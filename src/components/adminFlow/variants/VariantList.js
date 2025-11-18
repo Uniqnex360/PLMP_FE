@@ -59,9 +59,8 @@ const VariantList = ({ categories }) => {
        };
      }, []);
    
-    const filteredCategories = categories.category_list.filter(category =>
-        category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
-    );
+    const filteredCategories = categories?.category_list?.filter(category =>
+    category?.name?.toLowerCase().includes(searchQueries.level1.toLowerCase())) || [];
 
     const levelOneCategory = categories.category_list.find(level1 => level1._id === selectedCategoryId);
 
