@@ -1,0 +1,248 @@
+/* Sidebar styling */
+.sidebar { background-color: #f4f4f4; color: #333; position: fixed; top: 52px; left: 0; width: 200px; height: calc(100vh - 60px); padding: 4px; font-family: Arial, sans-serif; overflow-y: auto; box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.topMenu {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+}
+
+.topMenu li {
+  padding: 8px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  flex-wrap: wrap;
+  border-radius: 5px;
+    margin-bottom: 4px;
+}
+
+.topMenu li:hover {
+  background-color: #b4b3b3;
+  color: #000;
+}
+
+.icon {
+  margin-right: 10px;
+}
+
+.productsMenu {
+  position: relative;
+}
+
+.dropdown-icon {
+  margin-left: auto;
+  transition: transform 0.3s;
+}
+
+.dropdown-icon.rotate {
+  transform: rotate(180deg);
+}
+
+.subMenu {
+  list-style: none;
+  padding-left: 30px;
+  margin-top: 5px;
+}
+
+.subMenu li {
+  font-size: 14px;
+  color: #ffffff;
+  border-radius: 5px;
+  margin-bottom: 4px;
+}
+
+.subMenu li:hover {
+  background-color: #7191ea;
+  color: #000;
+}
+.upload_btn{
+  width: 100%;
+}
+.import-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.import-modal h2 {
+  margin-bottom: 10px;
+}
+
+.import-modal p {
+  margin-bottom: 20px;
+  color: #555;
+}
+
+.download-sample {
+  margin-bottom: 15px;
+  text-decoration: none;
+  color: #007bff;
+}
+
+.file-upload-section {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-name {
+  font-size: 14px;
+  color: #333;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.actions button {
+  width: 45%;
+}
+.swal-custom-confirm {
+  width: 100% !important;
+}
+.swal-custom-confirm-side{
+  width: 81%;
+  padding: 10px;
+  margin: 5px;}
+.selectFile_btn{
+  width: 100%;
+  padding: 5px !important;
+}
+/* Modal Styles */
+.response-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-title {
+  text-align: center;
+  font-size: 1.5em;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.response-content {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.response-list {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.json-viewer {
+  background-color: #f4f4f4;
+  padding: 15px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin-bottom: 20px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+button {
+  margin-top: 10px;
+}
+.sidebar .active {
+  background-color: #000;
+  color: white;
+}
+
+.sidebar .subMenu .active {
+  background-color: #000;
+  color: white;
+}
+.loading-spinner-container-sidebar{
+  height: 38vh;
+}
+.vendor-select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.import-modal h3 {
+  font-family: 'Segoe UI', sans-serif;
+}
+#import_address{
+  margin-bottom: 10px; width: 94% !important; height: 80px; padding:6px 6px 6px 12px; font-size:15px;font-family: sans-serif;
+}
+.download-icon-container {
+  position: relative;
+}
+
+/* Hover effect for the download icon container */
+.download-icon-container:hover .download-text {
+  visibility: visible; /* Make the download text visible */
+  opacity: 1;           /* Set opacity to 1 (fully visible) */
+  transition: visibility 0.3s, opacity 0.3s ease-in-out; /* Smooth transition */
+}
+
+/* Initial state for download-text */
+.download-text {
+  visibility: hidden; /* Initially hidden */
+  opacity: 0;         /* Initially transparent */
+  position: absolute;
+  width: 110px;
+  left: -43px;
+  bottom: 9px;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  transition: visibility 0.3s, opacity 0.3s ease-in-out; /* Smooth transition */
+}
+.custom-icon-margin{
+  margin-top: 22px;
+}
+.logo-upload-label{
+    margin: 16px 0px 10px 0px !important;
+    font-size: 14px !important;
+    width: 24%;
+    font-weight: 600; 
+}
+.logo-upload-section{
+  display: flex;
+}
+.vendor_input_import{
+  height: 33px !important; margin: 0 auto;
+
+}

@@ -1,0 +1,44 @@
+/* CSS */
+.arrow:hover {
+    transform: translateX(3px);
+    cursor: pointer;
+  }
+  .productth1{
+    width: 20% !important;
+  }
+  .productth2{
+    width: 25% !important;
+  }
+  .productth3{
+    width: 20% !important;
+  }
+  .productth4{
+    width: 10% !important;
+  }
+  .productth5{
+    width: 20% !important;
+  }
+  /* styles.css or in a styled-component */
+.responsive-header,
+.responsive-buttons {
+  min-width: 84%;
+}
+
+@media screen and (min-width: 1440px) {
+  .responsive-header,
+  .responsive-buttons {
+    min-width: 85%;
+  }
+}
+@media screen and (min-width: 1640px) {
+  .responsive-header,
+  .responsive-buttons {
+    min-width: 88%;
+  }
+}
+@media screen and (min-width: 1920px) {
+  .responsive-header,
+  .responsive-buttons {
+    min-width: 90%;
+  }
+}
