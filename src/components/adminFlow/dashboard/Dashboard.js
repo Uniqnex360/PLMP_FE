@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Line, Doughnut } from 'react-chartjs-2'; // Import Doughnut chart
+import { Doughnut } from 'react-chartjs-2'; // Import Doughnut chart
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -16,7 +16,7 @@ import './Dashboard.css'; // Add your custom styles here
 import axiosInstance from '../../../../src/utils/axiosConfig';
 import Unauthorized from '../../Unauthorized';
 import Modal from '@mui/material/Modal'; // Correct Modal import
-
+import {SyncLoader} from  'react-spinners'
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -100,17 +100,19 @@ function Dashboard() {
   if (loading) {
     return (
       <div className="loading-spinner-container">
-        <div className="loading-spinner"></div>
+        <div>
+         <SyncLoader color="#3498db" loading={loading} size={15} />
+        </div>
       </div>
     );
   }
-  if (!dashboardData) {
-    return (
-      <div className="superAdmin-error-message">
-        <p>Error loading dashboard data. Please try again later.</p>
-      </div>
-    );
-  }
+  // if (!dashboardData) {
+  //   return (
+  //     <div className="superAdmin-error-message">
+  //       <p>Error loading dashboard data. Please try again later.</p>
+  //     </div>
+  //   );
+  // }
 
   const categoryData = {
     labels: Object.keys(dashboardData.category_project_dict),

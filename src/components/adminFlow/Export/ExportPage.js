@@ -5,10 +5,13 @@ import Swal from 'sweetalert2';
 // import CircularProgress from '@mui/material/CircularProgress';
 // import Button from '@mui/material/Button';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
+import { SyncLoader } from 'react-spinners';
 
 
 const ExportPage = (categories) => {
     const [clearBtn, setShowclearBtn] = useState(false);
+  const [loading,setLoading]=useState(true)
+   const categoryList = categories?.categories?.category_list || [];
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [selectedLevel2Id, setselectedLevel2Id] = useState('');
   const [selectedLevel3Id, setSelectedLevel3Id] = useState('');
@@ -54,11 +57,11 @@ const ExportPage = (categories) => {
          document.removeEventListener('mousedown', handleClickOutside);
        };
      }, []);
-  const filteredCategories = categories.categories.category_list.filter(category =>
+  const filteredCategories = categories?.categories?.category_list.filter(category =>
       category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())
   );
 
-  const levelOneCategory = categories.categories.category_list.find(level1 => level1._id === selectedCategoryId);
+  const levelOneCategory = categories?.categories?.category_list.find(level1 => level1._id === selectedCategoryId);
 
   const safeSearchQuery = typeof searchQueries === 'string' ? searchQueries.toLowerCase() : '';
   const filteredCategoriesLevel2 = levelOneCategory ? levelOneCategory.level_one_category_list.filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery)
@@ -82,7 +85,7 @@ const ExportPage = (categories) => {
   const levelFiveCategory = levelFourCategory ? levelFourCategory.level_four_category_list.find(level5 => level5._id === selectedlevel5) : null;
 
   const filteredCategoriesLevel6 = levelFiveCategory
-      ? levelFiveCategory.level_five_category_list.filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list).filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery));
+      ? levelFiveCategory.level_five_category_list.filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery)) : categories?.categories?.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list).filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery));
 
   const handleSearchChange = (level, value) => {
       setSearchQueries(prev => ({ ...prev, [level]: value }));
@@ -103,6 +106,7 @@ const ExportPage = (categories) => {
       setIslevel5DropdownOpen(false);
       setIslevel6DropdownOpen(false);
   }
+ 
   const handleCategorySelect = async (id) => {
       setSelectedCategoryId(id);
       try {
@@ -166,6 +170,20 @@ const ExportPage = (categories) => {
           setselectedLevel2Id('');
       }
   };
+   useEffect(()=>{
+    if(categories)
+    {
+        setLoading(false)
+    }
+  },[categories])
+  if(loading)
+  {
+    return (
+        <div className='loading-spinner-container'>
+            <SyncLoader color="#3498db" loading={loading} size={15} />
+        </div>
+    )
+  }
 
   const handleLevel3Select = (id) => {
       const selectedValue = id;
@@ -330,7 +348,6 @@ const ExportPage = (categories) => {
   if (!level6Categories) {
       console.log(level6Categories);
   }
-  const [loading, setLoading] = useState(false);
 
   const handleExport = async () => {
     setLoading(true);

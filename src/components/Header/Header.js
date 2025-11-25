@@ -72,7 +72,7 @@ const Header = () => {
             }}
           />
 
-          <div className="logo">{fetchobtainClientNameData.name}</div>
+          {/* <div className="logo">{fetchobtainClientNameData.name}</div> */}
         </div>
       </div>
       <div className="header-right">

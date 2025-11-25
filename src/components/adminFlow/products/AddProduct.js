@@ -9,6 +9,7 @@
     import { useLocation } from 'react-router-dom';
     import ReactQuill from 'react-quill'; // Import ReactQuill
     import 'react-quill/dist/quill.snow.css'; 
+    import { SyncLoader } from 'react-spinners';
 
     const Modal = ({ isOpen, onClose, onSave, productData,handleEditorChange, formats,modules, handleChange,handlePaste,handleTextareaChange, handleVariantChange,selectedCategoryId, selectedVariants, handleVariantDetailChange, addVariantRow,removeVariantRow,handleDecimalInput, handleDecimalBlur,handleVariantDecimalInput,handleVariantDecimalBlur,selectedCategoryLevel,RetailPrice,addImageRow,removeImageRow }) => {
         const [variantOptions, setVariantOptions] = useState([]);
@@ -482,12 +483,19 @@
         );
     };
     const AddProduct = (categories) => {
+        const [loading,setLoading]=useState(false)
         const [lastLevelCategoryIds, setLastLevelCategoryIds] = useState([]);
         const [isAddProductVisible, setIsAddProductVisible] = useState(false); 
         const [clearBtn, setShowclearBtn] = useState(false);
         const [RetailPrice, setShowRetailPrice] = useState(1);
         const [RetailPriceOption, setShowRetailPriceOption] = useState([]);
     const [isInitialLoad, setIsInitialLoad] = useState(true);
+      useEffect(() => {
+    if (categories) {
+      setLoading(false);
+    }
+  }, [categories]);
+     const categoryList = categories?.categories?.category_list || [];
     const modules = {
         toolbar: [
         [{ 'font': ['sans-serif', 'serif', 'monospace'] }],
@@ -954,31 +962,31 @@
         };
     }, []);
 
-        const filteredCategories = categories.categories.category_list.filter(category =>
+        const filteredCategories = categories?.categories?.category_list.filter(category =>
             category.name.toLowerCase().includes(searchQueries.level1.toLowerCase())  );
 
-        const levelOneCategory = categories.categories.category_list.find(level1 => level1._id === selectedCategoryId);
+        const levelOneCategory = categories?.categories?.category_list .find(level1 => level1._id === selectedCategoryId);
 
         const safeSearchQuery = typeof searchQueries === 'string' ? searchQueries.toLowerCase() : '';
-        const filteredCategoriesLevel2 = levelOneCategory ? levelOneCategory.level_one_category_list.filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery) );
+        const filteredCategoriesLevel2 = levelOneCategory ? levelOneCategory.level_one_category_list.filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery)) : categories?.categories?.category_list .flatMap(level1 => level1.level_one_category_list).filter(level2 => level2.name.toLowerCase().includes(safeSearchQuery) );
 
         const levelTwoCategory = levelOneCategory ? levelOneCategory.level_one_category_list.find(level2 => level2._id === selectedLevel2Id) : null;
 
         const filteredCategoriesLevel3 = levelTwoCategory
-            ? levelTwoCategory.level_two_category_list.filter(level3 => level3.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).filter(level3 =>
+            ? levelTwoCategory.level_two_category_list.filter(level3 => level3.name.toLowerCase().includes(safeSearchQuery)) : categories?.categories?.category_list .flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).filter(level3 =>
                 level3.name.toLowerCase().includes(safeSearchQuery) );
 
         const levelThreeCategory = levelTwoCategory ? levelTwoCategory.level_two_category_list.find(level3 => level3._id === selectedLevel3Id) : null;
 
-        const filteredCategoriesLevel4 = levelThreeCategory ? levelThreeCategory.level_three_category_list.filter(level4 => level4.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).filter(level4 => level4.name.toLowerCase().includes(safeSearchQuery));
+        const filteredCategoriesLevel4 = levelThreeCategory ? levelThreeCategory.level_three_category_list.filter(level4 => level4.name.toLowerCase().includes(safeSearchQuery)) : categories?.categories?.category_list .flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).filter(level4 => level4.name.toLowerCase().includes(safeSearchQuery));
 
         const levelFourCategory = levelThreeCategory ? levelThreeCategory.level_three_category_list.find(level4 => level4._id === selectedlevel4) : null;
 
-        const filteredCategoriesLevel5 = levelFourCategory ? levelFourCategory.level_four_category_list.filter(level5 => level5.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).filter(level5 => level5.name.toLowerCase().includes(safeSearchQuery));
+        const filteredCategoriesLevel5 = levelFourCategory ? levelFourCategory.level_four_category_list.filter(level5 => level5.name.toLowerCase().includes(safeSearchQuery)) : categories?.categories?.category_list .flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).filter(level5 => level5.name.toLowerCase().includes(safeSearchQuery));
 
         const levelFiveCategory = levelFourCategory ? levelFourCategory.level_four_category_list.find(level5 => level5._id === selectedlevel5) : null;
 
-        const filteredCategoriesLevel6 = levelFiveCategory ? levelFiveCategory.level_five_category_list.filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery)) : categories.categories.category_list.flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list).filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery));
+        const filteredCategoriesLevel6 = levelFiveCategory ? levelFiveCategory.level_five_category_list.filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery)) : categories?.categories?.category_list .flatMap(level1 => level1.level_one_category_list).flatMap(level2 => level2.level_two_category_list).flatMap(level3 => level3.level_three_category_list).flatMap(level4 => level4.level_four_category_list).flatMap(level5 => level5.level_five_category_list).filter(level6 => level6.name.toLowerCase().includes(safeSearchQuery));
 
         const handleSearchChange = (level, value) => {
             setSearchQueries(prev => ({ ...prev, [level]: value }));
@@ -1047,7 +1055,7 @@
             const selectedValue = id;
             if (selectedValue !== '') {
                 let level1Category;
-                categories.categories.category_list.some(level1 => {
+                categories?.categories?.category_list .some(level1 => {
                     const foundLevel2 = level1.level_one_category_list.some(level2 => level2._id === selectedValue);
                     if (foundLevel2) {
                         level1Category = level1;
@@ -1076,7 +1084,7 @@
             const selectedValue = id;
             if (selectedValue !== '') {
                 let level1Category, level2Category;
-                categories.categories.category_list.some(level1 => {
+                categories?.categories?.category_list .some(level1 => {
                     const foundLevel2 = level1.level_one_category_list.find(level2 =>
                         level2.level_two_category_list.some(level3 => level3._id === selectedValue));
                     if (foundLevel2) {
@@ -1109,7 +1117,7 @@
                 switch (level) {
                     case 4:
                         let level1Category, level2Category, level3Category;
-                        categories.categories.category_list.some(level1 => {
+                        categories?.categories?.category_list .some(level1 => {
                             const foundLevel2 = level1.level_one_category_list.find(level2 => 
                                 level2.level_two_category_list.some(level3 => 
                                     level3.level_three_category_list.some(level4 => level4._id === selectedValue)
@@ -1144,7 +1152,7 @@
         
                     case 5:
                         let level4Category, level3CategoryForLevel5, level2CategoryForLevel5, level1CategoryForLevel5;
-                        categories.categories.category_list.some(level1 => {
+                        categories?.categories?.category_list .some(level1 => {
                         return level1.level_one_category_list.some(level2 => {
                             return level2.level_two_category_list.some(level3 => {
                             return level3.level_three_category_list.some(level4 => {
@@ -1171,7 +1179,7 @@
                         break;
                     case 6:
                         let level5Category, level4CategoryForLevel6, level3CategoryForLevel6, level2CategoryForLevel6, level1CategoryForLevel6;
-                        categories.categories.category_list.some(level1 => {
+                        categories?.categories?.category_list .some(level1 => {
                         return level1.level_one_category_list.some(level2 => {
                             return level2.level_two_category_list.some(level3 => {
                             return level3.level_three_category_list.some(level4 => {
@@ -1221,6 +1229,14 @@
                 }
             }
         };
+        if(loading)
+        {
+            return (
+                <div className='loading-container'>
+                    <SyncLoader color="#3498db" loading={loading} size={15} />
+                </div>
+            )
+        }
         //  To make visible the next level categories
         const level2Categories = levelOneCategory ? levelOneCategory.level_one_category_list : [];
         const levelTwoCategoryForVisible = level2Categories.find(level2 => level2._id === selectedLevel2Id);
@@ -1249,7 +1265,7 @@
                             <label htmlFor="categorySelect">Level 1:</label>
                             <div className="custom-dropdown" onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}>
                                 <div className="selected-category">
-                                    {selectedCategoryId ? categories.categories.category_list.find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'}
+                                    {selectedCategoryId ? categories?.categories?.category_list .find(level1 => level1._id === selectedCategoryId)?.name : 'Select Category'}
                                     <span className="dropdown-icons">
                                         <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                                     </span>

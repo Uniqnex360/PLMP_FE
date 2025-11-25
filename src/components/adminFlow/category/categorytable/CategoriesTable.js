@@ -249,7 +249,14 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
   };
   useEffect(() => {
     fetchData(true); // By default, load newest products
-  }, []);
+  }, []); 
+
+  useEffect(()=>{
+    if(categories && categories.category_list){
+      setLoading(false)
+    }
+  },[categories])
+  
 
   const [clearBtn, setShowclearBtn] = useState(false);
   const [selectedLevel3Id, setSelectedLevel3Id] = useState('');
@@ -298,6 +305,13 @@ const CategoriesTable = ({ categories, refreshCategories }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+   if (loading) {
+    return (
+      <div className="superAdmin-loading-message">
+        <p>Loading categories data...</p>
+      </div>
+    );
+  }
   if (!categories.category_list) {
     return (
       <div className="superAdmin-error-message">
