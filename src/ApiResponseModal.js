@@ -13,6 +13,11 @@ const ApiResponseModal = ({
   selectedFilepath,
   selectedVendorId,
 }) => {
+   console.log('=== ApiResponseModal Debug ===');
+  console.log('showResponseModal:', showResponseModal);
+  console.log('apiResponse:', apiResponse);
+  console.log('selectedFilepath:', selectedFilepath);
+  console.log('selectedVendorId:', selectedVendorId);
   const [mapping, setMapping] = useState([]);
   const [loading, setLoading] = useState(true);
   const [draggedItem, setDraggedItem] = useState(null);
@@ -31,29 +36,39 @@ const ApiResponseModal = ({
 console.log(selectedVendorId,'selectedVendorId');
 
   useEffect(() => {
-    if (apiResponse?.extract_list) {
-      const initialMapping = apiResponse.extract_list.map((item) => {
-        let resultKey = null;
-        // Find the key corresponding to the value in item
-        console.log(item,'Items');
-        
-        for (const [key, value] of Object.entries(databaseList)) {
-          if (value === item) {
-            resultKey = key;
-            console.log(key,'key');
-            console.log(value,'value');
-            break; // Exit loop once the key is found
-          }
+  console.log('=== DEBUGGING MAPPING DATA ===');
+  console.log('apiResponse:', apiResponse);
+  console.log('extract_list:', apiResponse?.extract_list);
+  console.log('databaseList:', databaseList);
+  console.log('databaseOptions:', databaseOptions);
+  
+  if (apiResponse?.extract_list) {
+    const initialMapping = apiResponse.extract_list.map((item) => {
+      let resultKey = null;
+      
+      console.log('Processing item:', item);
+      console.log('Type of item:', typeof item);
+      
+      for (const [key, value] of Object.entries(databaseList)) {
+        console.log(`Comparing: "${value}" (${typeof value}) with "${item}" (${typeof item})`);
+        if (value === item) {
+          resultKey = key;
+          console.log('MATCH FOUND:', key, '->', value);
+          break;
         }
-        return {
-          columnHeader: item,
-          databaseOption: resultKey, // Use the found resultKey
-        };
-      });
-      setMapping(initialMapping); // Update mapping state
-    }
-    setLoading(false); // Stop loading after setting mapping
-  }, [apiResponse, databaseList]); // Add dict as a dependency if needed
+      }
+      
+      return {
+        columnHeader: item,
+        databaseOption: resultKey,
+      };
+    });
+    
+    console.log('Initial mapping result:', initialMapping);
+    setMapping(initialMapping);
+  }
+  setLoading(false);
+}, [apiResponse, databaseList]);
   
 
   useEffect(() => {
