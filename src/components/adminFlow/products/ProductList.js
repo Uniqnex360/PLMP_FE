@@ -167,6 +167,7 @@ const controllerRef = useRef(null);
     setLoading(true);
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainAllProductList/`, { params });
+      console.log("obtainAllProductList",response)
       if (response.data && response.data.data && response.data.data.product_list) {
         setProductCounts(response.data.data.product_count);
         if (response.data.data.product_count <= 25 ) {

@@ -16,6 +16,7 @@ const VendorSummary = () => {
     const fetchVendorDetails = async () => {
       try {
         const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/?id=${brandId}`);
+        console.log("RESPONSE",response)
         setVendor(response.data.data.brand_list[0]);
         setUpdatedVendor(response.data.data.brand_list[0]);
         console.log(brandId,'brandId');

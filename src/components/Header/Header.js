@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../../utils/axiosConfig";
-import './Header.css'; 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'; 
-import { useNavigate } from 'react-router-dom'; 
+import "./Header.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
-  const navigate = useNavigate(); 
-  const [fetchobtainClientNameData, setfetchobtainClientNameData] = useState(null);
+  const navigate = useNavigate();
+  const [fetchobtainClientNameData, setfetchobtainClientNameData] =
+    useState(null);
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); 
-    navigate('/'); 
+    localStorage.removeItem("token");
+    navigate("/");
   };
   useEffect(() => {
     const fetchobtainClientNameData = async () => {
       try {
-        const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainClientName/`);        
+        const response = await axiosInstance.get(
+          `${process.env.REACT_APP_IP}/obtainClientName/`
+        );
         if (response.data) {
           setfetchobtainClientNameData(response.data.data);
         }
@@ -24,9 +27,8 @@ const Header = () => {
         if (error.response && error.response.status === 401) {
           // Handle Unauthorized Error
         } else {
-          console.error('Error fetching dashboard data:', error);
-          console.error('Error fetching dashboard data:', error.response);
-
+          console.error("Error fetching dashboard data:", error);
+          console.error("Error fetching dashboard data:", error.response);
         }
       }
     };
@@ -37,39 +39,39 @@ const Header = () => {
   if (!fetchobtainClientNameData) {
     return (
       <header className="header">
-      <div className="header-left">
-        <div className="logo-container">
-            <img 
-              src='#'
-              alt="Logo" 
-              className="logo-image"
-            />
-          <div className="logo">SuperAdmin</div>
+        <div className="header-left">
+          <div className="logo-container">
+            <img src="#" alt="Logo" className="logo-image" />
+            <div className="logo">SuperAdmin</div>
+          </div>
         </div>
-      </div>
-      <div className="header-right">
-        <button className="logout-button" onClick={handleLogout}>
-          <FontAwesomeIcon icon={faSignOutAlt} className="logout-icon" />
-          Logout
-        </button>
-      </div>
-    </header>
-    ); 
+        <div className="header-right">
+          <button className="logout-button" onClick={handleLogout}>
+            <FontAwesomeIcon icon={faSignOutAlt} className="logout-icon" />
+            Logout
+          </button>
+        </div>
+      </header>
+    );
   }
 
   return (
     <header className="header">
       <div className="header-left">
         <div className="logo-container">
-          {fetchobtainClientNameData.logo ? (
-            <img 
-              src={fetchobtainClientNameData.logo} 
-              alt="Logo" 
-              className="logo-image"
-            />
-          ) : (
-            <div>No logo available</div> // Handle case where no logo is provided
-          )}
+          <img
+            src="/PLPM_LOGO.jpg"
+            alt="Logo"
+            className="logo-image"
+            style={{
+              height: "40px",
+              width: "auto",
+              objectFit: "contain",
+              marginRight: "10px",
+              borderRadius: "5px",
+            }}
+          />
+
           <div className="logo">{fetchobtainClientNameData.name}</div>
         </div>
       </div>
