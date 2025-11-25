@@ -54,10 +54,11 @@ function Dashboard() {
     const fetchDashboardData = async () => {
       try {
         const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainDashboardCount/`);
+        console.log("RESPONSE",response)
         if (response.status === 401) {
           setUnauthorized(true);
         } else if (response.data) {
-          const categories = response.data.data.parent_level_category_list;
+          const categories = response.data.data.parent_level_category_list||[];
           setParentCategories(categories); // Set parent categories
           setDashboardData(response.data.data);
         }
