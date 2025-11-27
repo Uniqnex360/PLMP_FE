@@ -41,8 +41,19 @@ const Header = () => {
       <header className="header">
         <div className="header-left">
           <div className="logo-container">
-            <img src="#" alt="Logo" className="logo-image" />
-            <div className="logo">SuperAdmin</div>
+            <img
+            src="/PLPM_LOGO.jpg"
+            alt="Logo"
+            className="logo-image"
+            style={{
+              height: "40px",
+              width: "auto",
+              objectFit: "contain",
+              marginRight: "10px",
+              borderRadius: "5px",
+            }}
+          />
+            {/* <div className="logo">SuperAdmin</div> */}
           </div>
         </div>
         <div className="header-right">
