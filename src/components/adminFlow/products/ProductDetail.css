@@ -24,7 +24,182 @@
   background-color: #706e6e94;
   color: black;
 }
+/* Add these styles to your ProductDetail.css file */
 
+/* Standardize all variant dropdowns */
+.variants-options {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.variants-options .custom-dropdown {
+  min-width: 200px;
+  flex: 1;
+  position: relative;
+}
+
+/* Label styling */
+.variants-options .variant-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Consistent dropdown header */
+.variants-options .selected-category {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: border-color 0.2s;
+  min-height: 42px;
+}
+
+.variants-options .selected-category:hover {
+  border-color: #007bff;
+}
+
+/* Arrow indicator */
+.variants-options .dropdown-arrow {
+  margin-left: auto;
+  color: #666;
+  font-size: 12px;
+}
+
+/* Dropdown options container */
+.variants-options .dropdown-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  margin-top: -1px;
+}
+
+/* Individual dropdown option */
+.variants-options .dropdown-option {
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.variants-options .dropdown-option:last-child {
+  border-bottom: none;
+}
+
+.variants-options .dropdown-option:hover {
+  background-color: #f0f0f0;
+}
+
+.variants-options .dropdown-option.selected {
+  background-color: #e3f2fd;
+  font-weight: 600;
+  color: #1976d2;
+}
+
+/* Clear filters button */
+.filters-clear-btn {
+  padding: 10px 16px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  height: fit-content;
+  align-self: flex-end;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filters-clear-btn:hover {
+  background-color: #c82333;
+}
+
+/* Modal dropdown styles */
+.variant_model_pdp .dropdown {
+  width: 100%;
+  padding: 10px 12px;
+  margin: 6px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+.variant_model_pdp .dropdown:hover {
+  border-color: #007bff;
+}
+
+.variant_model_pdp .dropdown:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+/* Input field styles in modal */
+.variant_model_pdp .input_pdp {
+  width: 100%;
+  padding: 10px 12px;
+  margin: 6px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.variant_model_pdp .input_pdp:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+/* Required field indicator */
+.required {
+  color: #dc3545;
+  margin-left: 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .variants-options {
+    flex-direction: column;
+  }
+  
+  .variants-options .custom-dropdown {
+    width: 100%;
+  }
+}
 /* Product info sections */
 .product-info-section,
 .taxonomy-section,
