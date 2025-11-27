@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import ChevronDownIcon from "@mui/icons-material/ExpandMore";
 import "./VariantList.css";
 import axiosInstance from "../../../../src/utils/axiosConfig";
+import { SyncLoader } from "react-spinners";
 
 const VariantList = ({ categories }) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
@@ -14,6 +15,7 @@ const VariantList = ({ categories }) => {
   const [clearBtn, setShowclearBtn] = useState(false);
   const dropdownRef = useRef([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading,setLoading]=useState(false)
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const [isLevel2DropdownOpen, setIsLevel2DropdownOpen] = useState(false);
   const [isLevel3DropdownOpen, setIsLevel3DropdownOpen] = useState(false);
@@ -201,6 +203,7 @@ const VariantList = ({ categories }) => {
     fetchCategoryData();
   }, []);
   const handleCategorySelectForVariants = async (id, level) => {
+    setLoading(true)
     const selectedIdString = String(id);
     const isIdInLastLevel = lastLevelCategoryIds.some(
       (category) => String(category.id) === selectedIdString
@@ -220,6 +223,9 @@ const VariantList = ({ categories }) => {
       setVariantsData(res.data.data);
     } catch (err) {
       console.log("ERROR", err);
+    }
+    finally{
+      setLoading(false)
     }
   };
   useEffect(() => {
@@ -949,8 +955,14 @@ const VariantList = ({ categories }) => {
                   >
                     <span>Select category</span>
                   </div>
-                  {(levelOneCategory?.level_one_category_list ?? []).map(
-                    (level2) => (
+                  {(levelOneCategory
+  ? levelOneCategory.level_one_category_list
+  : categories.category_list.flatMap((level1) => level1.level_one_category_list)
+)
+  .filter((level2) =>
+    level2.name.toLowerCase().includes(searchQueries.level2.toLowerCase())
+  )
+  .map((level2) => (
                       <div
                         key={level2._id}
                         className="dropdown-option"
@@ -1006,8 +1018,16 @@ const VariantList = ({ categories }) => {
                   >
                     <span>Select category</span>
                   </div>
-                  {(levelTwoCategory?.level_two_category_list ?? []).map(
-                    (level3) => (
+                  {(levelTwoCategory
+  ? levelTwoCategory.level_two_category_list
+  : categories.category_list
+      .flatMap((level1) => level1.level_one_category_list)
+      .flatMap((level2) => level2.level_two_category_list)
+)
+  .filter((level3) =>
+    level3.name.toLowerCase().includes(searchQueries.level3.toLowerCase())
+  )
+  .map((level3) => (
                       <div
                         key={level3._id}
                         className="dropdown-option"
@@ -1063,8 +1083,17 @@ const VariantList = ({ categories }) => {
                   >
                     <span>Select category</span>
                   </div>
-                  {(levelThreeCategory?.level_three_category_list ?? []).map(
-                    (level4) => (
+                  {(levelThreeCategory
+  ? levelThreeCategory.level_three_category_list
+  : categories.category_list
+      .flatMap((level1) => level1.level_one_category_list)
+      .flatMap((level2) => level2.level_two_category_list)
+      .flatMap((level3) => level3.level_three_category_list)
+)
+  .filter((level4) =>
+    level4.name.toLowerCase().includes(searchQueries.level4.toLowerCase())
+  )
+  .map((level4) => (
                       <div
                         key={level4._id}
                         className="dropdown-option"
@@ -1120,8 +1149,18 @@ const VariantList = ({ categories }) => {
                   >
                     <span>Select category</span>
                   </div>
-                  {(levelFourCategory?.level_four_category_list ?? []).map(
-                    (level5) => (
+                  {(levelFourCategory
+  ? levelFourCategory.level_four_category_list
+  : categories.category_list
+      .flatMap((level1) => level1.level_one_category_list)
+      .flatMap((level2) => level2.level_two_category_list)
+      .flatMap((level3) => level3.level_three_category_list)
+      .flatMap((level4) => level4.level_four_category_list)
+)
+  .filter((level5) =>
+    level5.name.toLowerCase().includes(searchQueries.level5.toLowerCase())
+  )
+  .map((level5) => (
                       <div
                         key={level5._id}
                         className="dropdown-option"
@@ -1177,8 +1216,19 @@ const VariantList = ({ categories }) => {
                   >
                     <span>Select category</span>
                   </div>
-                  {(levelFiveCategory?.level_five_category_list ?? []).map(
-                    (level6) => (
+                  {(levelFiveCategory
+  ? levelFiveCategory.level_five_category_list
+  : categories.category_list
+      .flatMap((level1) => level1.level_one_category_list)
+      .flatMap((level2) => level2.level_two_category_list)
+      .flatMap((level3) => level3.level_three_category_list)
+      .flatMap((level4) => level4.level_four_category_list)
+      .flatMap((level5) => level5.level_five_category_list)
+)
+  .filter((level6) =>
+    level6.name.toLowerCase().includes(searchQueries.level6.toLowerCase())
+  )
+  .map((level6) => (
                       <div
                         key={level6._id}
                         className="dropdown-option"
@@ -1216,7 +1266,13 @@ const VariantList = ({ categories }) => {
         </button>
       )}
       {error && <p style={{ color: "red" }}>{error}</p>}
-      {variantsData.varient_list && variantsData.varient_list.length > 0 ? (
+      {loading ? (
+        <div className='loading-container'>
+                            <SyncLoader color="#3498db" loading={loading} size={15} />
+                        </div>
+
+      )
+      :variantsData.varient_list && variantsData.varient_list.length > 0 ? (
         <div>
           {variantsData.varient_list && (
             <div className="variant-container">

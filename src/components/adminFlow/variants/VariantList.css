@@ -9,7 +9,13 @@
   background-color: white;
   padding: 0;
 }
-
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  min-height: 200px;
+}
 .variant-table th,
 .variant-table td {
   padding: 12px; 

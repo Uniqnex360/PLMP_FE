@@ -46,109 +46,257 @@ const BrandList = () => {
     String.fromCharCode(65 + i)
   );
   const handleAddBrand = async () => {
-    const { value: formValues } = await Swal.fire({
-     html: `
-  <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
-    <button 
-      id="close-popup-btn" 
-      style="position: absolute; top: -20px; right: -71px; background: transparent; border: none; font-size: 26px; font-weight: bold; cursor: pointer; color: #555;">
-      &times;
-    </button>
-    <h2 style="margin-bottom: 20px; font-size: 24px; font-weight: bold; color: #333;">Add New Vendor</h2>
-  </div>
-  <div>
-    <input id="vendor-name" class="swal2-input vendor_input" autocomplete="off" placeholder="Vendor Name *" style="margin-bottom: 10px; font-size: 16px;" required>
-    <input id="vendor-email" type="email" class="swal2-input vendor_input" autocomplete="off" placeholder="Vendor Email Id *" style="margin-bottom: 10px;font-size: 16px;">
- <textarea id="vendor-address" class="swal2-input vendor_input" autocomplete="off" placeholder="Vendor Address *" style="margin-bottom: 10px; width: 96%; height: 80px; padding:6px 6px 6px 12px; font-size:16px;font-family: sans-serif;" required></textarea>
-    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-      <input id="vendor-city" class="swal2-input vendor_input" autocomplete="off" placeholder="City *" style="flex: 1; font-size: 16px;" required>
-      <input id="vendor-state" class="swal2-input vendor_input" autocomplete="off" placeholder="State *" style="flex: 1; font-size: 16px;" required>
-    </div>
+  const { value: formValues } = await Swal.fire({
+    html: `
+      <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+        <button 
+          id="close-popup-btn" 
+          style="position: absolute; top: -20px; right: -71px; background: transparent; border: none; font-size: 26px; font-weight: bold; cursor: pointer; color: #555;">
+          &times;
+        </button>
+        <h2 style="margin-bottom: 20px; font-size: 24px; font-weight: bold; color: #333;">Add New Vendor</h2>
+      </div>
+      <div>
+        <input id="vendor-name" class="swal2-input vendor_input" autocomplete="off" placeholder="Vendor Name *" style="margin-bottom: 10px; font-size: 16px;" required>
+        <input id="vendor-email" type="email" class="swal2-input vendor_input" autocomplete="off" placeholder="Vendor Email Id *" style="margin-bottom: 10px;font-size: 16px;">
+        <textarea id="vendor-address" class="swal2-input vendor_input" autocomplete="off" placeholder="Vendor Address *" style="margin-bottom: 10px; width: 96%; height: 80px; padding:6px 6px 6px 12px; font-size:16px;font-family: sans-serif;" required></textarea>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <input id="vendor-city" class="swal2-input vendor_input" autocomplete="off" placeholder="City *" style="flex: 1; font-size: 16px;" required>
+          <input id="vendor-state" class="swal2-input vendor_input" autocomplete="off" placeholder="State *" style="flex: 1; font-size: 16px;" required>
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <input id="vendor-phone" class="swal2-input vendor_input" autocomplete="off" placeholder="Phone Number *" style="flex: 1; font-size: 16px;" required>
+          <input id="vendor-zip" class="swal2-input vendor_input" autocomplete="off" placeholder="Zip Code *" style="flex: 1; font-size: 16px;" required>
+        </div>
+        <input id="vendor-website" type="url" class="swal2-input vendor_input" autocomplete="off" placeholder="Vendor Website *" style="margin-bottom: 10px;font-size: 16px;" required>
+        <label for="vendor-logo" style="display: inline-block; margin-top: 10px; font-size: 14px; font-weight: bold; color: #555;">Vendor Logo:</label>
+        <input id="vendor-logo" type="file" accept="image/*" class="swal2-file-input" style="margin-top: 10px;">
+      </div>
+    `,
+    showCancelButton: true,
+    focusConfirm: false,
+    didOpen: () => {
+      const closeButton = document.getElementById('close-popup-btn');
+      if (closeButton) {
+        closeButton.addEventListener('click', () => {
+          Swal.close();
+        });
+      }
+    },
+    preConfirm: () => {
+      // Get all input values
+      const vendorName = document.getElementById('vendor-name').value.trim();
+      const vendorEmail = document.getElementById('vendor-email').value.trim();
+      const vendorAddress = document.getElementById('vendor-address').value.trim();
+      const vendorWebsite = document.getElementById('vendor-website').value.trim();
+      const vendorLogo = document.getElementById('vendor-logo').files[0];
+      const vendorCity = document.getElementById('vendor-city').value.trim();
+      const vendorState = document.getElementById('vendor-state').value.trim();
+      const vendorPhone = document.getElementById('vendor-phone').value.trim();
+      const vendorZip = document.getElementById('vendor-zip').value.trim();
 
-    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-      <input id="vendor-phone" class="swal2-input vendor_input" autocomplete="off" placeholder="Phone Number *" style="flex: 1; font-size: 16px;" required>
-      <input id="vendor-zip" class="swal2-input vendor_input" autocomplete="off" placeholder="Zip Code *" style="flex: 1; font-size: 16px;" required>
-    </div>
+      // Validation functions
+      const isValidEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      };
 
-    <input id="vendor-website" type="url" class="swal2-input vendor_input" autocomplete="off" placeholder="Vendor Website *" style="margin-bottom: 10px;font-size: 16px;" required>
-    <label for="vendor-logo" style="display: inline-block; margin-top: 10px; font-size: 14px; font-weight: bold; color: #555;">Vendor Logo:</label>
-    <input id="vendor-logo" type="file" accept="image/*" class="swal2-file-input" style="margin-top: 10px;">
-  </div>
-`,
-      showCancelButton: true,
-      focusConfirm: false,
-      didOpen: () => {
-        // Add close functionality to the button after the popup renders
-        const closeButton = document.getElementById('close-popup-btn');
-        if (closeButton) {
-          closeButton.addEventListener('click', () => {
-            Swal.close();
-          });
+      const isValidPhone = (phone) => {
+        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+        return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
+      };
+
+      const isValidZip = (zip) => {
+        const zipRegex = /^\d{5,6}(-\d{4})?$/;
+        return zipRegex.test(zip);
+      };
+
+      const isValidWebsite = (website) => {
+        try {
+          const url = new URL(website);
+          return url.protocol === 'http:' || url.protocol === 'https:';
+        } catch {
+          return false;
         }
-      },
-      preConfirm: () => {
-        const vendorName = document.getElementById('vendor-name').value;
-        const vendorEmail = document.getElementById('vendor-email').value;
-        const vendorAddress = document.getElementById('vendor-address').value;
-        const vendorWebsite = document.getElementById('vendor-website').value;
-        // const vendorContact = document.getElementById('contact-info').value;
-        const vendorLogo = document.getElementById('vendor-logo').files[0];
-        const vendorCity = document.getElementById('vendor-city').value;
-        const vendorState = document.getElementById('vendor-state').value;
-        const vendorPhone = document.getElementById('vendor-phone').value;
-        const vendorZip = document.getElementById('vendor-zip').value;
-        if (!vendorName) {
-          Swal.showValidationMessage('Please enter a vendor name');
+      };
+
+      // const isValidImage = (file) => {
+      //   if (!file) return true; // Logo is optional
+      //   const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      //   const maxSize = 5 * 1024 * 1024; // 5MB
+      //   return validTypes.includes(file.type) && file.size <= maxSize;
+      // };
+
+      // Perform validations
+      const errors = [];
+
+      // Required field validations
+      if (!vendorName) errors.push('Vendor Name is required');
+      if (!vendorEmail) errors.push('Vendor Email is required');
+      if (!vendorAddress) errors.push('Vendor Address is required');
+      if (!vendorCity) errors.push('City is required');
+      if (!vendorState) errors.push('State is required');
+      if (!vendorPhone) errors.push('Phone Number is required');
+      if (!vendorZip) errors.push('Zip Code is required');
+      // if (!vendorWebsite) errors.push('Vendor Website is required');
+
+      // Format validations
+      if (vendorEmail && !isValidEmail(vendorEmail)) {
+        errors.push('Please enter a valid email address');
+      }
+
+      if (vendorPhone && !isValidPhone(vendorPhone)) {
+        errors.push('Please enter a valid phone number (digits only, 10-15 characters)');
+      }
+
+      if (vendorZip && !isValidZip(vendorZip)) {
+        errors.push('Please enter a valid zip code (5 or 6 digits)');
+      }
+
+      // if (vendorWebsite && !isValidWebsite(vendorWebsite)) {
+      //   errors.push('Please enter a valid website URL (http:// or https://)');
+      // }
+
+      // if (vendorLogo && !isValidImage(vendorLogo)) {
+      //   errors.push('Logo must be a valid image file (JPEG, PNG, GIF, WebP) and less than 5MB');
+      // }
+
+      // Length validations
+      if (vendorName && vendorName.length < 2) {
+        errors.push('Vendor Name must be at least 2 characters long');
+      }
+
+      if (vendorName && vendorName.length > 100) {
+        errors.push('Vendor Name must be less than 100 characters');
+      }
+
+      if (vendorEmail && vendorEmail.length > 255) {
+        errors.push('Email must be less than 255 characters');
+      }
+
+      if (vendorAddress && vendorAddress.length > 500) {
+        errors.push('Address must be less than 500 characters');
+      }
+
+      if (vendorCity && vendorCity.length > 50) {
+        errors.push('City must be less than 50 characters');
+      }
+
+      if (vendorState && vendorState.length > 50) {
+        errors.push('State must be less than 50 characters');
+      }
+
+      if (vendorPhone && vendorPhone.length > 15) {
+        errors.push('Phone number must be less than 15 digits');
+      }
+
+      if (vendorZip && vendorZip.length > 10) {
+        errors.push('Zip code must be less than 10 characters');
+      }
+
+      if (vendorWebsite && vendorWebsite.length > 255) {
+        errors.push('Website URL must be less than 255 characters');
+      }
+
+      // Show validation errors
+      if (errors.length > 0) {
+        Swal.showValidationMessage(errors.join('<br>'));
+        return false;
+      }
+
+      return { 
+        vendorName, 
+        vendorEmail, 
+        vendorAddress, 
+        vendorWebsite, 
+        vendorLogo, 
+        vendorCity, 
+        vendorState, 
+        vendorPhone, 
+        vendorZip 
+      };
+    },
+    customClass: { 
+      container: 'swal-custom-container swal-overflow', 
+      popup: 'swal-custom-popup', 
+      title: 'swal-custom-title', 
+      confirmButton: 'swal-custom-confirm-brand', 
+      cancelButton: 'swal-custom-cancel-brand',
+    },
+  });
+
+  if (formValues) {
+    const { vendorName, vendorLogo, vendorEmail, vendorAddress, vendorWebsite, vendorCity, vendorState, vendorPhone, vendorZip } = formValues;
+    const formData = new FormData();
+    formData.append('name', vendorName);
+    if (vendorLogo) { formData.append('logo', vendorLogo); }
+    if (vendorEmail) { formData.append('email', vendorEmail); }
+    if (vendorAddress) { formData.append('address', vendorAddress); }
+    if (vendorWebsite) { formData.append('website', vendorWebsite); }
+    if (vendorCity) formData.append('city', vendorCity);
+    if (vendorState) formData.append('state', vendorState);
+    if (vendorPhone) formData.append('mobile_number', vendorPhone);
+    if (vendorZip) formData.append('zip_code', vendorZip);
+
+    try {
+      const response = await axiosInstance.post(
+        `${process.env.REACT_APP_IP}/createBrand/`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         }
-        return { vendorName, vendorEmail,vendorAddress,vendorWebsite, vendorLogo, vendorCity, vendorState, vendorPhone, vendorZip };
-      },
-      customClass: { container: 'swal-custom-container swal-overflow', popup: 'swal-custom-popup', title: 'swal-custom-title', confirmButton: 'swal-custom-confirm-brand', cancelButton: 'swal-custom-cancel-brand',
-      },
-    });
-  
-    if (formValues) {
-      const { vendorName, vendorLogo, vendorEmail, vendorAddress, vendorWebsite, vendorCity, vendorState, vendorPhone, vendorZip } = formValues;
-      const formData = new FormData();
-      formData.append('name', vendorName);
-      if (vendorLogo) {  formData.append('logo', vendorLogo); }
-      if (vendorEmail) {  formData.append('email', vendorEmail); }
-      if (vendorAddress) {  formData.append('address', vendorAddress); }
-      if (vendorWebsite) {  formData.append('website', vendorWebsite); }
-      // if (vendorContact) {  formData.append('mobile_number', vendorContact); }
-      if (vendorCity) formData.append('city', vendorCity);
-      if (vendorState) formData.append('state', vendorState);
-      if (vendorPhone) formData.append('mobile_number', vendorPhone);
-      if (vendorZip) formData.append('zip_code', vendorZip);
-      try {
-        const response = await axiosInstance.post(
-          `${process.env.REACT_APP_IP}/createBrand/`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          }
-        );
-  
-        if (response.data.data.is_created === true) {
-          Swal.fire({  title: 'Success!',  text: 'Vendor added successfully!',  icon: 'success',  confirmButtonText: 'OK',
-            customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel',
-            },
-          });
-        } else if (response.data.data.is_created === false) {
-          Swal.fire({  title: 'Error!',  text: response.data.data.error,  icon: 'error',  confirmButtonText: 'OK',  customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel',
-            },
-          });
-        }
-        fetchBrands(); // Refresh brand list
-      } catch (error) {
-        console.error('Error adding Vendor:', error);
-        Swal.fire({  title: 'Error',  text: 'Failed to add Vendor.',  icon: 'error',  confirmButtonText: 'OK',  customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel',
+      );
+
+      if (response.data.data.is_created === true) {
+        Swal.fire({  
+          title: 'Success!',  
+          text: 'Vendor added successfully!',  
+          icon: 'success',  
+          confirmButtonText: 'OK',
+          customClass: {  
+            container: 'swal-custom-container',  
+            popup: 'swal-custom-popup',  
+            title: 'swal-custom-title',  
+            confirmButton: 'swal-custom-confirm',  
+            cancelButton: 'swal-custom-cancel',
+          },
+        });
+      } else if (response.data.data.is_created === false) {
+        Swal.fire({  
+          title: 'Error!',  
+          text: response.data.data.error,  
+          icon: 'error',  
+          confirmButtonText: 'OK',  
+          customClass: {  
+            container: 'swal-custom-container',  
+            popup: 'swal-custom-popup',  
+            title: 'swal-custom-title',  
+            confirmButton: 'swal-custom-confirm',  
+            cancelButton: 'swal-custom-cancel',
           },
         });
       }
+      fetchBrands(); // Refresh brand list
+    } catch (error) {
+      console.error('Error adding Vendor:', error);
+      Swal.fire({  
+        title: 'Error',  
+        text: 'Failed to add Vendor.',  
+        icon: 'error',  
+        confirmButtonText: 'OK',  
+        customClass: {  
+          container: 'swal-custom-container',  
+          popup: 'swal-custom-popup',  
+          title: 'swal-custom-title',  
+          confirmButton: 'swal-custom-confirm',  
+          cancelButton: 'swal-custom-cancel',
+        },
+      });
     }
-  };   
+  }
+};  
   useEffect(() => {
     fetchBrands();
   }, []);

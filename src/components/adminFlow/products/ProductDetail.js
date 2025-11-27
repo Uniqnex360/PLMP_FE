@@ -752,10 +752,12 @@ const ProductDetail = ({ categories }) => {
     setAllSelectedValues(allSelected);
     const selectedIds = allSelected.map((item) => item.type_value_id);
     setSelectedOptionValue(selectedIds.join(", "));
+    const validNameIds = allSelectedId.filter(id => id && id !== 'null' && id !== '');
+    const validValueIds = selectedIds.filter(id => id && id !== 'null' && id !== '');
     const params = {
       ...(productId && { product_id: productId }),
-      ...(allSelectedId && { variant_option_name_id: allSelectedId }),
-      ...(selectedIds && { variant_option_value_id: selectedIds }),
+      ...(allSelectedId && { variant_option_name_id: validNameIds }),
+      ...(selectedIds && { variant_option_value_id: validValueIds }),
     };
 
     fetchVariantDetailFilter(params);
