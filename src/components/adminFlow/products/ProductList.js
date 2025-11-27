@@ -170,9 +170,9 @@ const controllerRef = useRef(null);
       console.log("obtainAllProductList",response)
       if (response.data && response.data.data && response.data.data.product_list) {
         setProductCounts(response.data.data.product_count);
-        if (response.data.data.product_count <= 25 ) {
-            navigate(`/Admin/allproducts?page=1`);
-        }
+        // if (response.data.data.product_count <= 25 && location.pathname==='/Admin/allproducts' ) {
+        //     navigate(`/Admin/allproducts?page=1`);
+        // }
         setResponseData(response.data.data.product_list);     
         setResponseDataForProductsIds(response.data.data.product_id_list || []);   
       } else {
