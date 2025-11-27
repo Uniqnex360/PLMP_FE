@@ -21,7 +21,8 @@ const HistoryPage = () => {
     setActiveButton(buttonKey);
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/${apiUrl}`);
-      setApiResponse(response.data.data.result);
+      console.log('historypaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',response)
+      setApiResponse(response.data.data||[]);
     } catch (error) {
       console.error(`Error fetching data from ${apiUrl}:`, error);
       Swal.fire({
