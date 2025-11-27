@@ -4,7 +4,7 @@
   import Swal from 'sweetalert2';
   import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
   import { faBox, faTags, faUser, faFileImport, faFileExport, faCog, faHistory, faStore, faColumns,faCreditCard   } from '@fortawesome/free-solid-svg-icons';
-  import { Modal, Box, TextField, TextareaAutosize, Button } from '@mui/material';
+  import { Modal, Box, TextField, Button } from '@mui/material';
   import { useNavigate,useLocation } from 'react-router-dom';
   import axiosInstance from '../../../../src/utils/axiosConfig';
   import CircularProgress from '@mui/material/CircularProgress';
@@ -89,7 +89,7 @@
       setSelectedFile(null);
       setUploadProgress(0);
       navigate('/Admin'); 
-      window.location.reload();
+      // window.location.reload();
     };
     const closeImportModal2 = () => {
       setShowAddVendorForm(false);
@@ -168,7 +168,7 @@
         setShowProductsSubmenu(false);  // Close the admin control submenu
       }
         if (section === 'all-products' || section === 'add-product') {  setActiveSection('products')  }
-        if (section === 'all-products') { navigate('/Admin/allproducts');window.location.reload(); }
+        if (section === 'all-products') { navigate('/Admin/allproducts'); }
         if (section === 'add-product') { navigate('/Admin/addproduct'); }
         if (section === 'hidden') {  navigate('/Admin/inactiveproducts');  }
         if (section === 'settings' || section === 'users') {  setActiveSection('setting')  }
