@@ -195,7 +195,7 @@ function Dashboard() {
             {parentCategories.length > 0 ? (
               parentCategories.map((category) => (
                 <li key={category.id} className="ulliclass">
-                  {category.name}
+                  {category.name} ({category.product_count} {category.product_count === 1 ? 'product' : 'products'})
                 </li>
               ))
             ) : (
