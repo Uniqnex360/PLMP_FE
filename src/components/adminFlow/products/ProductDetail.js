@@ -7,6 +7,7 @@ import axiosInstance from "../../../../src/utils/axiosConfig";
 import ChevronDownIcon from "@mui/icons-material/ExpandMore";
 import Soon from "../../../assets/image_2025_01_02T08_51_07_818Z.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { SyncLoader } from "react-spinners";
 import {
   faEye,
   faEyeSlash,
@@ -364,7 +365,7 @@ const ProductDetail = ({ categories }) => {
     const selectedValue = id;
     if (selectedValue !== "") {
       let level1Category, level2Category;
-      categories.category_list.some((level1) => {
+      (categories?.category_list||[]).some((level1) => {
         const foundLevel2 = level1.level_one_category_list.find((level2) =>
           level2.level_two_category_list.some(
             (level3) => level3._id === selectedValue
@@ -401,7 +402,7 @@ const ProductDetail = ({ categories }) => {
       switch (level) {
         case 4:
           let level1Category, level2Category, level3Category;
-          categories.category_list.some((level1) => {
+          categories?.category_list.some((level1) => {
             const foundLevel2 = level1.level_one_category_list.find((level2) =>
               level2.level_two_category_list.some((level3) =>
                 level3.level_three_category_list.some(
@@ -592,6 +593,7 @@ const ProductDetail = ({ categories }) => {
     });
   };
   const fetchProductDetail = async (productId) => {
+    console.log("/////////////////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA///////////",productId)
     try {
       const response = await axiosInstance.post(
         `${process.env.REACT_APP_IP}/obtainProductDetails/`,
@@ -892,7 +894,7 @@ const ProductDetail = ({ categories }) => {
       navigate(`/Admin/allproducts`);
     }
   };
-  if (loading) return <p>Loading...</p>;
+
   if (error) return <p>{error}</p>;
   const swapProductToCategory = async () => {
     if (categoryIds && categoryName && categoryId) {
@@ -1095,6 +1097,9 @@ const ProductDetail = ({ categories }) => {
     }
     return feature;
   };
+    if (loading) return <div className='loading-container'>
+                      <SyncLoader color="#3498db" loading={true} size={15} />
+                  </div>
   const handleVisibilityToggle = async (e, variant) => {
     e.stopPropagation(); // Prevent click propagation if necessary
     // Toggle the visibility based on the current state of `is_active`

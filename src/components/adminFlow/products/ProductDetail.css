@@ -20,6 +20,13 @@
   background-color: #706e6e94;
   color: black;
 }
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  min-height: 100vh; 
+}
 .section-buttons button.active {
   background-color: #706e6e94;
   color: black;
