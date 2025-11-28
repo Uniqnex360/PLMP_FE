@@ -77,10 +77,10 @@ const PriceComponent = () => {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    fetchBrands();
-    fetchCategories();
-  }, []);
+  // useEffect(() => {
+  //   fetchBrands();
+  //   fetchCategories();
+  // }, []);
   const handleSearchChange = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
