@@ -76,6 +76,19 @@
     };
     const handleFileChange = (event) => {
       const file = event.target.files[0];
+      if(!file)return
+      const allowedExtension=['csv','xlsx','xls']
+      const fileExtension=file.name.split('.').pop().toLowerCase()
+      if(!allowedExtension.includes(fileExtension))
+      {
+        Swal.fire({
+          title:"Invalid File Type",
+          text:"Please upload only CSV or Excel files",
+          icon:"error"
+        })
+        event.target.value=''
+        return
+      }
       if (file) {
         setSelectedFile(file);
       }
@@ -360,6 +373,7 @@
             </a>
             <input
               type="file"
+              accept=".csv, .xls, .xlsx"
               id="file-input"
               style={{ display: 'none' }}
               ref={fileInputRef}
