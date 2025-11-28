@@ -462,9 +462,34 @@ const handleDashboard = async () =>{
       // }
       setShowResponseModal(false);
     } catch (err) {
-      //Swal.close();
+      Swal.close();
+      let errorMessage = 'An unexpected error occurred while processing your file.';
       console.error("API Error:", err);
-    } finally {
+      if (err.response) {
+    // Server responded with error status
+    errorMessage = err.response.data?.error || err.response.data?.message || errorMessage;
+  } else if (err.request) {
+    // Request was made but no response received
+    errorMessage = 'No response from server. Please check your connection and try again.';
+  } else {
+    // Something else happened
+    errorMessage = err.message || errorMessage;
+  }
+  
+  Swal.fire({
+    title: 'Error!',
+    text: errorMessage,
+    icon: 'error',
+    confirmButtonText: 'OK',
+    customClass: {
+      container: 'swal-custom-container',
+      popup: 'swal-custom-popup',
+      title: 'swal-custom-title',
+      confirmButton: 'swal-custom-confirm',
+    }
+  });
+} 
+    finally {
       //Swal.close();
       setLoading(false);
     }
