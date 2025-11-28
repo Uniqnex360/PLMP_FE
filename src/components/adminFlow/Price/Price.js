@@ -4,6 +4,7 @@ import './Price.css';
 import Swal from "sweetalert2";
 const PriceComponent = () => {
   const [brands, setBrands] = useState([]);
+  const [filteredVariantOptions,setFilteredVariantOptions]=useState([])
   const [loading, setLoading] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [selectedBrandId, setSelectedBrandId] = useState(null);
@@ -32,7 +33,6 @@ const PriceComponent = () => {
   const [filteredCategories, setFilteredCategories] = useState([]);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formSubmittedForVariant, setFormSubmittedForVariant] = useState(false);
-
   const dropdownRefForValue = useRef(null);
   // const handleToggle = async (index) => {
   //   try {
@@ -50,7 +50,6 @@ const PriceComponent = () => {
   //     Swal.fire({  title: "Error",  text: "An error occurred while updating active status.",  icon: "error",  confirmButtonText: "OK",customClass: {   container: 'swal-custom-container',   popup: 'swal-custom-popup',   title: 'swal-custom-title',   confirmButton: 'swal-custom-confirm',   cancelButton: 'swal-custom-cancel', }, });
   //   }
   // };
- 
   const fetchBrands = async () => {
     try {
       setLoading(true);
@@ -91,7 +90,6 @@ const PriceComponent = () => {
   };
   const handleCategorySelect = (e) => {
     const categoryId = e.target.value;
-  
     if (categoryId === "all") {
       if (selectedCategories.length === 1 && selectedCategories[0].name === "Apply to all categories") {
         setSelectedCategories([]);
@@ -105,7 +103,6 @@ const PriceComponent = () => {
     }
     } else {
       const category = categories.find((category) => category.id === categoryId);
-  
       if (category) {
         if (selectedCategoryIds.includes(category.id)) {
           setSelectedCategories((prevSelectedCategories) =>
@@ -159,10 +156,9 @@ const PriceComponent = () => {
       setDropdownOpen(false);
     }
   };
-
   const [dropdownOpen, setDropdownOpen] = useState(false);
   useEffect(() => {
-    fetchCategories();
+    // fetchCategories();
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -178,7 +174,6 @@ const PriceComponent = () => {
       document.removeEventListener("mousedown", handleClickOutsideForVariant);
     };
   }, []);
-
   const handleBrandSelect = (brand) => {
     if (brand && brand.id) {
       setProductTableDataAfterSave([]);
@@ -196,10 +191,18 @@ const PriceComponent = () => {
     if (brand && brand.id) {
       setSelectedBrandIdForVariant(brand.id);
       setSelectedBrandForVariant(brand);
+      const filtered=variantOptions.filter(variant=>variant.brand_id===brand.id)
+      setFilteredVariantOptions(filtered)
+      setSelectedVariant(null);
+    setSelectedVariantId(null);
+    setSelectedVariantValues([]);
+    setSelectedVariantValueIds([]);
+    setVariantTypeValues([]);
     }
     else{
       setSelectedBrandIdForVariant(null);
       setSelectedBrandForVariant(null);
+      setFilteredVariantOptions([]);
     }
   };
   const handleBrandRemoveForVariant = () => {
@@ -381,7 +384,6 @@ const PriceComponent = () => {
                   </table>
                 </div>
               `;              
-        
               // Display the Swal popup with the table
               Swal.fire({  title: "Products Found",  html: tableHTML,  showConfirmButton: false,  width: "80%",
                 customClass: {  container: "swal-custom-container",  popup: "swal-custom-popup",  title: "swal-custom-title", },
@@ -421,7 +423,6 @@ const PriceComponent = () => {
               }
             }
   };
- 
   const fetchPriceTableDataBrand = async (BrandID) => {    
     try {
         setLoading(true);
@@ -453,7 +454,6 @@ const PriceComponent = () => {
         setLoading(false);
     }
 };
-
   const fetchVariantOptions = async () => {
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientOptionForRetailPrice/`);      
@@ -472,7 +472,6 @@ const fetchAllData = async () => {
     setLoading(false);
   }
 };
-
 // Fetch data on component mount
 useEffect(() => {
   fetchAllData();
@@ -485,7 +484,10 @@ useEffect(() => {
   }
 }, [variantOptions]); // Only run when variantOptions change
 const handleVariantSelect = async(id) => {    
-  const variant = variantOptions.find((option) => option.id === id);
+  const variant = selectedBrandIdForVariant && filteredVariantOptions.length > 0
+    ? filteredVariantOptions.find((option) => option.id === id)
+    : variantOptions.find((option) => option.id === id);
+    
   setSelectedVariant(variant);
   if (variant) {
     setSelectedVariantId(variant.id); // Safely access variant.id
@@ -498,16 +500,19 @@ const handleVariantSelect = async(id) => {
     console.error("Error fetching variant options:", error);
   }
 };
-
 const handleVariantRemove = () => {
-  setVariantOptions([]);
-  fetchVariantOptions();
   setSelectedVariant(null);
+  setSelectedVariantId(null);
+  setSelectedVariantValues([]);
+  setSelectedVariantValueIds([]);
+  setVariantTypeValues([]);
+  if (selectedBrandIdForVariant) {
+    const filtered = variantOptions.filter(variant => variant.brand_id === selectedBrandIdForVariant);
+    setFilteredVariantOptions(filtered);
+  }
 };
-
 const handleVariantValueSelect = (event) => {
   const selectedValueId = event.target.value;
-
   if (selectedValueId === "all") {
     if (selectedVariantValues.length === 1 && selectedVariantValues[0].name === "Apply to all variant values" ) {
       setSelectedVariantValues([]);
@@ -519,7 +524,6 @@ const handleVariantValueSelect = (event) => {
   }
   } else {
     const selectedValue = variantTypeValues.find((value) => value.id === selectedValueId);
-
     if (selectedValue) {
       if (selectedVariantValueIds.includes(selectedValue.id)) {
         setSelectedVariantValues((prevSelectedValues) =>
@@ -558,7 +562,6 @@ const handleVariantValueRemove = (id) => {
 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'stretch' }}>
   <div style={{ display: "inline-block", justifyContent: "flex-start", boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)', width: '47%', minHeight: '90vh', padding: '14px',borderRadius:'15px' }}>
   <h4 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "bold",marginTop: '0', textAlign:'center' }}>Based on Vendor & Categories</h4>
-
     <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Vendor  <span className="required">*</span></h3>
     <div>
       <select style={{ padding: "10px", borderRadius: "5px", border: formSubmitted && !selectedBrand ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",appearance:'none',cursor:'pointer' }} onChange={(e) => handleBrandSelect(brands.find(brand => brand.id === e.target.value))}>
@@ -579,7 +582,6 @@ const handleVariantValueRemove = (id) => {
         </div>
       )}
     </div>
-
     <div style={{ margin: "10px 0" }}>
       <h3 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Category  <span className="required">*</span> </h3>
       <div ref={dropdownRef} style={{ position: "relative", display: "inline-block",}}>
@@ -589,7 +591,6 @@ const handleVariantValueRemove = (id) => {
           Select Category
           <span style={{ fontSize: "12px", color: "#918f8f" }}>▼</span>
         </div>
-
         {dropdownOpen && (
   <div
     style={{  width: "228px",  border: "1px solid #ccc",  backgroundColor: "#fff",  zIndex: 1000,  maxHeight: "130px",  overflowY: "auto",  padding: "8px",  position: "absolute",  top: "110%",  left: 0,  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",  borderRadius: "5px",
@@ -653,10 +654,8 @@ const handleVariantValueRemove = (id) => {
       </button>
     )}
   </div>
-
   <div style={{ display: "inline-block", justifyContent: "flex-start", boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)', width: '47%', minHeight: '90vh', padding: '14px',borderRadius:'15px' }}>
   <h4 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "bold",marginTop: '0', textAlign:'center' }}>Based on Vendor & Variants</h4>
-
   <h4 style={{ marginBottom: "8px", fontSize: "18px", fontWeight: "500" }}>Select Vendor <span className="required">*</span> </h4>
     <div>
       <select style={{ padding: "10px", borderRadius: "5px", border: formSubmittedForVariant && !selectedBrandForVariant ? "1px solid red" : "1px solid #ccc", width: "248px", display: "inline-block",appearance:'none',cursor:'pointer'  }} onChange={(e) => handleBrandSelectForVariant(brands.find(brand => brand.id === e.target.value))}>
@@ -686,7 +685,7 @@ const handleVariantValueRemove = (id) => {
           value={selectedVariantId || ""}
           onChange={(e) => handleVariantSelect(e.target.value)} >
           <option value="">Select Variant</option>
-          {variantOptions?.map((variant) => (
+          {(selectedBrandIdForVariant && filteredVariantOptions.length>0 ? filteredVariantOptions:variantOptions)  ?.map((variant) => (
             <option value={variant.id} selected={variant.name.toLowerCase() === 'wood type' && !selectedVariant} >
               {variant.name}
             </option>
@@ -713,7 +712,6 @@ const handleVariantValueRemove = (id) => {
           Select Variant Value
           <span style={{ fontSize: "12px", color: "#918f8f" }}>▼</span>
         </div>
-
         {dropdownOpenForValue && (
           <div
             style={{ width: "225px", border: "1px solid #ccc", backgroundColor: "#fff", zIndex: 1000, maxHeight: "120px", overflowY: "auto", padding: "8px", position: "absolute", top: "110%", left: 0, boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", borderRadius: "5px",
@@ -737,7 +735,6 @@ const handleVariantValueRemove = (id) => {
           </div>
         )}
       </div>
-
       <div style={{ marginTop: "12px", display: "inline-block" }}>
         {selectedVariantValues.map((variant) => (
           <span
