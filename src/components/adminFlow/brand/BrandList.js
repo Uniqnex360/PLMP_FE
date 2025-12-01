@@ -1,27 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import axiosInstance from '../../../utils/axiosConfig';
-import Swal from 'sweetalert2';
-import './BrandList.css';
-import { useNavigate } from 'react-router-dom';
-
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../../../utils/axiosConfig";
+import Swal from "sweetalert2";
+import "./BrandList.css";
+import { useNavigate } from "react-router-dom";
 const BrandList = () => {
   const [brands, setBrands] = useState([]);
   const [brandCount, setBrandCounts] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [filterLetter, setFilterLetter] = useState(''); // State for letter filter
+  const [filterLetter, setFilterLetter] = useState(""); // State for letter filter
   const [currentPage, setCurrentPage] = useState(1); // Pagination state
   const itemsPerPage = 25; // Number of items per page
   const navigate = useNavigate();
   const fetchBrands = async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainBrand/`);
-      setBrandCounts(response.data.data.brand_count || 0);      
+      const response = await axiosInstance.get(
+        `${process.env.REACT_APP_IP}/obtainBrand/`
+      );
+      setBrandCounts(response.data.data.brand_count || 0);
       const brandList = response.data.data.brand_list || [];
       setBrands(brandList);
     } catch (error) {
-      console.error('Error fetching Vendors:', error);
-      Swal.fire({  title: 'Error',  text: 'Failed to fetch vendors.',  icon: 'error',  confirmButtonText: 'OK',  customClass: {  container: 'swal-custom-container',  popup: 'swal-custom-popup',  title: 'swal-custom-title',  confirmButton: 'swal-custom-confirm',  cancelButton: 'swal-custom-cancel',
+      console.error("Error fetching Vendors:", error);
+      Swal.fire({
+        title: "Error",
+        text: "Failed to fetch vendors.",
+        icon: "error",
+        confirmButtonText: "OK",
+        customClass: {
+          container: "swal-custom-container",
+          popup: "swal-custom-popup",
+          title: "swal-custom-title",
+          confirmButton: "swal-custom-confirm",
+          cancelButton: "swal-custom-cancel",
         },
       });
     } finally {
@@ -29,25 +40,25 @@ const BrandList = () => {
     }
   };
   const filteredBrands = filterLetter
-  ? brands.filter((brand) => brand.name[0].toUpperCase() === filterLetter.toUpperCase())
-  : brands;
-  console.log('Filtered Brands:', filteredBrands);
+    ? brands.filter(
+        (brand) => brand.name[0].toUpperCase() === filterLetter.toUpperCase()
+      )
+    : brands;
+  console.log("Filtered Brands:", filteredBrands);
   useEffect(() => {
-    console.log(filterLetter,'filterLetter');
-    
-       if (filterLetter) {
-              setBrandCounts(filteredBrands.length);
-       }else{
-              setBrandCounts(brands.length);
-       }
-
+    console.log(filterLetter, "filterLetter");
+    if (filterLetter) {
+      setBrandCounts(filteredBrands.length);
+    } else {
+      setBrandCounts(brands.length);
+    }
   });
   const allLetters = Array.from({ length: 26 }, (_, i) =>
     String.fromCharCode(65 + i)
   );
   const handleAddBrand = async () => {
-  const { value: formValues } = await Swal.fire({
-    html: `
+    const { value: formValues } = await Swal.fire({
+      html: `
       <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
         <button 
           id="close-popup-btn" 
@@ -73,230 +84,234 @@ const BrandList = () => {
         <input id="vendor-logo" type="file" accept="image/*" class="swal2-file-input" style="margin-top: 10px;">
       </div>
     `,
-    showCancelButton: true,
-    focusConfirm: false,
-    didOpen: () => {
-      const closeButton = document.getElementById('close-popup-btn');
-      if (closeButton) {
-        closeButton.addEventListener('click', () => {
-          Swal.close();
-        });
-      }
-    },
-    preConfirm: () => {
-      // Get all input values
-      const vendorName = document.getElementById('vendor-name').value.trim();
-      const vendorEmail = document.getElementById('vendor-email').value.trim();
-      const vendorAddress = document.getElementById('vendor-address').value.trim();
-      const vendorWebsite = document.getElementById('vendor-website').value.trim();
-      const vendorLogo = document.getElementById('vendor-logo').files[0];
-      const vendorCity = document.getElementById('vendor-city').value.trim();
-      const vendorState = document.getElementById('vendor-state').value.trim();
-      const vendorPhone = document.getElementById('vendor-phone').value.trim();
-      const vendorZip = document.getElementById('vendor-zip').value.trim();
-
-      // Validation functions
-      const isValidEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-      };
-
-      const isValidPhone = (phone) => {
-        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-        return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
-      };
-
-      const isValidZip = (zip) => {
-        const zipRegex = /^\d{5,6}(-\d{4})?$/;
-        return zipRegex.test(zip);
-      };
-
-      const isValidWebsite = (website) => {
-        try {
-          const url = new URL(website);
-          return url.protocol === 'http:' || url.protocol === 'https:';
-        } catch {
+      showCancelButton: true,
+      focusConfirm: false,
+      didOpen: () => {
+        const closeButton = document.getElementById("close-popup-btn");
+        if (closeButton) {
+          closeButton.addEventListener("click", () => {
+            Swal.close();
+          });
+        }
+      },
+      preConfirm: () => {
+        // Get all input values
+        const vendorName = document.getElementById("vendor-name").value.trim();
+        const vendorEmail = document
+          .getElementById("vendor-email")
+          .value.trim();
+        const vendorAddress = document
+          .getElementById("vendor-address")
+          .value.trim();
+        const vendorWebsite = document
+          .getElementById("vendor-website")
+          .value.trim();
+        const vendorLogo = document.getElementById("vendor-logo").files[0];
+        const vendorCity = document.getElementById("vendor-city").value.trim();
+        const vendorState = document
+          .getElementById("vendor-state")
+          .value.trim();
+        const vendorPhone = document
+          .getElementById("vendor-phone")
+          .value.trim();
+        const vendorZip = document.getElementById("vendor-zip").value.trim();
+        // Validation functions
+        const isValidEmail = (email) => {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          return emailRegex.test(email);
+        };
+        const isValidPhone = (phone) => {
+          const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+          return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ""));
+        };
+        const isValidZip = (zip) => {
+          const zipRegex = /^\d{5,6}(-\d{4})?$/;
+          return zipRegex.test(zip);
+        };
+        const isValidWebsite = (website) => {
+          try {
+            const url = new URL(website);
+            return url.protocol === "http:" || url.protocol === "https:";
+          } catch {
+            return false;
+          }
+        };
+        // const isValidImage = (file) => {
+        //   if (!file) return true; // Logo is optional
+        //   const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        //   const maxSize = 5 * 1024 * 1024; // 5MB
+        //   return validTypes.includes(file.type) && file.size <= maxSize;
+        // };
+        // Perform validations
+        const errors = [];
+        // Required field validations
+        if (!vendorName) errors.push("Vendor Name is required");
+        if (!vendorEmail) errors.push("Vendor Email is required");
+        if (!vendorAddress) errors.push("Vendor Address is required");
+        if (!vendorCity) errors.push("City is required");
+        if (!vendorState) errors.push("State is required");
+        if (!vendorPhone) errors.push("Phone Number is required");
+        if (!vendorZip) errors.push("Zip Code is required");
+        // if (!vendorWebsite) errors.push('Vendor Website is required');
+        // Format validations
+        if (vendorEmail && !isValidEmail(vendorEmail)) {
+          errors.push("Please enter a valid email address");
+        }
+        if (vendorPhone && !isValidPhone(vendorPhone)) {
+          errors.push(
+            "Please enter a valid phone number (digits only, 10-15 characters)"
+          );
+        }
+        if (vendorZip && !isValidZip(vendorZip)) {
+          errors.push("Please enter a valid zip code (5 or 6 digits)");
+        }
+        // if (vendorWebsite && !isValidWebsite(vendorWebsite)) {
+        //   errors.push('Please enter a valid website URL (http:// or https://)');
+        // }
+        // if (vendorLogo && !isValidImage(vendorLogo)) {
+        //   errors.push('Logo must be a valid image file (JPEG, PNG, GIF, WebP) and less than 5MB');
+        // }
+        // Length validations
+        if (vendorName && vendorName.length < 2) {
+          errors.push("Vendor Name must be at least 2 characters long");
+        }
+        if (vendorName && vendorName.length > 100) {
+          errors.push("Vendor Name must be less than 100 characters");
+        }
+        if (vendorEmail && vendorEmail.length > 255) {
+          errors.push("Email must be less than 255 characters");
+        }
+        if (vendorAddress && vendorAddress.length > 500) {
+          errors.push("Address must be less than 500 characters");
+        }
+        if (vendorCity && vendorCity.length > 50) {
+          errors.push("City must be less than 50 characters");
+        }
+        if (vendorState && vendorState.length > 50) {
+          errors.push("State must be less than 50 characters");
+        }
+        if (vendorPhone && vendorPhone.length > 15) {
+          errors.push("Phone number must be less than 15 digits");
+        }
+        if (vendorZip && vendorZip.length > 10) {
+          errors.push("Zip code must be less than 10 characters");
+        }
+        if (vendorWebsite && vendorWebsite.length > 255) {
+          errors.push("Website URL must be less than 255 characters");
+        }
+        // Show validation errors
+        if (errors.length > 0) {
+          Swal.showValidationMessage(errors.join("<br>"));
           return false;
         }
-      };
-
-      // const isValidImage = (file) => {
-      //   if (!file) return true; // Logo is optional
-      //   const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-      //   const maxSize = 5 * 1024 * 1024; // 5MB
-      //   return validTypes.includes(file.type) && file.size <= maxSize;
-      // };
-
-      // Perform validations
-      const errors = [];
-
-      // Required field validations
-      if (!vendorName) errors.push('Vendor Name is required');
-      if (!vendorEmail) errors.push('Vendor Email is required');
-      if (!vendorAddress) errors.push('Vendor Address is required');
-      if (!vendorCity) errors.push('City is required');
-      if (!vendorState) errors.push('State is required');
-      if (!vendorPhone) errors.push('Phone Number is required');
-      if (!vendorZip) errors.push('Zip Code is required');
-      // if (!vendorWebsite) errors.push('Vendor Website is required');
-
-      // Format validations
-      if (vendorEmail && !isValidEmail(vendorEmail)) {
-        errors.push('Please enter a valid email address');
+        return {
+          vendorName,
+          vendorEmail,
+          vendorAddress,
+          vendorWebsite,
+          vendorLogo,
+          vendorCity,
+          vendorState,
+          vendorPhone,
+          vendorZip,
+        };
+      },
+      customClass: {
+        container: "swal-custom-container swal-overflow",
+        popup: "swal-custom-popup",
+        title: "swal-custom-title",
+        confirmButton: "swal-custom-confirm-brand",
+        cancelButton: "swal-custom-cancel-brand",
+      },
+    });
+    if (formValues) {
+      const {
+        vendorName,
+        vendorLogo,
+        vendorEmail,
+        vendorAddress,
+        vendorWebsite,
+        vendorCity,
+        vendorState,
+        vendorPhone,
+        vendorZip,
+      } = formValues;
+      const formData = new FormData();
+      formData.append("name", vendorName);
+      if (vendorLogo) {
+        formData.append("logo", vendorLogo);
       }
-
-      if (vendorPhone && !isValidPhone(vendorPhone)) {
-        errors.push('Please enter a valid phone number (digits only, 10-15 characters)');
+      if (vendorEmail) {
+        formData.append("email", vendorEmail);
       }
-
-      if (vendorZip && !isValidZip(vendorZip)) {
-        errors.push('Please enter a valid zip code (5 or 6 digits)');
+      if (vendorAddress) {
+        formData.append("address", vendorAddress);
       }
-
-      // if (vendorWebsite && !isValidWebsite(vendorWebsite)) {
-      //   errors.push('Please enter a valid website URL (http:// or https://)');
-      // }
-
-      // if (vendorLogo && !isValidImage(vendorLogo)) {
-      //   errors.push('Logo must be a valid image file (JPEG, PNG, GIF, WebP) and less than 5MB');
-      // }
-
-      // Length validations
-      if (vendorName && vendorName.length < 2) {
-        errors.push('Vendor Name must be at least 2 characters long');
+      if (vendorWebsite) {
+        formData.append("website", vendorWebsite);
       }
-
-      if (vendorName && vendorName.length > 100) {
-        errors.push('Vendor Name must be less than 100 characters');
-      }
-
-      if (vendorEmail && vendorEmail.length > 255) {
-        errors.push('Email must be less than 255 characters');
-      }
-
-      if (vendorAddress && vendorAddress.length > 500) {
-        errors.push('Address must be less than 500 characters');
-      }
-
-      if (vendorCity && vendorCity.length > 50) {
-        errors.push('City must be less than 50 characters');
-      }
-
-      if (vendorState && vendorState.length > 50) {
-        errors.push('State must be less than 50 characters');
-      }
-
-      if (vendorPhone && vendorPhone.length > 15) {
-        errors.push('Phone number must be less than 15 digits');
-      }
-
-      if (vendorZip && vendorZip.length > 10) {
-        errors.push('Zip code must be less than 10 characters');
-      }
-
-      if (vendorWebsite && vendorWebsite.length > 255) {
-        errors.push('Website URL must be less than 255 characters');
-      }
-
-      // Show validation errors
-      if (errors.length > 0) {
-        Swal.showValidationMessage(errors.join('<br>'));
-        return false;
-      }
-
-      return { 
-        vendorName, 
-        vendorEmail, 
-        vendorAddress, 
-        vendorWebsite, 
-        vendorLogo, 
-        vendorCity, 
-        vendorState, 
-        vendorPhone, 
-        vendorZip 
-      };
-    },
-    customClass: { 
-      container: 'swal-custom-container swal-overflow', 
-      popup: 'swal-custom-popup', 
-      title: 'swal-custom-title', 
-      confirmButton: 'swal-custom-confirm-brand', 
-      cancelButton: 'swal-custom-cancel-brand',
-    },
-  });
-
-  if (formValues) {
-    const { vendorName, vendorLogo, vendorEmail, vendorAddress, vendorWebsite, vendorCity, vendorState, vendorPhone, vendorZip } = formValues;
-    const formData = new FormData();
-    formData.append('name', vendorName);
-    if (vendorLogo) { formData.append('logo', vendorLogo); }
-    if (vendorEmail) { formData.append('email', vendorEmail); }
-    if (vendorAddress) { formData.append('address', vendorAddress); }
-    if (vendorWebsite) { formData.append('website', vendorWebsite); }
-    if (vendorCity) formData.append('city', vendorCity);
-    if (vendorState) formData.append('state', vendorState);
-    if (vendorPhone) formData.append('mobile_number', vendorPhone);
-    if (vendorZip) formData.append('zip_code', vendorZip);
-
-    try {
-      const response = await axiosInstance.post(
-        `${process.env.REACT_APP_IP}/createBrand/`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+      if (vendorCity) formData.append("city", vendorCity);
+      if (vendorState) formData.append("state", vendorState);
+      if (vendorPhone) formData.append("mobile_number", vendorPhone);
+      if (vendorZip) formData.append("zip_code", vendorZip);
+      try {
+        const response = await axiosInstance.post(
+          `${process.env.REACT_APP_IP}/createBrand/`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        if (response.data.data.is_created === true) {
+          Swal.fire({
+            title: "Success!",
+            text: "Vendor added successfully!",
+            icon: "success",
+            confirmButtonText: "OK",
+            customClass: {
+              container: "swal-custom-container",
+              popup: "swal-custom-popup",
+              title: "swal-custom-title",
+              confirmButton: "swal-custom-confirm",
+              cancelButton: "swal-custom-cancel",
+            },
+          });
+        } else if (response.data.data.is_created === false) {
+          Swal.fire({
+            title: "Error!",
+            text: response.data.data.error,
+            icon: "error",
+            confirmButtonText: "OK",
+            customClass: {
+              container: "swal-custom-container",
+              popup: "swal-custom-popup",
+              title: "swal-custom-title",
+              confirmButton: "swal-custom-confirm",
+              cancelButton: "swal-custom-cancel",
+            },
+          });
         }
-      );
-
-      if (response.data.data.is_created === true) {
-        Swal.fire({  
-          title: 'Success!',  
-          text: 'Vendor added successfully!',  
-          icon: 'success',  
-          confirmButtonText: 'OK',
-          customClass: {  
-            container: 'swal-custom-container',  
-            popup: 'swal-custom-popup',  
-            title: 'swal-custom-title',  
-            confirmButton: 'swal-custom-confirm',  
-            cancelButton: 'swal-custom-cancel',
-          },
-        });
-      } else if (response.data.data.is_created === false) {
-        Swal.fire({  
-          title: 'Error!',  
-          text: response.data.data.error,  
-          icon: 'error',  
-          confirmButtonText: 'OK',  
-          customClass: {  
-            container: 'swal-custom-container',  
-            popup: 'swal-custom-popup',  
-            title: 'swal-custom-title',  
-            confirmButton: 'swal-custom-confirm',  
-            cancelButton: 'swal-custom-cancel',
+        fetchBrands(); // Refresh brand list
+      } catch (error) {
+        console.error("Error adding Vendor:", error);
+        Swal.fire({
+          title: "Error",
+          text: "Failed to add Vendor.",
+          icon: "error",
+          confirmButtonText: "OK",
+          customClass: {
+            container: "swal-custom-container",
+            popup: "swal-custom-popup",
+            title: "swal-custom-title",
+            confirmButton: "swal-custom-confirm",
+            cancelButton: "swal-custom-cancel",
           },
         });
       }
-      fetchBrands(); // Refresh brand list
-    } catch (error) {
-      console.error('Error adding Vendor:', error);
-      Swal.fire({  
-        title: 'Error',  
-        text: 'Failed to add Vendor.',  
-        icon: 'error',  
-        confirmButtonText: 'OK',  
-        customClass: {  
-          container: 'swal-custom-container',  
-          popup: 'swal-custom-popup',  
-          title: 'swal-custom-title',  
-          confirmButton: 'swal-custom-confirm',  
-          cancelButton: 'swal-custom-cancel',
-        },
-      });
     }
-  }
-};  
+  };
   useEffect(() => {
     fetchBrands();
   }, []);
@@ -305,7 +320,10 @@ const BrandList = () => {
   };
   const totalPages = Math.ceil(filteredBrands.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentBrands = filteredBrands.slice(startIndex, startIndex + itemsPerPage);
+  const currentBrands = filteredBrands.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -326,64 +344,137 @@ const BrandList = () => {
             <span className="brand-count">{brandCount}</span>
           </div>
         </div>
-        <div style={{display:'inline-block',width:'50%',textAlign:'end'}}>
-        <div className="alphabetical-dropdown">
-        <label htmlFor="alphabetical-filter" style={{display:'inline-block', padding:'0px 8px 0px 0px'}} className="dropdown-label-vendor">  Filter by  </label>
-        <select
-    id="alphabetical-filter"
-    className="dropdown-select"
-    style={{cursor:'pointer'}}
-    value={filterLetter}
-    onChange={(e) => {
-      const selectedLetter = e.target.value;
-      // Allow selection of "All" or highlighted letters
-      if ( selectedLetter === "" ||  brands.some(  (brand) => brand.name[0].toUpperCase() === selectedLetter )  ) {  setFilterLetter(selectedLetter);  }
-    }} >
-    <option value="">All</option>
-    {allLetters.map((letter) => {
-      // Check if the letter exists in the first letters of brands
-      const isPresent = brands.some((brand) => brand.name[0].toUpperCase() === letter);
-      return (
-        <option  key={letter}  value={letter}  style={{ fontWeight: filterLetter === letter ? 'bold' : 'normal', color: isPresent ? 'black' : 'lightgray',  }}
-          disabled={!isPresent} >  {letter}   </option> );
-    })}
-  </select>
-      </div>
-        <button className="add-brand-btn" onClick={handleAddBrand}>  Add Vendor  </button>
+        <div
+          style={{ display: "inline-block", width: "50%", textAlign: "end" }}
+        >
+          <div className="alphabetical-dropdown">
+            <label
+              htmlFor="alphabetical-filter"
+              style={{ display: "inline-block", padding: "0px 8px 0px 0px" }}
+              className="dropdown-label-vendor"
+            >
+              {" "}
+              Filter by{" "}
+            </label>
+            <select
+              id="alphabetical-filter"
+              className="dropdown-select"
+              style={{ cursor: "pointer" }}
+              value={filterLetter}
+              onChange={(e) => {
+                const selectedLetter = e.target.value;
+                // Allow selection of "All" or highlighted letters
+                if (
+                  selectedLetter === "" ||
+                  brands.some(
+                    (brand) => brand.name[0].toUpperCase() === selectedLetter
+                  )
+                ) {
+                  setFilterLetter(selectedLetter);
+                }
+              }}
+            >
+              <option value="">All</option>
+              {allLetters.map((letter) => {
+                // Check if the letter exists in the first letters of brands
+                const isPresent = brands.some(
+                  (brand) => brand.name[0].toUpperCase() === letter
+                );
+                return (
+                  <option
+                    key={letter}
+                    value={letter}
+                    style={{
+                      fontWeight: filterLetter === letter ? "bold" : "normal",
+                      color: isPresent ? "black" : "lightgray",
+                    }}
+                    disabled={!isPresent}
+                  >
+                    {" "}
+                    {letter}{" "}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+          <button className="add-brand-btn" onClick={handleAddBrand}>
+            {" "}
+            Add Vendor{" "}
+          </button>
         </div>
       </div>
       {loading ? (
         <p>Loading Vendors...</p>
-      ) :  currentBrands.length > 0 ? (
+      ) : currentBrands.length > 0 ? (
         <>
-        <div className="brand-cards-container">
-          {currentBrands.map((brand) => (
-            <div key={brand.id} className="brand-card" onClick={() => handleBrandClick(brand.id)}>
-              <div className="brand-logo">
-                <img  src={ brand.logo || 'https://img.freepik.com/free-vector/creative-furniture-store-logo_23-2148455884.jpg?semt=ais_hybrid'  } alt={`${brand.name} Logo`} className="brand-logo-image"  />
+          <div className="brand-cards-container">
+            {currentBrands.map((brand) => (
+              <div
+                key={brand.id}
+                className="brand-card"
+                onClick={() => handleBrandClick(brand.id)}
+              >
+                <div className="brand-logo">
+                  <img
+                    src={
+                      brand.logo ||
+                      "https://img.freepik.com/free-vector/creative-furniture-store-logo_23-2148455884.jpg?semt=ais_hybrid"
+                    }
+                    alt={`${brand.name} Logo`}
+                    className="brand-logo-image"
+                  />
+                </div>
+                <h3 className="brand-name">{brand.name}</h3>
+                {/* <p className="brand-id">ID: {brand.brand_number}</p> */}
               </div>
-              <h3 className="brand-name">{brand.name}</h3>
-              <p className="brand-id">ID: {brand.brand_number}</p>
-            </div>
-          ))}
-        </div>
-        <div className="pagination-container">
-        {totalPages > 1 && currentPage > 1 && (
-  <button className="pagination-button prev-button" onClick={() => handlePageChange(currentPage - 1)}> &laquo; Prev </button> )}
-{totalPages > 1 && (
-  Array.from({ length: totalPages }, (_, i) => i + 1)
-    .slice(Math.max(0, currentPage - 3), currentPage + 2)  // Adjust range of pages to display
-    .map((page) => (   // Don't show page "1" if the totalPages is 1
-      (totalPages > 1 || page > 1) && (
-        <button  key={page}  className={`pagination-button ${page === currentPage ? 'active' : ''}`}  onClick={() => handlePageChange(page)} >    {page}  </button>  )
-    ))
-)}
-{totalPages > 1 && currentPage < totalPages && (
-  <button className="pagination-button next-button" onClick={() => handlePageChange(currentPage + 1)} >
-    Next &raquo; </button>)}
-</div>   </>
-      ): (
-        <p style={{ textAlign: 'center', marginTop: '20px',fontWeight:'bold' }}>No Vendors found.</p>
+            ))}
+          </div>
+          <div className="pagination-container">
+            {totalPages > 1 && currentPage > 1 && (
+              <button
+                className="pagination-button prev-button"
+                onClick={() => handlePageChange(currentPage - 1)}
+              >
+                {" "}
+                &laquo; Prev{" "}
+              </button>
+            )}
+            {totalPages > 1 &&
+              Array.from({ length: totalPages }, (_, i) => i + 1)
+                .slice(Math.max(0, currentPage - 3), currentPage + 2) // Adjust range of pages to display
+                .map(
+                  (
+                    page // Don't show page "1" if the totalPages is 1
+                  ) =>
+                    (totalPages > 1 || page > 1) && (
+                      <button
+                        key={page}
+                        className={`pagination-button ${
+                          page === currentPage ? "active" : ""
+                        }`}
+                        onClick={() => handlePageChange(page)}
+                      >
+                        {" "}
+                        {page}{" "}
+                      </button>
+                    )
+                )}
+            {totalPages > 1 && currentPage < totalPages && (
+              <button
+                className="pagination-button next-button"
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                Next &raquo;{" "}
+              </button>
+            )}
+          </div>{" "}
+        </>
+      ) : (
+        <p
+          style={{ textAlign: "center", marginTop: "20px", fontWeight: "bold" }}
+        >
+          No Vendors found.
+        </p>
       )}
     </div>
   );
