@@ -19,35 +19,59 @@ const AddLevelFour = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, selected
     setSelectedLevel3Id('');
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axiosInstance.post(`${process.env.REACT_APP_IP}/createCategory3/`, {
-        name: levelFourName,
-        category_id: selectedLevel3Id,
-      });
+        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/createCategory3/`, {
+            name: levelFourName,
+            category_id: selectedLevel3Id,
+        });
 
-      setLevelFourName('');
-      setSelectedCategoryId('');
-      setselectedLevel2Id('');
-      setSelectedLevel3Id('');
-      setIsTyping(false);
+        setLevelFourName('');
+        setSelectedCategoryId('');
+        setselectedLevel2Id('');
+        setSelectedLevel3Id('');
+        setIsTyping(false);
 
-      await refreshCategories();
-      Swal.fire({ title: 'Success', text: 'Category added successfully!', icon: 'success', confirmButtonText: 'OK', customClass: {
-        container: 'swal-custom-container',
-        popup: 'swal-custom-popup',
-        title: 'swal-custom-title',
-        confirmButton: 'swal-custom-confirm',
-        cancelButton: 'swal-custom-cancel',
-    },
-}).then(() => { });  
-onCloseDialog();
+        await refreshCategories();
+        
+        if (response.data.data.is_created === true) {
+            await refreshCategories();
+            Swal.fire({
+                title: 'Success',
+                text: 'Category added successfully!',
+                icon: 'success',
+                confirmButtonText: 'OK',
+                customClass: {
+                    container: 'swal-custom-container',
+                    popup: 'swal-custom-popup',
+                    title: 'swal-custom-title',
+                    confirmButton: 'swal-custom-confirm',
+                    cancelButton: 'swal-custom-cancel',
+                },
+            }).then(() => { });
+            await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainCategoryAndSections/`);
+            onCloseDialog();
+        } else if (response.data.data.is_created === false) {
+            console.log('Npe', response.data.data.error);
+            Swal.fire({
+                title: response.data.data.error,
+                icon: "warning",
+                customClass: {
+                    container: 'swal-custom-container',
+                    popup: 'swal-custom-popup',
+                    title: 'swal-custom-title',
+                    confirmButton: 'swal-custom-confirm',
+                    cancelButton: 'swal-custom-cancel',
+                },
+            });
+        }
+        onCloseDialog();
     } catch (error) {
-      console.error('Error adding level 4 category:', error);
-      alert('Error adding level 4 category. Please try again.');
+        console.error('Error adding level 4 category:', error);
+        alert('Error adding level 4 category. Please try again.');
     }
-  };
+};
 
   return (
     <div className="add-level-four">

@@ -27,37 +27,57 @@ const AddLevelSix = ({
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await axiosInstance.post(`${process.env.REACT_APP_IP}/createCategory5/`, {
-                name: levelSixName,
-                category_id: selectedLevel5Id,
-            });
+    e.preventDefault();
+    try {
+        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/createCategory5/`, {
+            name: levelSixName,
+            category_id: selectedLevel5Id,
+        });
 
-            // Reset form fields
-            setLevelSixName('');
-            setSelectedCategoryId('');
-            setselectedLevel2Id('');
-            setSelectedLevel3Id('');
-            setSelectedLevel4Id('');
-            setSelectedLevel5Id('');
-            setIsTyping(false);
+        // Reset form fields
+        setLevelSixName('');
+        setSelectedCategoryId('');
+        setselectedLevel2Id('');
+        setSelectedLevel3Id('');
+        setSelectedLevel4Id('');
+        setSelectedLevel5Id('');
+        setIsTyping(false);
 
+        if (response.data.data.is_created === true) {
             await refreshCategories(); // Refresh the category list
-            Swal.fire({ title: 'Success', text: 'Category added successfully!', icon: 'success', confirmButtonText: 'OK', customClass: {
-                container: 'swal-custom-container',
-                popup: 'swal-custom-popup',
-                title: 'swal-custom-title',
-                confirmButton: 'swal-custom-confirm',
-                cancelButton: 'swal-custom-cancel',
-            },
-        }).then(() => { });  
-        onCloseDialog();
-        } catch (error) {
-            console.error('Error adding level 6 category:', error);
-            Swal.fire('Error', 'Error adding level 6 category. Please try again.', 'error');
+            Swal.fire({ 
+                title: 'Success', 
+                text: 'Category added successfully!', 
+                icon: 'success', 
+                confirmButtonText: 'OK', 
+                customClass: {
+                    container: 'swal-custom-container',
+                    popup: 'swal-custom-popup',
+                    title: 'swal-custom-title',
+                    confirmButton: 'swal-custom-confirm',
+                    cancelButton: 'swal-custom-cancel',
+                },
+            }).then(() => { });  
+            onCloseDialog();
+        } else if (response.data.data.is_created === false) {
+            console.log('Npe', response.data.data.error);
+            Swal.fire({
+                title: response.data.data.error,
+                icon: "warning",
+                customClass: {
+                    container: 'swal-custom-container',
+                    popup: 'swal-custom-popup',
+                    title: 'swal-custom-title',
+                    confirmButton: 'swal-custom-confirm',
+                    cancelButton: 'swal-custom-cancel',
+                },
+            });
         }
-    };
+    } catch (error) {
+        console.error('Error adding level 6 category:', error);
+        Swal.fire('Error', 'Error adding level 6 category. Please try again.', 'error');
+    }
+};
 
     useEffect(() => {
         // Resetting states when the props change

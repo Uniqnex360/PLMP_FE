@@ -21,34 +21,55 @@ const  AddLevelThree = ({ selectedCategoryIdPopup, selectedLevel2IdPopup, catego
     setselectedLevel2Id(''); // Reset section selection when category changes
   };
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await axiosInstance.post(`${process.env.REACT_APP_IP}/createCategory2/`, {
-        name: productTypeName,
-        category_id: selectedLevel2Id,
-      });
-      setProductTypeName('');
-      setSelectedCategoryId('');
-      setselectedLevel2Id('');
-      setIsTyping(false);
+        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/createCategory2/`, {
+            name: productTypeName,
+            category_id: selectedLevel2Id,
+        });
+        
+        setProductTypeName('');
+        setSelectedCategoryId('');
+        setselectedLevel2Id('');
+        setIsTyping(false);
 
-      await refreshCategories(); 
-      Swal.fire({ title: 'Success', text: 'Category added successfully!', icon: 'success', confirmButtonText: 'OK', customClass: {
-        container: 'swal-custom-container',
-        popup: 'swal-custom-popup',
-        title: 'swal-custom-title',
-        confirmButton: 'swal-custom-confirm',
-        cancelButton: 'swal-custom-cancel',
-    },
-}).then(() => {    })
-    onCloseDialog();
+        if (response.data.data.is_created === true) {
+            await refreshCategories(); 
+            Swal.fire({ 
+                title: 'Success', 
+                text: 'Category added successfully!', 
+                icon: 'success', 
+                confirmButtonText: 'OK', 
+                customClass: {
+                    container: 'swal-custom-container',
+                    popup: 'swal-custom-popup',
+                    title: 'swal-custom-title',
+                    confirmButton: 'swal-custom-confirm',
+                    cancelButton: 'swal-custom-cancel',
+                },
+            }).then(() => { });
+            onCloseDialog();
+        } else if (response.data.data.is_created === false) {
+            console.log('Npe', response.data.data.error);
+            Swal.fire({
+                title: response.data.data.error,
+                icon: "warning",
+                customClass: {
+                    container: 'swal-custom-container',
+                    popup: 'swal-custom-popup',
+                    title: 'swal-custom-title',
+                    confirmButton: 'swal-custom-confirm',
+                    cancelButton: 'swal-custom-cancel',
+                },
+            });
+        }
     } catch (error) {
-      console.error('Error adding level 3 Category:', error);
-      alert('Error adding level 3 Category. Please try again.');
+        console.error('Error adding level 3 Category:', error);
+        alert('Error adding level 3 Category. Please try again.');
     }
-  };
+};
 
   return (
     <div className="add-product-type">

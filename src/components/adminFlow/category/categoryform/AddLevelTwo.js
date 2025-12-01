@@ -11,34 +11,55 @@ const  AddLevelTwo = ({ selectedCategoryIdPopup, categories, refreshCategories, 
     setSectionName(e.target.value);
     setIsTyping(e.target.value.trim().length > 0); 
   };
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await axiosInstance.post(`${process.env.REACT_APP_IP}/createCategory1/`, {
-        name: sectionName,
-        category_id: selectedCategoryId,
-      });
+        const response = await axiosInstance.post(`${process.env.REACT_APP_IP}/createCategory1/`, {
+            name: sectionName,
+            category_id: selectedCategoryId,
+        });
 
-      setSectionName('');
-      setSelectedCategoryId('');
-      setIsTyping(false);
-      // Refresh categories after adding a section
-      await refreshCategories(); 
-      Swal.fire({ title: 'Success', text: 'Category added successfully!', icon: 'success', confirmButtonText: 'OK', customClass: {
-        container: 'swal-custom-container',
-        popup: 'swal-custom-popup',
-        title: 'swal-custom-title',
-        confirmButton: 'swal-custom-confirm',
-        cancelButton: 'swal-custom-cancel',
-    },
-}).then(() => {    })
-onCloseDialog();
+        setSectionName('');
+        setSelectedCategoryId('');
+        setIsTyping(false);
+        
+        if (response.data.data.is_created === true) {
+            // Refresh categories after adding a section
+            await refreshCategories(); 
+            Swal.fire({ 
+                title: 'Success', 
+                text: 'Category added successfully!', 
+                icon: 'success', 
+                confirmButtonText: 'OK', 
+                customClass: {
+                    container: 'swal-custom-container',
+                    popup: 'swal-custom-popup',
+                    title: 'swal-custom-title',
+                    confirmButton: 'swal-custom-confirm',
+                    cancelButton: 'swal-custom-cancel',
+                },
+            }).then(() => { });
+            onCloseDialog();
+        } else if (response.data.data.is_created === false) {
+            console.log('Npe', response.data.data.error);
+            Swal.fire({
+                title: response.data.data.error,
+                icon: "warning",
+                customClass: {
+                    container: 'swal-custom-container',
+                    popup: 'swal-custom-popup',
+                    title: 'swal-custom-title',
+                    confirmButton: 'swal-custom-confirm',
+                    cancelButton: 'swal-custom-cancel',
+                },
+            });
+        }
     } catch (error) {
-      console.error('Error adding level 2 Category:', error);
-      alert('Error adding level 2 Category. Please try again.');
+        console.error('Error adding level 2 Category:', error);
+        alert('Error adding level 2 Category. Please try again.');
     }
-  };
+};
 
   return (
     <div className="add-section">
