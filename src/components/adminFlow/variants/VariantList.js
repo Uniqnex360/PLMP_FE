@@ -15,7 +15,7 @@ const VariantList = ({ categories }) => {
   const [clearBtn, setShowclearBtn] = useState(false);
   const dropdownRef = useRef([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading,setLoading]=useState(false)
+  const [loading, setLoading] = useState(false);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const [isLevel2DropdownOpen, setIsLevel2DropdownOpen] = useState(false);
   const [isLevel3DropdownOpen, setIsLevel3DropdownOpen] = useState(false);
@@ -101,79 +101,103 @@ const VariantList = ({ categories }) => {
 
   const levelOneCategory = (categories?.category_list ?? []).find(
     (level1) => level1._id === selectedCategoryId
-);
+  );
 
   const safeSearchQuery =
     typeof searchQueries === "string" ? searchQueries.toLowerCase() : "";
-//   const filteredCategoriesLevel2 = levelOneCategory
-//     ? levelOneCategory.level_one_category_list.filter((level2) =>
-//         level2.name.toLowerCase().includes(safeSearchQuery)
-//       )
-//     : categories.category_list
-//         .flatMap((level1) => level1.level_one_category_list)
-//         .filter((level2) =>
-//           level2.name.toLowerCase().includes(safeSearchQuery)
-//         );
-  const levelTwoCategory = (levelOneCategory?.level_one_category_list ?? []).find(
-    (level2) => level2._id === selectedLevel2Id
-);
-//   const filteredCategoriesLevel3 = levelTwoCategory
-//     ? levelTwoCategory.level_two_category_list.filter((level3) =>
-//         level3.name.toLowerCase().includes(safeSearchQuery)
-//       )
-//     : categories.category_list
-//         .flatMap((level1) => level1.level_one_category_list)
-//         .flatMap((level2) => level2.level_two_category_list)
-//         .filter((level3) =>
-//           level3.name.toLowerCase().includes(safeSearchQuery)
-//         );
+  //   const filteredCategoriesLevel2 = levelOneCategory
+  //     ? levelOneCategory.level_one_category_list.filter((level2) =>
+  //         level2.name.toLowerCase().includes(safeSearchQuery)
+  //       )
+  //     : categories.category_list
+  //         .flatMap((level1) => level1.level_one_category_list)
+  //         .filter((level2) =>
+  //           level2.name.toLowerCase().includes(safeSearchQuery)
+  //         );
+ const levelTwoCategory = (() => {
+  if (!selectedLevel2Id || !selectedCategoryId) return null;
+  
+  // Find the specific Level 1 category first
+  const level1 = categories.category_list?.find(
+    (l1) => l1._id === selectedCategoryId
+  );
+  
+  if (!level1) return null;
+  
+  // Then find the Level 2 under THIS specific Level 1
+  return level1.level_one_category_list?.find(
+    (l2) => l2._id === selectedLevel2Id
+  );
+})();
+  //   const filteredCategoriesLevel3 = levelTwoCategory
+  //     ? levelTwoCategory.level_two_category_list.filter((level3) =>
+  //         level3.name.toLowerCase().includes(safeSearchQuery)
+  //       )
+  //     : categories.category_list
+  //         .flatMap((level1) => level1.level_one_category_list)
+  //         .flatMap((level2) => level2.level_two_category_list)
+  //         .filter((level3) =>
+  //           level3.name.toLowerCase().includes(safeSearchQuery)
+  //         );
 
- const levelThreeCategory = (levelTwoCategory?.level_two_category_list ?? []).find(
-    (level3) => level3._id === selectedLevel3Id
-);
-//   const filteredCategoriesLevel4 = levelThreeCategory
-//     ? levelThreeCategory.level_three_category_list.filter((level4) =>
-//         level4.name.toLowerCase().includes(safeSearchQuery)
-//       )
-//     : categories.category_list
-//         .flatMap((level1) => level1.level_one_category_list)
-//         .flatMap((level2) => level2.level_two_category_list)
-//         .flatMap((level3) => level3.level_three_category_list)
-//         .filter((level4) =>
-//           level4.name.toLowerCase().includes(safeSearchQuery)
-//         );
+  const levelThreeCategory = (() => {
+  if (!selectedLevel3Id || !levelTwoCategory) return null;
+  
+  return levelTwoCategory.level_two_category_list?.find(
+    (l3) => l3._id === selectedLevel3Id
+  );
+})();
+  //   const filteredCategoriesLevel4 = levelThreeCategory
+  //     ? levelThreeCategory.level_three_category_list.filter((level4) =>
+  //         level4.name.toLowerCase().includes(safeSearchQuery)
+  //       )
+  //     : categories.category_list
+  //         .flatMap((level1) => level1.level_one_category_list)
+  //         .flatMap((level2) => level2.level_two_category_list)
+  //         .flatMap((level3) => level3.level_three_category_list)
+  //         .filter((level4) =>
+  //           level4.name.toLowerCase().includes(safeSearchQuery)
+  //         );
 
-  const levelFourCategory = (levelThreeCategory?.level_three_category_list ?? []).find(
-    (level4) => level4._id === selectedlevel4
-);
-//   const filteredCategoriesLevel5 = levelFourCategory
-//     ? levelFourCategory.level_four_category_list.filter((level5) =>
-//         level5.name.toLowerCase().includes(safeSearchQuery)
-//       )
-//     : categories.category_list
-//         .flatMap((level1) => level1.level_one_category_list)
-//         .flatMap((level2) => level2.level_two_category_list)
-//         .flatMap((level3) => level3.level_three_category_list)
-//         .flatMap((level4) => level4.level_four_category_list)
-//         .filter((level5) =>
-//           level5.name.toLowerCase().includes(safeSearchQuery)
-//         );
-  const levelFiveCategory = (levelFourCategory?.level_four_category_list ?? []).find(
-    (level5) => level5._id === selectedlevel5
-);
-//   const filteredCategoriesLevel6 = levelFiveCategory
-//     ? levelFiveCategory.level_five_category_list.filter((level6) =>
-//         level6.name.toLowerCase().includes(safeSearchQuery)
-//       )
-//     : categories.category_list
-//         .flatMap((level1) => level1.level_one_category_list)
-//         .flatMap((level2) => level2.level_two_category_list)
-//         .flatMap((level3) => level3.level_three_category_list)
-//         .flatMap((level4) => level4.level_four_category_list)
-//         .flatMap((level5) => level5.level_five_category_list)
-//         .filter((level6) =>
-//           level6.name.toLowerCase().includes(safeSearchQuery)
-//         );
+const levelFourCategory = (() => {
+  if (!selectedlevel4 || !levelThreeCategory) return null;
+  
+  return levelThreeCategory.level_three_category_list?.find(
+    (l4) => l4._id === selectedlevel4
+  );
+})();
+  //   const filteredCategoriesLevel5 = levelFourCategory
+  //     ? levelFourCategory.level_four_category_list.filter((level5) =>
+  //         level5.name.toLowerCase().includes(safeSearchQuery)
+  //       )
+  //     : categories.category_list
+  //         .flatMap((level1) => level1.level_one_category_list)
+  //         .flatMap((level2) => level2.level_two_category_list)
+  //         .flatMap((level3) => level3.level_three_category_list)
+  //         .flatMap((level4) => level4.level_four_category_list)
+  //         .filter((level5) =>
+  //           level5.name.toLowerCase().includes(safeSearchQuery)
+  //         );
+const levelFiveCategory = (() => {
+  if (!selectedlevel5 || !levelFourCategory) return null;
+  
+  return levelFourCategory.level_four_category_list?.find(
+    (l5) => l5._id === selectedlevel5
+  );
+})();
+  //   const filteredCategoriesLevel6 = levelFiveCategory
+  //     ? levelFiveCategory.level_five_category_list.filter((level6) =>
+  //         level6.name.toLowerCase().includes(safeSearchQuery)
+  //       )
+  //     : categories.category_list
+  //         .flatMap((level1) => level1.level_one_category_list)
+  //         .flatMap((level2) => level2.level_two_category_list)
+  //         .flatMap((level3) => level3.level_three_category_list)
+  //         .flatMap((level4) => level4.level_four_category_list)
+  //         .flatMap((level5) => level5.level_five_category_list)
+  //         .filter((level6) =>
+  //           level6.name.toLowerCase().includes(safeSearchQuery)
+  //         );
 
   const handleSearchChange = (level, value) => {
     setSearchQueries((prev) => ({ ...prev, [level]: value }));
@@ -203,7 +227,7 @@ const VariantList = ({ categories }) => {
     fetchCategoryData();
   }, []);
   const handleCategorySelectForVariants = async (id, level) => {
-    setLoading(true)
+    setLoading(true);
     const selectedIdString = String(id);
     const isIdInLastLevel = lastLevelCategoryIds.some(
       (category) => String(category.id) === selectedIdString
@@ -223,9 +247,8 @@ const VariantList = ({ categories }) => {
       setVariantsData(res.data.data);
     } catch (err) {
       console.log("ERROR", err);
-    }
-    finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -248,29 +271,36 @@ const VariantList = ({ categories }) => {
   useEffect(() => {
     handleMultiSelectCategory();
   }, []);
-  const handleLevel2Select = (id) => {
+  const handleLevel2Select = (id, parentId) => {
     const selectedValue = id;
     if (selectedValue !== "") {
-      let level1Category;
-      categories.category_list.some((level1) => {
-        const foundLevel2 = level1.level_one_category_list.some(
-          (level2) => level2._id === selectedValue
-        );
-        if (foundLevel2) {
-          level1Category = level1;
-          return true;
-        }
-        return false;
-      });
+      // CRITICAL FIX: Always use the parentId to set the correct Level 1 category
+      if (parentId) {
+        setSelectedCategoryId(parentId);
+      } else {
+        // Fallback: search for parent if not provided
+        let level1Category;
+        categories.category_list.some((level1) => {
+          const foundLevel2 = level1.level_one_category_list.find(
+            (level2) => level2._id === selectedValue
+          );
+          if (foundLevel2) {
+            level1Category = level1;
+            return true;
+          }
+          return false;
+        });
 
-      if (!level1Category) {
-        console.error(
-          "Level 1 category not found for Level 2 category with ID:",
-          selectedValue
-        );
-        return;
+        if (!level1Category) {
+          console.error(
+            "Level 1 category not found for Level 2 category with ID:",
+            selectedValue
+          );
+          return;
+        }
+        setSelectedCategoryId(level1Category._id);
       }
-      setSelectedCategoryId(level1Category._id);
+
       setSelectedLevel2Id(selectedValue);
       setSelectedLevel3Id("");
       setSelectedlevel4("");
@@ -285,6 +315,31 @@ const VariantList = ({ categories }) => {
   const handleLevel3Select = (id) => {
     const selectedValue = id;
     if (selectedValue !== "") {
+      // 1. Check if the item exists in the CURRENT selection chain
+      if (selectedCategoryId && selectedLevel2Id) {
+        const currentL1 = categories.category_list.find(
+          (c) => c._id === selectedCategoryId
+        );
+        const currentL2 = currentL1?.level_one_category_list.find(
+          (c) => c._id === selectedLevel2Id
+        );
+        const existsInCurrent = currentL2?.level_two_category_list.some(
+          (c) => c._id === selectedValue
+        );
+
+        if (existsInCurrent) {
+          // It belongs to current parents, just set the level 3
+          setSelectedLevel3Id(selectedValue);
+          setSelectedlevel4("");
+          setSelectedlevel5("");
+          setSelectedlevel6("");
+          setIsLevel3DropdownOpen(false);
+          handleCategorySelectForVariants(selectedValue, "level-3");
+          return; // Stop here, don't search globally
+        }
+      }
+
+      // 2. Global Search (Auto-complete parents if nothing selected yet)
       let level1Category, level2Category;
       categories.category_list.some((level1) => {
         const foundLevel2 = level1.level_one_category_list.find((level2) =>
@@ -299,13 +354,12 @@ const VariantList = ({ categories }) => {
         }
         return false;
       });
+
       if (!level2Category || !level1Category) {
-        console.error(
-          "Parent categories not found for selected Level 3 category with ID:",
-          selectedValue
-        );
+        console.error("Parent categories not found");
         return;
       }
+
       setSelectedCategoryId(level1Category._id);
       setSelectedLevel2Id(level2Category._id);
       setSelectedLevel3Id(selectedValue);
@@ -313,6 +367,7 @@ const VariantList = ({ categories }) => {
       setSelectedlevel5("");
       setSelectedlevel6("");
       setIsLevel3DropdownOpen(false);
+      handleCategorySelectForVariants(selectedValue, "level-3");
     } else {
       setSelectedLevel3Id("");
       handleLevelClear();
@@ -323,7 +378,32 @@ const VariantList = ({ categories }) => {
     if (selectedValue !== "") {
       switch (level) {
         case 4:
-          let level1Category, level2Category, level3Category;
+          // 1. Check current selection
+          if (selectedCategoryId && selectedLevel2Id && selectedLevel3Id) {
+            const l1 = categories.category_list.find(
+              (c) => c._id === selectedCategoryId
+            );
+            const l2 = l1?.level_one_category_list.find(
+              (c) => c._id === selectedLevel2Id
+            );
+            const l3 = l2?.level_two_category_list.find(
+              (c) => c._id === selectedLevel3Id
+            );
+            const exists = l3?.level_three_category_list.some(
+              (c) => c._id === selectedValue
+            );
+            if (exists) {
+              setSelectedlevel4(selectedValue);
+              setSelectedlevel5("");
+              setSelectedlevel6("");
+              setIslevel4DropdownOpen(false);
+              handleCategorySelectForVariants(selectedValue, "level-4");
+              return;
+            }
+          }
+
+          // 2. Global Search
+          let l1_4, l2_4, l3_4;
           categories.category_list.some((level1) => {
             const foundLevel2 = level1.level_one_category_list.find((level2) =>
               level2.level_two_category_list.some((level3) =>
@@ -339,36 +419,61 @@ const VariantList = ({ categories }) => {
                     (level4) => level4._id === selectedValue
                   )
               );
-
               if (foundLevel3) {
-                level1Category = level1;
-                level2Category = foundLevel2;
-                level3Category = foundLevel3;
+                l1_4 = level1;
+                l2_4 = foundLevel2;
+                l3_4 = foundLevel3;
                 return true;
               }
             }
             return false;
           });
-          if (!level1Category || !level2Category || !level3Category) {
-            console.error(
-              "Parent categories not found for selected Level 4 category with ID:",
-              selectedValue
-            );
-            return;
+          if (l1_4) {
+            setSelectedCategoryId(l1_4._id);
+            setSelectedLevel2Id(l2_4._id);
+            setSelectedLevel3Id(l3_4._id);
+            setSelectedlevel4(selectedValue);
+            setSelectedlevel5("");
+            setSelectedlevel6("");
+            setIslevel4DropdownOpen(false);
+            handleCategorySelectForVariants(selectedValue, "level-4");
           }
-          // Set the selected categories and reset lower levels
-          setSelectedCategoryId(level1Category._id);
-          setSelectedLevel2Id(level2Category._id);
-          setSelectedLevel3Id(level3Category._id);
-          setSelectedlevel4(selectedValue);
-          setSelectedlevel5("");
-          setSelectedlevel6("");
           break;
+
         case 5:
-          let level4Category,
-            level3CategoryForLevel5,
-            level2CategoryForLevel5,
-            level1CategoryForLevel5;
+          // 1. Check current selection
+          if (
+            selectedCategoryId &&
+            selectedLevel2Id &&
+            selectedLevel3Id &&
+            selectedlevel4
+          ) {
+            const l1 = categories.category_list.find(
+              (c) => c._id === selectedCategoryId
+            );
+            const l2 = l1?.level_one_category_list.find(
+              (c) => c._id === selectedLevel2Id
+            );
+            const l3 = l2?.level_two_category_list.find(
+              (c) => c._id === selectedLevel3Id
+            );
+            const l4 = l3?.level_three_category_list.find(
+              (c) => c._id === selectedlevel4
+            );
+            const exists = l4?.level_four_category_list.some(
+              (c) => c._id === selectedValue
+            );
+            if (exists) {
+              setSelectedlevel5(selectedValue);
+              setSelectedlevel6("");
+              setIslevel5DropdownOpen(false);
+              handleCategorySelectForVariants(selectedValue, "level-5");
+              return;
+            }
+          }
+
+          // 2. Global Search
+          let l1_5, l2_5, l3_5, l4_5;
           categories.category_list.some((level1) => {
             return level1.level_one_category_list.some((level2) => {
               return level2.level_two_category_list.some((level3) => {
@@ -378,10 +483,10 @@ const VariantList = ({ categories }) => {
                       (level5) => level5._id === selectedValue
                     )
                   ) {
-                    level1CategoryForLevel5 = level1;
-                    level2CategoryForLevel5 = level2;
-                    level3CategoryForLevel5 = level3;
-                    level4Category = level4;
+                    l1_5 = level1;
+                    l2_5 = level2;
+                    l3_5 = level3;
+                    l4_5 = level4;
                     return true;
                   }
                   return false;
@@ -389,31 +494,55 @@ const VariantList = ({ categories }) => {
               });
             });
           });
-          if (
-            !level1CategoryForLevel5 ||
-            !level2CategoryForLevel5 ||
-            !level3CategoryForLevel5 ||
-            !level4Category
-          ) {
-            console.error(
-              "Parent categories not found for Level 5 category with ID:",
-              selectedValue
-            );
-            return;
+          if (l1_5) {
+            setSelectedCategoryId(l1_5._id);
+            setSelectedLevel2Id(l2_5._id);
+            setSelectedLevel3Id(l3_5._id);
+            setSelectedlevel4(l4_5._id);
+            setSelectedlevel5(selectedValue);
+            setSelectedlevel6("");
+            setIslevel5DropdownOpen(false);
+            handleCategorySelectForVariants(selectedValue, "level-5");
           }
-          setSelectedCategoryId(level1CategoryForLevel5._id);
-          setSelectedLevel2Id(level2CategoryForLevel5._id);
-          setSelectedLevel3Id(level3CategoryForLevel5._id);
-          setSelectedlevel4(level4Category._id);
-          setSelectedlevel5(selectedValue);
-          setSelectedlevel6("");
           break;
+
         case 6:
-          let level5Category,
-            level4CategoryForLevel6,
-            level3CategoryForLevel6,
-            level2CategoryForLevel6,
-            level1CategoryForLevel6;
+          // 1. Check current selection
+          if (
+            selectedCategoryId &&
+            selectedLevel2Id &&
+            selectedLevel3Id &&
+            selectedlevel4 &&
+            selectedlevel5
+          ) {
+            const l1 = categories.category_list.find(
+              (c) => c._id === selectedCategoryId
+            );
+            const l2 = l1?.level_one_category_list.find(
+              (c) => c._id === selectedLevel2Id
+            );
+            const l3 = l2?.level_two_category_list.find(
+              (c) => c._id === selectedLevel3Id
+            );
+            const l4 = l3?.level_three_category_list.find(
+              (c) => c._id === selectedlevel4
+            );
+            const l5 = l4?.level_four_category_list.find(
+              (c) => c._id === selectedlevel5
+            );
+            const exists = l5?.level_five_category_list.some(
+              (c) => c._id === selectedValue
+            );
+            if (exists) {
+              setSelectedlevel6(selectedValue);
+              setIslevel6DropdownOpen(false);
+              handleCategorySelectForVariants(selectedValue, "level-6");
+              return;
+            }
+          }
+
+          // 2. Global Search
+          let l1_6, l2_6, l3_6, l4_6, l5_6;
           categories.category_list.some((level1) => {
             return level1.level_one_category_list.some((level2) => {
               return level2.level_two_category_list.some((level3) => {
@@ -424,11 +553,11 @@ const VariantList = ({ categories }) => {
                         (level6) => level6._id === selectedValue
                       )
                     ) {
-                      level1CategoryForLevel6 = level1;
-                      level2CategoryForLevel6 = level2;
-                      level3CategoryForLevel6 = level3;
-                      level4CategoryForLevel6 = level4;
-                      level5Category = level5;
+                      l1_6 = level1;
+                      l2_6 = level2;
+                      l3_6 = level3;
+                      l4_6 = level4;
+                      l5_6 = level5;
                       return true;
                     }
                     return false;
@@ -437,30 +566,22 @@ const VariantList = ({ categories }) => {
               });
             });
           });
-          if (
-            !level1CategoryForLevel6 ||
-            !level2CategoryForLevel6 ||
-            !level3CategoryForLevel6 ||
-            !level4CategoryForLevel6 ||
-            !level5Category
-          ) {
-            console.error(
-              "Parent categories not found for Level 6 category with ID:",
-              selectedValue
-            );
-            return;
+          if (l1_6) {
+            setSelectedCategoryId(l1_6._id);
+            setSelectedLevel2Id(l2_6._id);
+            setSelectedLevel3Id(l3_6._id);
+            setSelectedlevel4(l4_6._id);
+            setSelectedlevel5(l5_6._id);
+            setSelectedlevel6(selectedValue);
+            setIslevel6DropdownOpen(false);
+            handleCategorySelectForVariants(selectedValue, "level-6");
           }
-          setSelectedCategoryId(level1CategoryForLevel6._id);
-          setSelectedLevel2Id(level2CategoryForLevel6._id);
-          setSelectedLevel3Id(level3CategoryForLevel6._id);
-          setSelectedlevel4(level4CategoryForLevel6._id);
-          setSelectedlevel5(level5Category._id);
-          setSelectedlevel6(selectedValue);
           break;
         default:
           break;
       }
     } else {
+      // Clear logic remains the same
       switch (level) {
         case 4:
           setSelectedlevel4("");
@@ -921,6 +1042,9 @@ const VariantList = ({ categories }) => {
           </div>
 
           {/* Level 2 Dropdown */}
+          {/* Level 2 Dropdown */}
+          {/* Level 2 Dropdown */}
+          {/* Level 2 Dropdown - FIXED with index tracking */}
           <div className="DropdownColumn" ref={categoryDropdown2Ref}>
             <label htmlFor="sectionSelect">Level 2:</label>
             <div
@@ -928,11 +1052,17 @@ const VariantList = ({ categories }) => {
               onClick={() => setIsLevel2DropdownOpen(!isLevel2DropdownOpen)}
             >
               <div className="selected-category">
-                {selectedLevel2Id
-                  ? (levelOneCategory?.level_one_category_list ?? []).find(
-                      (level2) => level2._id === selectedLevel2Id
-                    )?.name
-                  : "Select category"}
+                {(() => {
+                  if (!selectedLevel2Id || !selectedCategoryId)
+                    return "Select category";
+                  const l1 = categories.category_list?.find(
+                    (l) => l._id === selectedCategoryId
+                  );
+                  const l2 = l1?.level_one_category_list?.find(
+                    (l) => l._id === selectedLevel2Id
+                  );
+                  return l2?.name || "Select category";
+                })()}
                 <span className="dropdown-icons">
                   <ChevronDownIcon style={{ fontSize: 25, float: "right" }} />
                 </span>
@@ -951,38 +1081,129 @@ const VariantList = ({ categories }) => {
                   />
                   <div
                     className="dropdown-option"
-                    onClick={() => handleLevel2Select("")}
+                    onClick={() => {
+                      setSelectedCategoryId("");
+                      setSelectedLevel2Id("");
+                      setSelectedLevel3Id("");
+                      setSelectedlevel4("");
+                      setSelectedlevel5("");
+                      setSelectedlevel6("");
+                      setIsLevel2DropdownOpen(false);
+                    }}
                   >
                     <span>Select category</span>
                   </div>
-                  {(levelOneCategory
-  ? levelOneCategory.level_one_category_list
-  : categories.category_list.flatMap((level1) => level1.level_one_category_list)
-)
-  .filter((level2) =>
-    level2.name.toLowerCase().includes(searchQueries.level2.toLowerCase())
-  )
-  .map((level2) => (
+
+                  {(() => {
+                    let itemsToShow = [];
+
+                    if (selectedCategoryId) {
+                      // Level 1 is selected - show only its children
+                      const level1 = categories.category_list?.find(
+                        (l1) => l1._id === selectedCategoryId
+                      );
+                      if (level1) {
+                        level1.level_one_category_list?.forEach(
+                          (level2, index) => {
+                            itemsToShow.push({
+                              level2,
+                              level1,
+                              level2Index: index, // ✅ Track the index
+                              path: null,
+                              uniqueKey: `${level1._id}___${index}___${level2._id}`,
+                            });
+                          }
+                        );
+                      }
+                    } else {
+                      // Level 1 NOT selected - show all with parent path
+                      categories.category_list?.forEach((level1) => {
+                        level1.level_one_category_list?.forEach(
+                          (level2, index) => {
+                            itemsToShow.push({
+                              level2,
+                              level1,
+                              level2Index: index, // ✅ Track the index
+                              path: level1.name,
+                              uniqueKey: `${level1._id}___${index}___${level2._id}`,
+                            });
+                          }
+                        );
+                      });
+                    }
+
+                    // Filter by search
+                    const filtered = itemsToShow.filter((item) =>
+                      item.level2.name
+                        .toLowerCase()
+                        .includes(searchQueries.level2.toLowerCase())
+                    );
+
+                    return filtered.map((item) => (
                       <div
-                        key={level2._id}
+                        key={item.uniqueKey}
                         className="dropdown-option"
                         onClick={() => {
-                          handleLevel2Select(level2._id);
+                          console.log("=== Level 2 Selection ===");
+                          console.log(
+                            "Level 1:",
+                            item.level1.name,
+                            "ID:",
+                            item.level1._id
+                          );
+                          console.log(
+                            "Level 2:",
+                            item.level2.name,
+                            "ID:",
+                            item.level2._id,
+                            "Index:",
+                            item.level2Index
+                          );
+                          console.log(
+                            "Level 2 children count:",
+                            item.level2.level_two_category_list?.length
+                          );
+                          console.log(
+                            "Level 2 children:",
+                            item.level2.level_two_category_list?.map(
+                              (l3) => l3.name
+                            )
+                          );
+
+                          setSelectedCategoryId(item.level1._id);
+                          setSelectedLevel2Id(item.level2._id);
+                          setSelectedLevel3Id("");
+                          setSelectedlevel4("");
+                          setSelectedlevel5("");
+                          setSelectedlevel6("");
                           handleCategorySelectForVariants(
-                            level2._id,
+                            item.level2._id,
                             "level-2"
                           );
+                          setIsLevel2DropdownOpen(false);
                         }}
                       >
-                        <span>{level2.name}</span>
+                        <span>
+                          {item.level2.name}
+                          {item.path && (
+                            <small style={{ color: "#999", marginLeft: "8px" }}>
+                              ({item.path})
+                            </small>
+                          )}
+                        </span>
                       </div>
-                    )
-                  )}
+                    ));
+                  })()}
                 </div>
               )}
             </div>
           </div>
 
+          {/* Level 3 Dropdown */}
+          {/* Level 3 Dropdown */}
+          {/* Level 3 Dropdown */}
+          {/* Level 3 Dropdown */}
+          {/* Level 3 Dropdown */}
           {/* Level 3 Dropdown */}
           <div className="DropdownColumn" ref={categoryDropdown3Ref}>
             <label htmlFor="productTypeSelect">Level 3:</label>
@@ -1018,36 +1239,91 @@ const VariantList = ({ categories }) => {
                   >
                     <span>Select category</span>
                   </div>
-                  {(levelTwoCategory
-  ? levelTwoCategory.level_two_category_list
-  : categories.category_list
-      .flatMap((level1) => level1.level_one_category_list)
-      .flatMap((level2) => level2.level_two_category_list)
-)
-  .filter((level3) =>
-    level3.name.toLowerCase().includes(searchQueries.level3.toLowerCase())
-  )
-  .map((level3) => (
-                      <div
-                        key={level3._id}
-                        className="dropdown-option"
-                        onClick={() => {
-                          handleLevel3Select(level3._id);
-                          handleCategorySelectForVariants(
-                            level3._id,
-                            "level-3"
-                          );
-                        }}
-                      >
-                        <span>{level3.name}</span>
-                      </div>
-                    )
-                  )}
+                  {selectedLevel2Id
+                    ? (levelTwoCategory?.level_two_category_list ?? [])
+                        .filter((level3) =>
+                          level3.name
+                            .toLowerCase()
+                            .includes(searchQueries.level3.toLowerCase())
+                        )
+                        .map((level3) => (
+                          <div
+                            key={level3._id}
+                            className="dropdown-option"
+                            onClick={() => {
+                              handleLevel3Select(level3._id);
+                              handleCategorySelectForVariants(
+                                level3._id,
+                                "level-3"
+                              );
+                              setIsLevel3DropdownOpen(false);
+                            }}
+                          >
+                            <span>{level3.name}</span>
+                          </div>
+                        ))
+                    : (() => {
+                        // When Level 2 is NOT selected, show all Level 3s with their EXACT parent path
+                        const level3List = [];
+                        categories.category_list.forEach((level1) => {
+                          level1.level_one_category_list.forEach((level2) => {
+                            // ✅ KEY FIX: Only show level3s that belong to THIS specific level1 and level2
+                            level2.level_two_category_list.forEach((level3) => {
+                              level3List.push({
+                                level3,
+                                level1,
+                                level2,
+                                path: `${level1.name} → ${level2.name}`,
+                              });
+                            });
+                          });
+                        });
+
+                        return level3List
+                          .filter((item) =>
+                            item.level3.name
+                              .toLowerCase()
+                              .includes(searchQueries.level3.toLowerCase())
+                          )
+                          .filter(
+                            (item) => item.level3._id !== selectedLevel3Id // ✅ Hide already selected
+                          )
+                          .map((item) => (
+                            <div
+                              key={`${item.level3._id}-${item.level1._id}-${item.level2._id}`}
+                              className="dropdown-option"
+                              onClick={() => {
+                                setSelectedCategoryId(item.level1._id);
+                                setSelectedLevel2Id(item.level2._id);
+                                handleLevel3Select(item.level3._id);
+                                handleCategorySelectForVariants(
+                                  item.level3._id,
+                                  "level-3"
+                                );
+                                setIsLevel3DropdownOpen(false);
+                              }}
+                            >
+                              <span>
+                                {item.level3.name}
+                                <small
+                                  style={{ color: "#999", marginLeft: "8px" }}
+                                >
+                                  ({item.path})
+                                </small>
+                              </span>
+                            </div>
+                          ));
+                      })()}
                 </div>
               )}
             </div>
           </div>
 
+          {/* Level 4 Dropdown */}
+          {/* Level 4 Dropdown */}
+          {/* Level 4 Dropdown */}
+          {/* Level 4 Dropdown */}
+          {/* Level 4 Dropdown */}
           {/* Level 4 Dropdown */}
           <div className="DropdownColumn" ref={categoryDropdown4Ref}>
             <label htmlFor="level4Select">Level 4:</label>
@@ -1083,37 +1359,97 @@ const VariantList = ({ categories }) => {
                   >
                     <span>Select category</span>
                   </div>
-                  {(levelThreeCategory
-  ? levelThreeCategory.level_three_category_list
-  : categories.category_list
-      .flatMap((level1) => level1.level_one_category_list)
-      .flatMap((level2) => level2.level_two_category_list)
-      .flatMap((level3) => level3.level_three_category_list)
-)
-  .filter((level4) =>
-    level4.name.toLowerCase().includes(searchQueries.level4.toLowerCase())
-  )
-  .map((level4) => (
-                      <div
-                        key={level4._id}
-                        className="dropdown-option"
-                        onClick={() => {
-                          handleLevelSelect(4, level4._id);
-                          handleCategorySelectForVariants(
-                            level4._id,
-                            "level-4"
-                          );
-                        }}
-                      >
-                        <span>{level4.name}</span>
-                      </div>
-                    )
-                  )}
+                  {selectedLevel3Id
+                    ? (levelThreeCategory?.level_three_category_list ?? [])
+                        .filter((level4) =>
+                          level4.name
+                            .toLowerCase()
+                            .includes(searchQueries.level4.toLowerCase())
+                        )
+                        .map((level4) => (
+                          <div
+                            key={level4._id}
+                            className="dropdown-option"
+                            onClick={() => {
+                              handleLevelSelect(4, level4._id);
+                              handleCategorySelectForVariants(
+                                level4._id,
+                                "level-4"
+                              );
+                              setIslevel4DropdownOpen(false);
+                            }}
+                          >
+                            <span>{level4.name}</span>
+                          </div>
+                        ))
+                    : (() => {
+                        // When Level 3 is NOT selected, show all Level 4s with their EXACT parent path
+                        const level4List = [];
+                        categories.category_list.forEach((level1) => {
+                          level1.level_one_category_list.forEach((level2) => {
+                            level2.level_two_category_list.forEach((level3) => {
+                              // ✅ KEY FIX: Only show level4s that belong to THIS specific path
+                              level3.level_three_category_list.forEach(
+                                (level4) => {
+                                  level4List.push({
+                                    level4,
+                                    level1,
+                                    level2,
+                                    level3,
+                                    path: `${level1.name} → ${level2.name} → ${level3.name}`,
+                                  });
+                                }
+                              );
+                            });
+                          });
+                        });
+
+                        return level4List
+                          .filter((item) =>
+                            item.level4.name
+                              .toLowerCase()
+                              .includes(searchQueries.level4.toLowerCase())
+                          )
+                          .filter(
+                            (item) => item.level4._id !== selectedlevel4 // ✅ Hide already selected
+                          )
+                          .map((item) => (
+                            <div
+                              key={`${item.level4._id}-${item.level1._id}-${item.level2._id}-${item.level3._id}`}
+                              className="dropdown-option"
+                              onClick={() => {
+                                setSelectedCategoryId(item.level1._id);
+                                setSelectedLevel2Id(item.level2._id);
+                                setSelectedLevel3Id(item.level3._id);
+                                handleLevelSelect(4, item.level4._id);
+                                handleCategorySelectForVariants(
+                                  item.level4._id,
+                                  "level-4"
+                                );
+                                setIslevel4DropdownOpen(false);
+                              }}
+                            >
+                              <span>
+                                {item.level4.name}
+                                <small
+                                  style={{ color: "#999", marginLeft: "8px" }}
+                                >
+                                  ({item.path})
+                                </small>
+                              </span>
+                            </div>
+                          ));
+                      })()}
                 </div>
               )}
             </div>
           </div>
 
+          {/* Level 5 Dropdown */}
+          {/* Level 5 Dropdown */}
+          {/* Level 5 Dropdown */}
+          {/* Level 5 Dropdown */}
+          {/* Level 5 Dropdown */}
           {/* Level 5 Dropdown */}
           <div className="DropdownColumn" ref={categoryDropdown5Ref}>
             <label htmlFor="level5Select">Level 5:</label>
@@ -1149,38 +1485,103 @@ const VariantList = ({ categories }) => {
                   >
                     <span>Select category</span>
                   </div>
-                  {(levelFourCategory
-  ? levelFourCategory.level_four_category_list
-  : categories.category_list
-      .flatMap((level1) => level1.level_one_category_list)
-      .flatMap((level2) => level2.level_two_category_list)
-      .flatMap((level3) => level3.level_three_category_list)
-      .flatMap((level4) => level4.level_four_category_list)
-)
-  .filter((level5) =>
-    level5.name.toLowerCase().includes(searchQueries.level5.toLowerCase())
-  )
-  .map((level5) => (
-                      <div
-                        key={level5._id}
-                        className="dropdown-option"
-                        onClick={() => {
-                          handleLevelSelect(5, level5._id);
-                          handleCategorySelectForVariants(
-                            level5._id,
-                            "level-5"
-                          );
-                        }}
-                      >
-                        <span>{level5.name}</span>
-                      </div>
-                    )
-                  )}
+                  {selectedlevel4
+                    ? (levelFourCategory?.level_four_category_list ?? [])
+                        .filter((level5) =>
+                          level5.name
+                            .toLowerCase()
+                            .includes(searchQueries.level5.toLowerCase())
+                        )
+                        .map((level5) => (
+                          <div
+                            key={level5._id}
+                            className="dropdown-option"
+                            onClick={() => {
+                              handleLevelSelect(5, level5._id);
+                              handleCategorySelectForVariants(
+                                level5._id,
+                                "level-5"
+                              );
+                              setIslevel5DropdownOpen(false);
+                            }}
+                          >
+                            <span>{level5.name}</span>
+                          </div>
+                        ))
+                    : (() => {
+                        // When Level 4 is NOT selected, show all Level 5s with their EXACT parent path
+                        const level5List = [];
+                        categories.category_list.forEach((level1) => {
+                          level1.level_one_category_list.forEach((level2) => {
+                            level2.level_two_category_list.forEach((level3) => {
+                              level3.level_three_category_list.forEach(
+                                (level4) => {
+                                  // ✅ KEY FIX: Only show level5s that belong to THIS specific path
+                                  level4.level_four_category_list.forEach(
+                                    (level5) => {
+                                      level5List.push({
+                                        level5,
+                                        level1,
+                                        level2,
+                                        level3,
+                                        level4,
+                                        path: `${level1.name} → ${level2.name} → ${level3.name} → ${level4.name}`,
+                                      });
+                                    }
+                                  );
+                                }
+                              );
+                            });
+                          });
+                        });
+
+                        return level5List
+                          .filter((item) =>
+                            item.level5.name
+                              .toLowerCase()
+                              .includes(searchQueries.level5.toLowerCase())
+                          )
+                          .filter(
+                            (item) => item.level5._id !== selectedlevel5 // ✅ Hide already selected
+                          )
+                          .map((item) => (
+                            <div
+                              key={`${item.level5._id}-${item.level1._id}-${item.level2._id}-${item.level3._id}-${item.level4._id}`}
+                              className="dropdown-option"
+                              onClick={() => {
+                                setSelectedCategoryId(item.level1._id);
+                                setSelectedLevel2Id(item.level2._id);
+                                setSelectedLevel3Id(item.level3._id);
+                                setSelectedlevel4(item.level4._id);
+                                handleLevelSelect(5, item.level5._id);
+                                handleCategorySelectForVariants(
+                                  item.level5._id,
+                                  "level-5"
+                                );
+                                setIslevel5DropdownOpen(false);
+                              }}
+                            >
+                              <span>
+                                {item.level5.name}
+                                <small
+                                  style={{ color: "#999", marginLeft: "8px" }}
+                                >
+                                  ({item.path})
+                                </small>
+                              </span>
+                            </div>
+                          ));
+                      })()}
                 </div>
               )}
             </div>
           </div>
 
+          {/* Level 6 Dropdown */}
+          {/* Level 6 Dropdown */}
+          {/* Level 6 Dropdown */}
+          {/* Level 6 Dropdown */}
+          {/* Level 6 Dropdown */}
           {/* Level 6 Dropdown */}
           <div className="DropdownColumn" ref={categoryDropdown6Ref}>
             <label htmlFor="level6Select">Level 6:</label>
@@ -1216,34 +1617,99 @@ const VariantList = ({ categories }) => {
                   >
                     <span>Select category</span>
                   </div>
-                  {(levelFiveCategory
-  ? levelFiveCategory.level_five_category_list
-  : categories.category_list
-      .flatMap((level1) => level1.level_one_category_list)
-      .flatMap((level2) => level2.level_two_category_list)
-      .flatMap((level3) => level3.level_three_category_list)
-      .flatMap((level4) => level4.level_four_category_list)
-      .flatMap((level5) => level5.level_five_category_list)
-)
-  .filter((level6) =>
-    level6.name.toLowerCase().includes(searchQueries.level6.toLowerCase())
-  )
-  .map((level6) => (
-                      <div
-                        key={level6._id}
-                        className="dropdown-option"
-                        onClick={() => {
-                          handleLevelSelect(6, level6._id);
-                          handleCategorySelectForVariants(
-                            level6._id,
-                            "level-6"
-                          );
-                        }}
-                      >
-                        <span>{level6.name}</span>
-                      </div>
-                    )
-                  )}
+                  {selectedlevel5
+                    ? (levelFiveCategory?.level_five_category_list ?? [])
+                        .filter((level6) =>
+                          level6.name
+                            .toLowerCase()
+                            .includes(searchQueries.level6.toLowerCase())
+                        )
+                        .map((level6) => (
+                          <div
+                            key={level6._id}
+                            className="dropdown-option"
+                            onClick={() => {
+                              handleLevelSelect(6, level6._id);
+                              handleCategorySelectForVariants(
+                                level6._id,
+                                "level-6"
+                              );
+                              setIslevel6DropdownOpen(false);
+                            }}
+                          >
+                            <span>{level6.name}</span>
+                          </div>
+                        ))
+                    : (() => {
+                        // When Level 5 is NOT selected, show all Level 6s with their EXACT parent path
+                        const level6List = [];
+                        categories.category_list.forEach((level1) => {
+                          level1.level_one_category_list.forEach((level2) => {
+                            level2.level_two_category_list.forEach((level3) => {
+                              level3.level_three_category_list.forEach(
+                                (level4) => {
+                                  level4.level_four_category_list.forEach(
+                                    (level5) => {
+                                      // ✅ KEY FIX: Only show level6s that belong to THIS specific path
+                                      level5.level_five_category_list.forEach(
+                                        (level6) => {
+                                          level6List.push({
+                                            level6,
+                                            level1,
+                                            level2,
+                                            level3,
+                                            level4,
+                                            level5,
+                                            path: `${level1.name} → ${level2.name} → ${level3.name} → ${level4.name} → ${level5.name}`,
+                                          });
+                                        }
+                                      );
+                                    }
+                                  );
+                                }
+                              );
+                            });
+                          });
+                        });
+
+                        return level6List
+                          .filter((item) =>
+                            item.level6.name
+                              .toLowerCase()
+                              .includes(searchQueries.level6.toLowerCase())
+                          )
+                          .filter(
+                            (item) => item.level6._id !== selectedlevel6 // ✅ Hide already selected
+                          )
+                          .map((item) => (
+                            <div
+                              key={`${item.level6._id}-${item.level1._id}-${item.level2._id}-${item.level3._id}-${item.level4._id}-${item.level5._id}`}
+                              className="dropdown-option"
+                              onClick={() => {
+                                setSelectedCategoryId(item.level1._id);
+                                setSelectedLevel2Id(item.level2._id);
+                                setSelectedLevel3Id(item.level3._id);
+                                setSelectedlevel4(item.level4._id);
+                                setSelectedlevel5(item.level5._id);
+                                handleLevelSelect(6, item.level6._id);
+                                handleCategorySelectForVariants(
+                                  item.level6._id,
+                                  "level-6"
+                                );
+                                setIslevel6DropdownOpen(false);
+                              }}
+                            >
+                              <span>
+                                {item.level6.name}
+                                <small
+                                  style={{ color: "#999", marginLeft: "8px" }}
+                                >
+                                  ({item.path})
+                                </small>
+                              </span>
+                            </div>
+                          ));
+                      })()}
                 </div>
               )}
             </div>
@@ -1267,12 +1733,10 @@ const VariantList = ({ categories }) => {
       )}
       {error && <p style={{ color: "red" }}>{error}</p>}
       {loading ? (
-        <div className='loading-container'>
-                            <SyncLoader color="#3498db" loading={loading} size={15} />
-                        </div>
-
-      )
-      :variantsData.varient_list && variantsData.varient_list.length > 0 ? (
+        <div className="loading-container">
+          <SyncLoader color="#3498db" loading={loading} size={15} />
+        </div>
+      ) : variantsData.varient_list && variantsData.varient_list.length > 0 ? (
         <div>
           {variantsData.varient_list && (
             <div className="variant-container">
