@@ -3,7 +3,7 @@
   import ApiResponseModal from '../../../ApiResponseModal';
   import Swal from 'sweetalert2';
   import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-  import { faBox, faTags, faUser, faFileImport, faFileExport, faCog, faHistory, faStore, faColumns,faCreditCard   } from '@fortawesome/free-solid-svg-icons';
+  import { faBox, faTags, faUser, faFileImport, faFileExport, faCog, faHistory, faStore, faColumns,faCreditCard,faReceipt  } from '@fortawesome/free-solid-svg-icons';
   import { Modal, Box, TextField, TextareaAutosize, Button } from '@mui/material';
   import { useNavigate,useLocation } from 'react-router-dom';
   import axiosInstance from '../../../../src/utils/axiosConfig';
@@ -201,6 +201,9 @@
       else if (section === 'price' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
         navigate('/Admin/price'); 
       }
+      else if (section === 'accounts' && ((location.pathname.includes("accounts/")) || (location.pathname.includes("/Admin")) ) ) {
+        navigate('/Admin/accounts'); 
+      }
       else if (section === 'users' && ((location.pathname.includes("product/")) || (location.pathname.includes("/Admin")) ) ) {
         navigate('/Admin/createuser'); 
       }
@@ -297,6 +300,11 @@
             <FontAwesomeIcon icon={faCreditCard} className="icon" />
             Pricing
           </li>
+          <li onClick={() => { OnPriceClick(); handleSectionClick('accounts'); }}
+    className={activeSection === 'accounts' ? 'active' : ''}>
+  <FontAwesomeIcon icon={faReceipt} className="icon" />
+  Accounting
+</li>
           <li onClick={() => { OnImportClick();handleImportClick(); handleSectionClick('import'); }}
             className={activeSection === 'import' ? 'active' : ''}>
             <FontAwesomeIcon icon={faFileImport} className="icon" /> Import

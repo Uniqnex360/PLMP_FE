@@ -25,11 +25,48 @@
 }
 
 .logo-image {
-  width: 35px; /* Adjust logo size */
+  width: 35px;
   height: auto;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  margin-right: 15px; /* Space between logo and text */
+  margin-right: 15px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  border-radius: 20px;
+  gap: 8px;
+}
+
+.user-icon {
+  color: #6e6e70;
+  font-size: 14px;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  white-space: nowrap; /* Prevents text wrapping */
+}
+
+.greeting {
+  font-size: 11px;
+  color: #a0a0a0;
+  white-space: nowrap;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #f3f4f6;
+  white-space: nowrap; /* Prevents username from wrapping */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Adds ... if name is too long */
+  max-width: 200px; /* Adjust based on your needs */
 }
 
 .logo {

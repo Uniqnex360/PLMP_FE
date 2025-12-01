@@ -21,6 +21,7 @@ import CreateUser from './Users/CreateUser.js';
 import RevokePrice from './Price/RevokePrice.js';
 import HiddenProduct from './HiddenProduct/HiddenProduct.js';
 import VendorSummary from './brand/VendorSummary.js';
+import QuickBooks from './accounting/QuickBooks.js';
 
 
 function HomePage() {
@@ -332,6 +333,7 @@ function HomePage() {
             <Route path="/export" element={  showExport ? ( <ExportPage categories={categoriesData}/>):null} />
             <Route path="/import" element={  showImport ? ( <ApiResponseModal />):null} />
             <Route path="/price" element={  showPrice ? ( <Price />):null} />
+            <Route path='/accounts' element={<QuickBooks/>}/>
             <Route path="/createuser" element={  showUser ? ( <CreateUser />):null} />
             <Route path="/inactiveproducts" element={  showHidden ? ( <HiddenProduct />):null} />
             <Route path="/restoreprice" element={  showRevokePrice ? ( <RevokePrice />):null} />

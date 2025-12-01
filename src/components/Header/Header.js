@@ -4,12 +4,14 @@ import "./Header.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+
 
 const Header = () => {
   const navigate = useNavigate();
   const [fetchobtainClientNameData, setfetchobtainClientNameData] =
     useState(null);
-
+  const name=localStorage.getItem('user_name')
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/");
@@ -87,6 +89,13 @@ const Header = () => {
         </div>
       </div>
       <div className="header-right">
+        <div className="user-info">
+          <FontAwesomeIcon icon={faUser} className="user-icon" />
+          <div className="user-details">
+            <span className="greeting">Welcome</span>
+            <span className="user-name">{name}</span>
+          </div>
+        </div>
         <button className="logout-button" onClick={handleLogout}>
           <FontAwesomeIcon icon={faSignOutAlt} className="logout-icon" />
           Logout
