@@ -1492,11 +1492,54 @@
                                         <div className="dropdown-option" onClick={() => handleLevel2Select('')}>
                                             <span>Select category</span>
                                         </div>
-                                        {filteredCategoriesLevel2?.map(level2 => (
-                                            <div className="dropdown-option"  onClick={() => { handleLevel2Select(level2._id); handleCategorySelectForVariants(level2._id, 'level-2'); }}>
-                                                <span>{level2.name}</span>
-                                            </div>
-                                        ))}
+                                        {selectedCategoryId
+  ? filteredCategoriesLevel2?.map(level2 => (
+      <div
+        key={level2._id}
+        className="dropdown-option"
+        onClick={() => {
+          handleLevel2Select(level2._id);
+          handleCategorySelectForVariants(level2._id, 'level-2');
+        }}
+      >
+        <span>{level2.name}</span>
+      </div>
+    ))
+  : (() => {
+      const level2List = [];
+      categoryList.forEach(level1 => {
+        (level1.level_one_category_list || [])
+          .filter(level2 =>
+            level2.name.toLowerCase().includes(searchQueries.level2.toLowerCase())
+          )
+          .forEach(level2 => {
+            level2List.push({
+              level2,
+              level1,
+              path: level1.name,
+            });
+          });
+      });
+
+      return level2List.map(item => (
+        <div
+          key={`${item.level1._id}-${item.level2._id}`}
+          className="dropdown-option"
+          onClick={() => {
+            setSelectedCategoryId(item.level1._id);
+            handleLevel2Select(item.level2._id);
+            handleCategorySelectForVariants(item.level2._id, 'level-2');
+          }}
+        >
+          <span>
+            {item.level2.name}
+            <small style={{ color: '#999', marginLeft: '8px' }}>
+              ({item.path})
+            </small>
+          </span>
+        </div>
+      ));
+    })()}
                                     </div>
                                 )}
                             </div>
@@ -1515,11 +1558,58 @@
                                         <div className="dropdown-option" onClick={() => handleLevel3Select('')}>
                                             <span>Select category</span>
                                         </div>
-                                        {filteredCategoriesLevel3?.map(level3 => (
-                                            <div className="dropdown-option"  onClick={() => { handleLevel3Select(level3._id); handleCategorySelectForVariants(level3._id, 'level-3'); }}>
-                                                <span>{level3.name}</span>
-                                            </div>
-                                        ))}
+                                        {selectedLevel2Id
+  ? filteredCategoriesLevel3?.map(level3 => (
+      <div
+        key={level3._id}
+        className="dropdown-option"
+        onClick={() => {
+          handleLevel3Select(level3._id);
+          handleCategorySelectForVariants(level3._id, 'level-3');
+        }}
+      >
+        <span>{level3.name}</span>
+      </div>
+    ))
+  : (() => {
+      const level3List = [];
+      categoryList.forEach(level1 => {
+        (level1.level_one_category_list || []).forEach(level2 => {
+          (level2.level_two_category_list || [])
+            .filter(level3 =>
+              level3.name.toLowerCase().includes(searchQueries.level3.toLowerCase())
+            )
+            .forEach(level3 => {
+              level3List.push({
+                level3,
+                level1,
+                level2,
+                path: `${level1.name} → ${level2.name}`,
+              });
+            });
+        });
+      });
+
+      return level3List.map(item => (
+        <div
+          key={`${item.level1._id}-${item.level2._id}-${item.level3._id}`}
+          className="dropdown-option"
+          onClick={() => {
+            setSelectedCategoryId(item.level1._id);
+            setselectedLevel2Id(item.level2._id);
+            handleLevel3Select(item.level3._id);
+            handleCategorySelectForVariants(item.level3._id, 'level-3');
+          }}
+        >
+          <span>
+            {item.level3.name}
+            <small style={{ color: '#999', marginLeft: '8px' }}>
+              ({item.path})
+            </small>
+          </span>
+        </div>
+      ));
+    })()}
                                     </div>
                                 )}
                             </div>
@@ -1540,11 +1630,62 @@
                                         <div className="dropdown-option" onClick={() => handleLevelSelect(4, '')}>
                                             <span>Select category</span>
                                         </div>
-                                        {filteredCategoriesLevel4?.map(level4 => (
-                                            <div className="dropdown-option"  onClick={() => { handleLevelSelect(4, level4._id); handleCategorySelectForVariants(level4._id, 'level-4'); }}>
-                                                <span>{level4.name}</span>
-                                            </div>
-                                        ))}
+                                       {selectedLevel3Id
+  ? filteredCategoriesLevel4?.map(level4 => (
+      <div
+        key={level4._id}
+        className="dropdown-option"
+        onClick={() => {
+          handleLevelSelect(4, level4._id);
+          handleCategorySelectForVariants(level4._id, 'level-4');
+        }}
+      >
+        <span>{level4.name}</span>
+      </div>
+    ))
+  : (() => {
+      const level4List = [];
+      categoryList.forEach(level1 => {
+        (level1.level_one_category_list || []).forEach(level2 => {
+          (level2.level_two_category_list || []).forEach(level3 => {
+            (level3.level_three_category_list || [])
+              .filter(level4 =>
+                level4.name.toLowerCase().includes(searchQueries.level4.toLowerCase())
+              )
+              .forEach(level4 => {
+                level4List.push({
+                  level4,
+                  level1,
+                  level2,
+                  level3,
+                  path: `${level1.name} → ${level2.name} → ${level3.name}`,
+                });
+              });
+          });
+        });
+      });
+
+      return level4List.map(item => (
+        <div
+          key={`${item.level1._id}-${item.level2._id}-${item.level3._id}-${item.level4._id}`}
+          className="dropdown-option"
+          onClick={() => {
+            setSelectedCategoryId(item.level1._id);
+            setselectedLevel2Id(item.level2._id);
+            setSelectedLevel3Id(item.level3._id);
+            handleLevelSelect(4, item.level4._id);
+            handleCategorySelectForVariants(item.level4._id, 'level-4');
+          }}
+        >
+          <span>
+            {item.level4.name}
+            <small style={{ color: '#999', marginLeft: '8px' }}>
+              ({item.path})
+            </small>
+          </span>
+        </div>
+      ));
+    })()}
                                     </div>
                                 )}
                             </div>
@@ -1565,11 +1706,66 @@
                                         <div className="dropdown-option" onClick={() => handleLevelSelect(5, '')}>
                                             <span>Select category</span>
                                         </div>
-                                        {filteredCategoriesLevel5?.map(level5 => (
-                                            <div className="dropdown-option"  onClick={() => { handleLevelSelect(5, level5._id); handleCategorySelectForVariants(level5._id, 'level-5'); }}>
-                                                <span>{level5.name}</span>
-                                            </div>
-                                        ))}
+                                        {selectedlevel4
+  ? filteredCategoriesLevel5?.map(level5 => (
+      <div
+        key={level5._id}
+        className="dropdown-option"
+        onClick={() => {
+          handleLevelSelect(5, level5._id);
+          handleCategorySelectForVariants(level5._id, 'level-5');
+        }}
+      >
+        <span>{level5.name}</span>
+      </div>
+    ))
+  : (() => {
+      const level5List = [];
+      categoryList.forEach(level1 => {
+        (level1.level_one_category_list || []).forEach(level2 => {
+          (level2.level_two_category_list || []).forEach(level3 => {
+            (level3.level_three_category_list || []).forEach(level4 => {
+              (level4.level_four_category_list || [])
+                .filter(level5 =>
+                  level5.name.toLowerCase().includes(searchQueries.level5.toLowerCase())
+                )
+                .forEach(level5 => {
+                  level5List.push({
+                    level5,
+                    level1,
+                    level2,
+                    level3,
+                    level4,
+                    path: `${level1.name} → ${level2.name} → ${level3.name} → ${level4.name}`,
+                  });
+                });
+            });
+          });
+        });
+      });
+
+      return level5List.map(item => (
+        <div
+          key={`${item.level1._id}-${item.level2._id}-${item.level3._id}-${item.level4._id}-${item.level5._id}`}
+          className="dropdown-option"
+          onClick={() => {
+            setSelectedCategoryId(item.level1._id);
+            setselectedLevel2Id(item.level2._id);
+            setSelectedLevel3Id(item.level3._id);
+            setSelectedlevel4(item.level4._id);
+            handleLevelSelect(5, item.level5._id);
+            handleCategorySelectForVariants(item.level5._id, 'level-5');
+          }}
+        >
+          <span>
+            {item.level5.name}
+            <small style={{ color: '#999', marginLeft: '8px' }}>
+              ({item.path})
+            </small>
+          </span>
+        </div>
+      ));
+    })()}
                                     </div>
                                 )}
                             </div>
@@ -1590,11 +1786,70 @@
                                         <div className="dropdown-option" onClick={() => handleLevelSelect(6, '')}>
                                             <span>Select category</span>
                                         </div>
-                                        {filteredCategoriesLevel6?.map(level6 => (
-                                            <div className="dropdown-option"  onClick={() => { handleLevelSelect(6, level6._id); handleCategorySelectForVariants(level6._id, 'level-6'); }}>
-                                                <span>{level6.name}</span>
-                                            </div>
-                                        ))}
+                                       {selectedlevel5
+  ? filteredCategoriesLevel6?.map(level6 => (
+      <div
+        key={level6._id}
+        className="dropdown-option"
+        onClick={() => {
+          handleLevelSelect(6, level6._id);
+          handleCategorySelectForVariants(level6._id, 'level-6');
+        }}
+      >
+        <span>{level6.name}</span>
+      </div>
+    ))
+  : (() => {
+      const level6List = [];
+      categoryList.forEach(level1 => {
+        (level1.level_one_category_list || []).forEach(level2 => {
+          (level2.level_two_category_list || []).forEach(level3 => {
+            (level3.level_three_category_list || []).forEach(level4 => {
+              (level4.level_four_category_list || []).forEach(level5 => {
+                (level5.level_five_category_list || [])
+                  .filter(level6 =>
+                    level6.name.toLowerCase().includes(searchQueries.level6.toLowerCase())
+                  )
+                  .forEach(level6 => {
+                    level6List.push({
+                      level6,
+                      level1,
+                      level2,
+                      level3,
+                      level4,
+                      level5,
+                      path: `${level1.name} → ${level2.name} → ${level3.name} → ${level4.name} → ${level5.name}`,
+                    });
+                  });
+              });
+            });
+          });
+        });
+      });
+
+      return level6List.map(item => (
+        <div
+          key={`${item.level1._id}-${item.level2._id}-${item.level3._id}-${item.level4._id}-${item.level5._id}-${item.level6._id}`}
+          className="dropdown-option"
+          onClick={() => {
+            setSelectedCategoryId(item.level1._id);
+            setselectedLevel2Id(item.level2._id);
+            setSelectedLevel3Id(item.level3._id);
+            setSelectedlevel4(item.level4._id);
+            setSelectedlevel5(item.level5._id);
+            handleLevelSelect(6, item.level6._id);
+            handleCategorySelectForVariants(item.level6._id, 'level-6');
+          }}
+        >
+          <span>
+            {item.level6.name}
+            <small style={{ color: '#999', marginLeft: '8px' }}>
+              ({item.path})
+            </small>
+          </span>
+        </div>
+      ));
+    })()}
                                     </div>
                                 )}
                             </div>
