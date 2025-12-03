@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import Swal from "sweetalert2";
 import axiosInstance from "../../../utils/axiosConfig.js";
 
-// ==================== STYLES ====================
 const styles = {
   container: {
     backgroundColor: "white",
@@ -10,6 +9,10 @@ const styles = {
     padding: "20px",
     borderRadius: "12px",
     fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+  },
+   checkingStatus: {
+    backgroundColor: "#fef3c7",
+    color: "#92400e",
   },
   header: {
     display: "flex",
@@ -341,7 +344,6 @@ const styles = {
   },
 };
 
-// Add CSS animation for spinner
 const spinnerStyle = document.createElement("style");
 spinnerStyle.textContent = `
   @keyframes spin {
@@ -351,21 +353,17 @@ spinnerStyle.textContent = `
 `;
 document.head.appendChild(spinnerStyle);
 
-// ==================== MAIN COMPONENT ====================
 const QuickBooks = () => {
-  // Connection state
   const [isConnected, setIsConnected] = useState(false);
   const [realmId, setRealmId] = useState(null);
   const [companyInfo, setCompanyInfo] = useState(null);
 
-  // UI state
   const [activeTab, setActiveTab] = useState("invoices");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  // Data state
   const [invoices, setInvoices] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [vendors, setVendors] = useState([]);
@@ -374,19 +372,18 @@ const QuickBooks = () => {
   const [payments, setPayments] = useState([]);
   const [inventory, setInventory] = useState([]);
   const [accounts, setAccounts] = useState([]);
+  const [checkingConnection, setCheckingConnection] = useState(true);
+  const [connectionError, setConnectionError] = useState(null);
 
-  // Summary state
   const [invoiceSummary, setInvoiceSummary] = useState({});
   const [inventorySummary, setInventorySummary] = useState({});
   const [accountsSummary, setAccountsSummary] = useState({});
 
-  // Detail modal state
   const [selectedItem, setSelectedItem] = useState(null);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [detailData, setDetailData] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
 
-  // ==================== UTILITY FUNCTIONS ====================
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -419,7 +416,6 @@ const QuickBooks = () => {
     return parts.join(", ") || "-";
   };
 
-  // ==================== API FUNCTIONS ====================
   const checkConnectionStatus = useCallback(async () => {
     try {
       const response = await axiosInstance.get(
@@ -439,6 +435,15 @@ const QuickBooks = () => {
     } catch (err) {
       console.error("Error checking connection status:", err);
       setIsConnected(false);
+      setConnectionError(err.message||"Failed to check connection status")
+       Swal.fire({
+      title: "Connection Error",
+      text: "Unable to check QuickBooks connection status",
+      icon: "error",
+    });
+    }
+    finally{
+      setCheckingConnection(false)
     }
   }, []);
 
@@ -790,7 +795,6 @@ const QuickBooks = () => {
             icon: failed > 0 ? "warning" : "success",
           });
 
-          // Refresh inventory
           fetchInventory();
         } else {
           throw new Error(response.data.data?.error || "Sync failed");
@@ -802,7 +806,6 @@ const QuickBooks = () => {
     }
   };
 
-  // ==================== DATA FETCH BY TAB ====================
   const fetchDataForTab = useCallback(
     (tab) => {
       switch (tab) {
@@ -837,7 +840,6 @@ const QuickBooks = () => {
     [realmId]
   );
 
-  // ==================== EFFECTS ====================
   useEffect(() => {
     checkConnectionStatus();
   }, [checkConnectionStatus]);
@@ -848,7 +850,6 @@ const QuickBooks = () => {
     }
   }, [isConnected, realmId, activeTab, fetchDataForTab]);
 
-  // ==================== FILTER FUNCTIONS ====================
   const getFilteredData = () => {
     let data = [];
     let searchFields = [];
@@ -890,7 +891,6 @@ const QuickBooks = () => {
         return [];
     }
 
-    // Apply search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       data = data.filter((item) =>
@@ -900,7 +900,6 @@ const QuickBooks = () => {
       );
     }
 
-    // Apply status filter
     if (statusFilter !== "all") {
       switch (activeTab) {
         case "invoices":
@@ -973,7 +972,6 @@ const QuickBooks = () => {
     }
   };
 
-  // ==================== STATUS BADGE ====================
  const getStatusBadgeStyle = (status, type) => {
     const baseStyle = styles.statusBadge;
 
@@ -1005,7 +1003,6 @@ const QuickBooks = () => {
 
     return baseStyle;
 };
-  // ==================== RENDER STATS ====================
   const renderStats = () => {
     const data = getFilteredData();
 
@@ -1157,7 +1154,6 @@ const QuickBooks = () => {
     }
   };
 
-  // ==================== RENDER TABLE ====================
   const renderTable = () => {
     if (loading) {
       return (
@@ -1525,7 +1521,6 @@ const QuickBooks = () => {
     }
   };
 
-  // ==================== RENDER DETAIL MODAL ====================
   const renderDetailModal = () => {
     if (!detailModalOpen || !detailData) return null;
 
@@ -1546,7 +1541,6 @@ const QuickBooks = () => {
             </button>
           </div>
 
-          {/* Basic Info */}
           <div style={styles.detailSection}>
             <div style={styles.detailTitle}>Basic Information</div>
             <div style={styles.detailGrid}>
@@ -1581,7 +1575,6 @@ const QuickBooks = () => {
             </div>
           </div>
 
-          {/* Address */}
           <div style={styles.detailSection}>
             <div style={styles.detailTitle}>Address</div>
             <div style={styles.detailGrid}>
@@ -1602,7 +1595,6 @@ const QuickBooks = () => {
             </div>
           </div>
 
-          {/* Transactions */}
           <div style={styles.detailSection}>
             <div style={styles.detailTitle}>
               {isCustomer ? "Invoices" : "Bills"} ({transactions?.length || 0})
@@ -1641,7 +1633,6 @@ const QuickBooks = () => {
             )}
           </div>
 
-          {/* Secondary Data */}
           <div style={styles.detailSection}>
             <div style={styles.detailTitle}>
               {isCustomer ? "Payments" : "Purchase Orders"} ({secondaryData?.length || 0})
@@ -1688,7 +1679,6 @@ const QuickBooks = () => {
     );
   };
 
-  // ==================== TABS CONFIG ====================
   const tabs = [
     { id: "invoices", label: "Invoices" },
     { id: "customers", label: "Customers" },
@@ -1700,41 +1690,43 @@ const QuickBooks = () => {
     // { id: "accounts", label: "Chart of Accounts" },
   ];
 
-  // ==================== MAIN RENDER ====================
   return (
     <div style={styles.container}>
-      {/* Header */}
-      <div style={styles.header}>
-        <h2 style={styles.title}>QuickBooks Integration</h2>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          {isConnected ? (
-            <>
-              <div style={{ ...styles.connectionStatus, ...styles.connected }}>
-                <span style={{ width: "8px", height: "8px", backgroundColor: "#166534", borderRadius: "50%" }}></span>
-                Connected: {companyInfo?.name || realmId}
-              </div>
-              <button style={styles.disconnectBtn} onClick={handleDisconnect}>
-                Disconnect
-              </button>
-            </>
-          ) : (
-            <>
-              <div style={{ ...styles.connectionStatus, ...styles.disconnected }}>
-                <span style={{ width: "8px", height: "8px", backgroundColor: "#991b1b", borderRadius: "50%" }}></span>
-                Not Connected
-              </div>
-              <button style={styles.connectBtn} onClick={handleConnect}>
-                Connect to QuickBooks
-              </button>
-            </>
-          )}
+    <div style={styles.header}>
+      <h2 style={styles.title}>QuickBooks Integration</h2>
+      
+      {checkingConnection ? (
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div style={styles.connectionStatus}>
+            <span style={{ width: "8px", height: "8px", backgroundColor: "#f59e0b", borderRadius: "50%" }}></span>
+            Checking connection...
+          </div>
         </div>
-      </div>
+      ) : isConnected ? (
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ ...styles.connectionStatus, ...styles.connected }}>
+            <span style={{ width: "8px", height: "8px", backgroundColor: "#166534", borderRadius: "50%" }}></span>
+            Connected: {companyInfo?.name || realmId}
+          </div>
+          <button style={styles.disconnectBtn} onClick={handleDisconnect}>
+            Disconnect
+          </button>
+        </div>
+      ) : (
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ ...styles.connectionStatus, ...styles.disconnected }}>
+            <span style={{ width: "8px", height: "8px", backgroundColor: "#991b1b", borderRadius: "50%" }}></span>
+            Not Connected
+          </div>
+          <button style={styles.connectBtn} onClick={handleConnect}>
+            Connect to QuickBooks
+          </button>
+        </div>
+      )}
+    </div>
 
-      {/* Show content only if connected */}
       {isConnected ? (
         <>
-          {/* Tabs */}
           <div style={styles.tabContainer}>
             {tabs.map((tab) => (
               <button
@@ -1755,10 +1747,8 @@ const QuickBooks = () => {
             ))}
           </div>
 
-          {/* Stats */}
           {renderStats()}
 
-          {/* Search & Filters */}
           <div style={styles.searchContainer}>
             <input
               type="text"
@@ -1792,7 +1782,6 @@ const QuickBooks = () => {
             )} */}
           </div>
 
-          {/* Table */}
           <div
             style={{
               overflowX: "auto",
@@ -1815,7 +1804,6 @@ const QuickBooks = () => {
         </div>
       )}
 
-      {/* Detail Modal */}
       {renderDetailModal()}
     </div>
   );
