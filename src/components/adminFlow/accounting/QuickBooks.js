@@ -95,7 +95,7 @@ const styles = {
     marginBottom: "16px",
     flexWrap: "wrap",
     alignItems: "center",
-    justifyContent: "space-between",
+     justifyContent: "flex-end",
   },
   refreshContainer: {
     display: "flex",
@@ -144,18 +144,20 @@ const styles = {
     justifyContent: "center",
     height: "38px",
   },
-  syncBtn: {
-    padding: "10px 20px",
-    backgroundColor: "#3b82f6",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontSize: "14px",
-    fontWeight: "500",
-    height: "38px",
-    boxSizing: "border-box",
-  },
+syncBtn: {
+  padding: "10px 20px",
+  backgroundColor: "#3b82f6",
+  color: "white",
+  border: "none",
+  borderRadius: "8px",
+  cursor: "pointer",
+  fontSize: "14px",
+  fontWeight: "500",
+  height: "38px",
+  boxSizing: "border-box",
+  whiteSpace: "nowrap",
+  minWidth: "140px",
+},
   exportBtn: {
     padding: "10px 20px",
     backgroundColor: "#f3f4f6",
@@ -317,19 +319,24 @@ const styles = {
     maxHeight: "80vh",
     overflow: "auto",
   },
-  modalHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "20px",
-  },
-  closeBtn: {
-    background: "none",
-    border: "none",
-    fontSize: "24px",
-    cursor: "pointer",
-    color: "#6b7280",
-  },
+modalHeader: {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "20px",
+  gap: "20px",
+},
+closeBtn: {
+  background: "none",
+  border: "none",
+  fontSize: "32px",
+  cursor: "pointer",
+  color: "#6b7280",
+  padding: "0",
+  width: "32px",
+  height: "32px",
+  flexShrink: 0,
+},
   detailSection: {
     marginBottom: "20px",
   },
@@ -445,6 +452,16 @@ const QuickBooks = () => {
       return dateString;
     }
   };
+  useEffect(()=>{
+    const handleEsc=(e)=>{
+      if(e.key==='Escape'){
+        setInvoiceModalOpen(false)
+        setDetailModalOpen(false)
+      }
+    }
+    window.addEventListener('keydown',handleEsc)
+    return()=>window.removeEventListener('keydown',handleEsc)
+  })
   const formatAddress = (address) => {
     if (!address) return "-";
     const parts = [
@@ -756,6 +773,7 @@ const QuickBooks = () => {
   };
   const fetchCustomerDetails = async (customerId) => {
     if (!realmId || !customerId) return;
+    setLoading(true)
     setDetailLoading(true);
     try {
       const response = await axiosInstance.get(
@@ -765,15 +783,22 @@ const QuickBooks = () => {
       if (response.data.estatus && response.data.data.success) {
         setDetailData(response.data.data);
         setDetailModalOpen(true);
+        setLoading(false)
       } else {
+        setLoading(false)
+
         throw new Error(
           response.data.data?.error || "Failed to fetch customer details"
         );
+        
       }
     } catch (err) {
+      
       console.error("Error fetching customer details:", err);
       Swal.fire("Error", err.message || "Failed to fetch details", "error");
     } finally {
+        setLoading(false)
+
       setDetailLoading(false);
     }
   };
@@ -1201,7 +1226,7 @@ const QuickBooks = () => {
       return (
         <div style={styles.loadingOverlay}>
           <div style={styles.spinner}></div>
-          <div>Loading data...</div>
+          <div>Loading...</div>
         </div>
       );
     }
@@ -1417,9 +1442,11 @@ const QuickBooks = () => {
                     color:
                       purchaseOrderMode === "vendors" ? "white" : "#374151",
                     border: "none",
+                    whiteSpace: "nowrap",
                     borderRadius: "4px",
                     cursor: "pointer",
                     fontSize: "14px",
+                    minWidth: "140px",
                     fontWeight: "500",
                     transition: "all 0.2s",
                   }}
@@ -1429,7 +1456,7 @@ const QuickBooks = () => {
                 </button>
                 <button
                   style={{
-                    padding: "8px 16px",
+                    padding: "10px 20px",
                     backgroundColor:
                       purchaseOrderMode === "customers"
                         ? "#3b82f6"
@@ -1437,9 +1464,11 @@ const QuickBooks = () => {
                     color:
                       purchaseOrderMode === "customers" ? "white" : "#374151",
                     border: "none",
+                    whiteSpace: "nowrap",
                     borderRadius: "4px",
                     cursor: "pointer",
                     fontSize: "14px",
+                    minWidth: "140px",
                     fontWeight: "500",
                     transition: "all 0.2s",
                   }}
@@ -1536,10 +1565,12 @@ const QuickBooks = () => {
                     backgroundColor:
                       billMode === "vendors" ? "#2d8a4e" : "transparent",
                     color: billMode === "vendors" ? "white" : "#374151",
-                    border: "none",
+                   border: "none",
+                    whiteSpace: "nowrap",
                     borderRadius: "4px",
                     cursor: "pointer",
                     fontSize: "14px",
+                    minWidth: "140px",
                     fontWeight: "500",
                     transition: "all 0.2s",
                   }}
@@ -1554,9 +1585,11 @@ const QuickBooks = () => {
                       billMode === "customers" ? "#3b82f6" : "transparent",
                     color: billMode === "customers" ? "white" : "#374151",
                     border: "none",
+                    whiteSpace: "nowrap",
                     borderRadius: "4px",
                     cursor: "pointer",
                     fontSize: "14px",
+                    minWidth: "140px",
                     fontWeight: "500",
                     transition: "all 0.2s",
                   }}
@@ -1823,7 +1856,7 @@ const QuickBooks = () => {
     <div style={styles.detailModal} onClick={() => setInvoiceModalOpen(false)}>
       <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <div style={styles.modalHeader}>
-          <h3 style={{ margin: 0 }}>Invoice Details - {selectedInvoice.doc_number}</h3>
+          <h3 style={{ margin: 0, flex: 1, minWidth: 0 }}>Invoice Details - {selectedInvoice.doc_number}</h3>
           <button style={styles.closeBtn} onClick={() => setInvoiceModalOpen(false)}>
             ×
           </button>
@@ -1959,7 +1992,7 @@ const QuickBooks = () => {
       <div style={styles.detailModal} onClick={() => setDetailModalOpen(false)}>
         <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
           <div style={styles.modalHeader}>
-            <h3 style={{ margin: 0 }}>
+            <h3 style={{margin: 0, flex: 1, minWidth: 0 }}>
               {isCustomer ? "Customer" : "Vendor"} Details
             </h3>
             <button
@@ -2129,7 +2162,7 @@ const QuickBooks = () => {
     { id: "payments", label: "Payments" },
     { id: "purchase-orders", label: "Purchase Orders" },
     { id: "inventory", label: "Inventory" },
-    // { id: "accounts", label: "Chart of Accounts" },
+    { id: "accounts", label: "Chart of Accounts" },
   ];
   return (
     <div style={styles.container}>
@@ -2238,7 +2271,7 @@ const QuickBooks = () => {
             <div style={styles.refreshContainer}>
               {activeTab === "inventory" && (
                 <button style={styles.syncBtn} onClick={handleSyncProducts}>
-                  ⇄ Sync Products
+                  ⇄&nbsp;Sync Products
                 </button>
               )}
               <button
