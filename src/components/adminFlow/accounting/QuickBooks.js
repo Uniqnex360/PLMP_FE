@@ -102,32 +102,32 @@ const styles = {
     alignItems: "center",
     gap: "12px",
   },
-searchInput: {
-  padding: "10px 16px",
-  borderRadius: "8px",
-  border: "1px solid #d1d5db",
-  width: "280px",
-  marginTop:'11px',
-  fontSize: "14px",
-  outline: "none",
-  height: "40px", 
-  boxSizing: "border-box", 
-},
-filterSelect: {
-  padding: "10px 32px 10px 12px",
-  borderRadius: "8px",
-  border: "1px solid #d1d5db",
-  fontSize: "14px",
-  cursor: "pointer",
-  appearance: "none",
-  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-  backgroundPosition: "right 8px center",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "16px",
-  backgroundColor: "white",
-  height: "40px", 
-  boxSizing: "border-box", 
-},
+  searchInput: {
+    padding: "10px 16px",
+    borderRadius: "8px",
+    border: "1px solid #d1d5db",
+    width: "280px",
+    marginTop: "11px",
+    fontSize: "14px",
+    outline: "none",
+    height: "40px",
+    boxSizing: "border-box",
+  },
+  filterSelect: {
+    padding: "10px 32px 10px 12px",
+    borderRadius: "8px",
+    border: "1px solid #d1d5db",
+    fontSize: "14px",
+    cursor: "pointer",
+    appearance: "none",
+    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+    backgroundPosition: "right 8px center",
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "16px",
+    backgroundColor: "white",
+    height: "40px",
+    boxSizing: "border-box",
+  },
   refreshBtn: {
     padding: "10px 12px",
     backgroundColor: "#2d8a4e",
@@ -154,7 +154,7 @@ filterSelect: {
     fontSize: "14px",
     fontWeight: "500",
     height: "38px",
-    boxSizing: "border-box", 
+    boxSizing: "border-box",
   },
   exportBtn: {
     padding: "10px 20px",
@@ -1221,13 +1221,17 @@ const QuickBooks = () => {
       fetchPurchaseOrders(mode);
     };
     const data = getFilteredData();
-    if (data.length === 0) {
-      return (
-        <div style={styles.noData}>No {activeTab.replace("-", " ")} found.</div>
-      );
-    }
+    // if (data.length === 0) {
+    //   return (
+    //     <div style={styles.noData}>No {activeTab.replace("-", " ")} found.</div>
+    //   );
+    // }
     switch (activeTab) {
       case "invoices":
+        if(data.length===0)
+        {
+          return <div style={styles.noData}>No invoices found</div>
+        }
         return (
           <table style={styles.table}>
             <thead>
@@ -1275,6 +1279,10 @@ const QuickBooks = () => {
           </table>
         );
       case "customers":
+        if(data.length===0)
+        {
+          return <div style={styles.noData}>No customers found</div>
+        }
         return (
           <table style={styles.table}>
             <thead>
@@ -1320,6 +1328,10 @@ const QuickBooks = () => {
           </table>
         );
       case "vendors":
+        if(data.length===0)
+        {
+          return <div style={styles.noData}>No vendors found</div>
+        }
         return (
           <table style={styles.table}>
             <thead>
@@ -1428,56 +1440,65 @@ const QuickBooks = () => {
                 </button>
               </div>
             </div>
-            <table style={styles.table}>
-              <thead>
-                <tr>
-                  <th style={styles.th}>PO #</th>
-                  <th style={styles.th}>
-                    {purchaseOrderMode === "vendors" ? "Vendor" : "Customer"}
-                  </th>
-                  <th style={styles.th}>Date</th>
-                  <th style={styles.th}>
-                    {purchaseOrderMode === "vendors"
-                      ? "Expected Date"
-                      : "Delivery Date"}
-                  </th>
-                  <th style={styles.th}>Amount</th>
-                  <th style={styles.th}>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((po) => (
-                  <tr key={po.id}>
-                    <td
-                      style={{
-                        ...styles.td,
-                        fontWeight: "600",
-                        color: "#2d8a4e",
-                      }}
-                    >
-                      {po.doc_number || po.id}
-                    </td>
-                    <td style={styles.td}>
+
+            {data.length === 0 ? (
+              <div style={styles.noData}>
+                No {purchaseOrderMode === "vendors" ? "vendor" : "customer"}{" "}
+                purchase orders found
+              </div>
+            ) : (
+              <table style={styles.table}>
+                <thead>
+                  <tr>
+                    <th style={styles.th}>PO #</th>
+                    <th style={styles.th}>
+                      {purchaseOrderMode === "vendors" ? "Vendor" : "Customer"}
+                    </th>
+                    <th style={styles.th}>Date</th>
+                    <th style={styles.th}>
                       {purchaseOrderMode === "vendors"
-                        ? po.vendor_name
-                        : po.customer_name || "-"}
-                    </td>
-                    <td style={styles.td}>{formatDate(po.issue_date)}</td>
-                    <td style={styles.td}>{formatDate(po.expected_date)}</td>
-                    <td style={{ ...styles.td, fontWeight: "500" }}>
-                      {formatCurrency(po.total_amount)}
-                    </td>
-                    <td style={styles.td}>
-                      <span style={getStatusBadgeStyle(po.status, "po")}>
-                        {po.status || "Open"}
-                      </span>
-                    </td>
+                        ? "Expected Date"
+                        : "Delivery Date"}
+                    </th>
+                    <th style={styles.th}>Amount</th>
+                    <th style={styles.th}>Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {data.map((po) => (
+                    <tr key={po.id}>
+                      <td
+                        style={{
+                          ...styles.td,
+                          fontWeight: "600",
+                          color: "#2d8a4e",
+                        }}
+                      >
+                        {po.doc_number || po.id}
+                      </td>
+                      <td style={styles.td}>
+                        {purchaseOrderMode === "vendors"
+                          ? po.vendor_name
+                          : po.customer_name || "-"}
+                      </td>
+                      <td style={styles.td}>{formatDate(po.issue_date)}</td>
+                      <td style={styles.td}>{formatDate(po.expected_date)}</td>
+                      <td style={{ ...styles.td, fontWeight: "500" }}>
+                        {formatCurrency(po.total_amount)}
+                      </td>
+                      <td style={styles.td}>
+                        <span style={getStatusBadgeStyle(po.status, "po")}>
+                          {po.status || "Open"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </>
         );
+
       case "bills":
         return (
           <>
@@ -1522,7 +1543,7 @@ const QuickBooks = () => {
                     padding: "8px 16px",
                     backgroundColor:
                       billMode === "customers" ? "#3b82f6" : "transparent",
-                    color: billMode === "vendors" ? "white" : "#374151",
+                    color: billMode === "customers" ? "white" : "#374151",
                     border: "none",
                     borderRadius: "4px",
                     cursor: "pointer",
@@ -1536,56 +1557,67 @@ const QuickBooks = () => {
                 </button>
               </div>
             </div>
-            <table style={styles.table}>
-              <thead>
-                <tr>
-                  <th style={styles.th}>Bill #</th>
-                  <th style={styles.th}>
-                    {billMode === "vendors" ? "Vendor" : "Customer"}
-                  </th>
-                  <th style={styles.th}>Date</th>
-                  <th style={styles.th}>Due Date</th>
-                  <th style={styles.th}>Amount</th>
-                  <th style={styles.th}>Balance</th>
-                  <th style={styles.th}>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((bill) => (
-                  <tr key={bill.id}>
-                    <td style={{ ...styles.td, fontWeight: "600" }}>
-                      {bill.doc_number || bill.id}
-                    </td>
-                    <td style={styles.td}>
-                      {billMode === "vendors"
-                        ? bill.vendor_name
-                        : bill.customer_name || "-"}
-                    </td>
-                    <td style={styles.td}>{formatDate(bill.issue_date)}</td>
-                    <td style={styles.td}>{formatDate(bill.due_date)}</td>
-                    <td style={{ ...styles.td, fontWeight: "500" }}>
-                      {formatCurrency(bill.total_amount)}
-                    </td>
-                    <td style={{ ...styles.td, fontWeight: "500" }}>
-                      {formatCurrency(bill.balance_due)}
-                    </td>
-                    <td style={styles.td}>
-                      <span
-                        style={getStatusBadgeStyle(
-                          bill.payment_status,
-                          "payment"
-                        )}
-                      >
-                        {bill.payment_status || "Unknown"}
-                      </span>
-                    </td>
+
+            {data.length === 0 ? (
+              <div style={styles.noData}>
+                No {billMode === "vendors" ? "vendor" : "customer"} bills found
+              </div>
+            ) : (
+              <table style={styles.table}>
+                <thead>
+                  <tr>
+                    <th style={styles.th}>Bill #</th>
+                    <th style={styles.th}>
+                      {billMode === "vendors" ? "Vendor" : "Customer"}
+                    </th>
+                    <th style={styles.th}>Date</th>
+                    <th style={styles.th}>Due Date</th>
+                    <th style={styles.th}>Amount</th>
+                    <th style={styles.th}>Balance</th>
+                    <th style={styles.th}>Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {data.map((bill) => (
+                    <tr key={bill.id}>
+                      <td style={{ ...styles.td, fontWeight: "600" }}>
+                        {bill.doc_number || bill.id}
+                      </td>
+                      <td style={styles.td}>
+                        {billMode === "vendors"
+                          ? bill.vendor_name
+                          : bill.customer_name || "-"}
+                      </td>
+                      <td style={styles.td}>{formatDate(bill.issue_date)}</td>
+                      <td style={styles.td}>{formatDate(bill.due_date)}</td>
+                      <td style={{ ...styles.td, fontWeight: "500" }}>
+                        {formatCurrency(bill.total_amount)}
+                      </td>
+                      <td style={{ ...styles.td, fontWeight: "500" }}>
+                        {formatCurrency(bill.balance_due)}
+                      </td>
+                      <td style={styles.td}>
+                        <span
+                          style={getStatusBadgeStyle(
+                            bill.payment_status,
+                            "payment"
+                          )}
+                        >
+                          {bill.payment_status || "Unknown"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </>
         );
       case "payments":
+         if(data.length===0)
+        {
+          return <div style={styles.noData}>No payments found</div>
+        }
         return (
           <table style={styles.table}>
             <thead>
@@ -1623,6 +1655,10 @@ const QuickBooks = () => {
           </table>
         );
       case "inventory":
+         if(data.length===0)
+        {
+          return <div style={styles.noData}>No inventory found</div>
+        }
         return (
           <table style={styles.table}>
             <thead>
@@ -1703,6 +1739,10 @@ const QuickBooks = () => {
           </table>
         );
       case "accounts":
+         if(data.length===0)
+        {
+          return <div style={styles.noData}>No accounts found</div>
+        }
         return (
           <table style={styles.table}>
             <thead>
