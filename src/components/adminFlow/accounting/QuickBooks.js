@@ -95,7 +95,7 @@ const styles = {
     marginBottom: "16px",
     flexWrap: "wrap",
     alignItems: "center",
-     justifyContent: "flex-end",
+    justifyContent: "space-between",
   },
   refreshContainer: {
     display: "flex",
@@ -144,20 +144,20 @@ const styles = {
     justifyContent: "center",
     height: "38px",
   },
-syncBtn: {
-  padding: "10px 20px",
-  backgroundColor: "#3b82f6",
-  color: "white",
-  border: "none",
-  borderRadius: "8px",
-  cursor: "pointer",
-  fontSize: "14px",
-  fontWeight: "500",
-  height: "38px",
-  boxSizing: "border-box",
-  whiteSpace: "nowrap",
-  minWidth: "140px",
-},
+  syncBtn: {
+    padding: "10px 20px",
+    backgroundColor: "#3b82f6",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "500",
+    height: "38px",
+    boxSizing: "border-box",
+    whiteSpace: "nowrap",
+    minWidth: "140px",
+  },
   exportBtn: {
     padding: "10px 20px",
     backgroundColor: "#f3f4f6",
@@ -319,24 +319,24 @@ syncBtn: {
     maxHeight: "80vh",
     overflow: "auto",
   },
-modalHeader: {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  marginBottom: "20px",
-  gap: "20px",
-},
-closeBtn: {
-  background: "none",
-  border: "none",
-  fontSize: "32px",
-  cursor: "pointer",
-  color: "#6b7280",
-  padding: "0",
-  width: "32px",
-  height: "32px",
-  flexShrink: 0,
-},
+  modalHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "20px",
+    gap: "20px",
+  },
+  closeBtn: {
+    background: "none",
+    border: "none",
+    fontSize: "32px",
+    cursor: "pointer",
+    color: "#6b7280",
+    padding: "0",
+    width: "32px",
+    height: "32px",
+    flexShrink: 0,
+  },
   detailSection: {
     marginBottom: "20px",
   },
@@ -452,16 +452,16 @@ const QuickBooks = () => {
       return dateString;
     }
   };
-  useEffect(()=>{
-    const handleEsc=(e)=>{
-      if(e.key==='Escape'){
-        setInvoiceModalOpen(false)
-        setDetailModalOpen(false)
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") {
+        setInvoiceModalOpen(false);
+        setDetailModalOpen(false);
       }
-    }
-    window.addEventListener('keydown',handleEsc)
-    return()=>window.removeEventListener('keydown',handleEsc)
-  })
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  });
   const formatAddress = (address) => {
     if (!address) return "-";
     const parts = [
@@ -773,7 +773,7 @@ const QuickBooks = () => {
   };
   const fetchCustomerDetails = async (customerId) => {
     if (!realmId || !customerId) return;
-    setLoading(true)
+    setLoading(true);
     setDetailLoading(true);
     try {
       const response = await axiosInstance.get(
@@ -783,21 +783,19 @@ const QuickBooks = () => {
       if (response.data.estatus && response.data.data.success) {
         setDetailData(response.data.data);
         setDetailModalOpen(true);
-        setLoading(false)
+        setLoading(false);
       } else {
-        setLoading(false)
+        setLoading(false);
 
         throw new Error(
           response.data.data?.error || "Failed to fetch customer details"
         );
-        
       }
     } catch (err) {
-      
       console.error("Error fetching customer details:", err);
       Swal.fire("Error", err.message || "Failed to fetch details", "error");
     } finally {
-        setLoading(false)
+      setLoading(false);
 
       setDetailLoading(false);
     }
@@ -1221,6 +1219,10 @@ const QuickBooks = () => {
         return null;
     }
   };
+  const handlePurchaseOrderModeToggle = (mode) => {
+    setPurchaseOrderMode(mode);
+    fetchPurchaseOrders(mode);
+  };
   const renderTable = () => {
     if (loading) {
       return (
@@ -1243,10 +1245,7 @@ const QuickBooks = () => {
         </div>
       );
     }
-    const handlePurchaseOrderModeToggle = (mode) => {
-      setPurchaseOrderMode(mode);
-      fetchPurchaseOrders(mode);
-    };
+
     const data = getFilteredData();
     // if (data.length === 0) {
     //   return (
@@ -1540,66 +1539,6 @@ const QuickBooks = () => {
       case "bills":
         return (
           <>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                marginBottom: "20px",
-                backgroundColor: "#f9fafb",
-                padding: "12px",
-                borderRadius: "8px",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  gap: "8px",
-                  backgroundColor: "#e5e7eb",
-                  padding: "4px",
-                  borderRadius: "8px",
-                }}
-              >
-                <button
-                  style={{
-                    padding: "8px 16px",
-                    backgroundColor:
-                      billMode === "vendors" ? "#2d8a4e" : "transparent",
-                    color: billMode === "vendors" ? "white" : "#374151",
-                   border: "none",
-                    whiteSpace: "nowrap",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    minWidth: "140px",
-                    fontWeight: "500",
-                    transition: "all 0.2s",
-                  }}
-                  onClick={() => handleBillModeToggle("vendors")}
-                >
-                  Vendor Bills
-                </button>
-                <button
-                  style={{
-                    padding: "8px 16px",
-                    backgroundColor:
-                      billMode === "customers" ? "#3b82f6" : "transparent",
-                    color: billMode === "customers" ? "white" : "#374151",
-                    border: "none",
-                    whiteSpace: "nowrap",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    minWidth: "140px",
-                    fontWeight: "500",
-                    transition: "all 0.2s",
-                  }}
-                  onClick={() => handleBillModeToggle("customers")}
-                >
-                  Customer Bills
-                </button>
-              </div>
-            </div>
-
             {data.length === 0 ? (
               <div style={styles.noData}>
                 No {billMode === "vendors" ? "vendor" : "customer"} bills found
@@ -1823,7 +1762,7 @@ const QuickBooks = () => {
   const fetchInvoiceDetails = async (invoiceId) => {
     if (!invoiceId || !realmId) return;
     try {
-      setLoading(true)
+      setLoading(true);
       const response = await axiosInstance.get(
         `${process.env.REACT_APP_IP}/quickbooks/invoice/details/`,
         { params: { realm_id: realmId, invoice_id: invoiceId } }
@@ -1832,14 +1771,14 @@ const QuickBooks = () => {
         const invoiceDetails = response.data.data.invoice;
         setSelectedInvoice(invoiceDetails);
         setInvoiceModalOpen(true);
-        setLoading(false)
+        setLoading(false);
       } else {
         throw new Error(
           response.data.data?.error || "Failed to fetch invoice details"
         );
       }
     } catch (error) {
-        setLoading(false)
+      setLoading(false);
 
       console.error("Error fetching invoice details", error);
       Swal.fire(
@@ -1850,136 +1789,187 @@ const QuickBooks = () => {
     }
   };
   const renderInvoiceModal = () => {
-  if (!selectedInvoice || !invoiceModalOpen) return null;
-  
-  return (
-    <div style={styles.detailModal} onClick={() => setInvoiceModalOpen(false)}>
-      <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-        <div style={styles.modalHeader}>
-          <h3 style={{ margin: 0, flex: 1, minWidth: 0 }}>Invoice Details - {selectedInvoice.doc_number}</h3>
-          <button style={styles.closeBtn} onClick={() => setInvoiceModalOpen(false)}>
-            ×
-          </button>
-        </div>
-        
-        <div style={styles.detailSection}>
-          <div style={styles.detailTitle}>Customer Information</div>
-          <div style={styles.detailGrid}>
-            <div style={styles.detailItem}>
-              <div style={styles.detailLabel}>Customer</div>
-              <div style={styles.detailValue}>{selectedInvoice.customer_name}</div>
-            </div>
-            <div style={styles.detailItem}>
-              <div style={styles.detailLabel}>Email</div>
-              <div style={styles.detailValue}>{selectedInvoice.customer_email || '-'}</div>
-            </div>
-            <div style={styles.detailItem}>
-              <div style={styles.detailLabel}>Invoice Date</div>
-              <div style={styles.detailValue}>{formatDate(selectedInvoice.issue_date)}</div>
-            </div>
-            <div style={styles.detailItem}>
-              <div style={styles.detailLabel}>Due Date</div>
-              <div style={styles.detailValue}>{formatDate(selectedInvoice.due_date)}</div>
-            </div>
+    if (!selectedInvoice || !invoiceModalOpen) return null;
+
+    return (
+      <div
+        style={styles.detailModal}
+        onClick={() => setInvoiceModalOpen(false)}
+      >
+        <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+          <div style={styles.modalHeader}>
+            <h3 style={{ margin: 0, flex: 1, minWidth: 0 }}>
+              Invoice Details - {selectedInvoice.doc_number}
+            </h3>
+            <button
+              style={styles.closeBtn}
+              onClick={() => setInvoiceModalOpen(false)}
+            >
+              ×
+            </button>
           </div>
-        </div>
-        
-        <div style={styles.detailSection}>
-          <div style={styles.detailTitle}>Financial Summary</div>
-          <div style={styles.detailGrid}>
-            <div style={styles.detailItem}>
-              <div style={styles.detailLabel}>Subtotal</div>
-              <div style={styles.detailValue}>{formatCurrency(selectedInvoice.subtotal)}</div>
-            </div>
-            <div style={styles.detailItem}>
-              <div style={styles.detailLabel}>Tax</div>
-              <div style={styles.detailValue}>{formatCurrency(selectedInvoice.tax_amount)}</div>
-            </div>
-            <div style={styles.detailItem}>
-              <div style={styles.detailLabel}>Shipping</div>
-              <div style={styles.detailValue}>{formatCurrency(selectedInvoice.shipping)}</div>
-            </div>
-            <div style={styles.detailItem}>
-              <div style={styles.detailLabel}>Total Amount</div>
-              <div style={{ ...styles.detailValue, fontWeight: '600', color: '#166534' }}>
-                {formatCurrency(selectedInvoice.total_amount)}
-              </div>
-            </div>
-            <div style={styles.detailItem}>
-              <div style={styles.detailLabel}>Balance Due</div>
-              <div style={{ ...styles.detailValue, fontWeight: '600', color: selectedInvoice.balance_due > 0 ? '#92400e' : '#166534' }}>
-                {formatCurrency(selectedInvoice.balance_due)}
-              </div>
-            </div>
-            <div style={styles.detailItem}>
-              <div style={styles.detailLabel}>Status</div>
-              <div style={styles.detailValue}>
-                <span style={getStatusBadgeStyle(selectedInvoice.payment_status, 'payment')}>
-                  {selectedInvoice.payment_status}
-                  {selectedInvoice.is_overdue ? ' (Overdue)' : ''}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div style={styles.detailSection}>
-          <div style={styles.detailTitle}>Line Items ({selectedInvoice.line_items_count})</div>
-          <table style={{ ...styles.table, fontSize: '13px' }}>
-            <thead>
-              <tr>
-                <th style={styles.th}>Item</th>
-                <th style={styles.th}>Description</th>
-                <th style={styles.th}>Quantity</th>
-                <th style={styles.th}>Unit Price</th>
-                <th style={styles.th}>Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              {selectedInvoice.line_items.map((item, index) => (
-                <tr key={index}>
-                  <td style={styles.td}>{item.item_name || '-'}</td>
-                  <td style={styles.td}>{item.description || '-'}</td>
-                  <td style={styles.td}>{item.quantity}</td>
-                  <td style={styles.td}>{formatCurrency(item.unit_price)}</td>
-                  <td style={styles.td}>{formatCurrency(item.amount)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        
-        {selectedInvoice.linked_payments && selectedInvoice.linked_payments.length > 0 && (
+
           <div style={styles.detailSection}>
-            <div style={styles.detailTitle}>Payments ({selectedInvoice.payment_count})</div>
-            <table style={{ ...styles.table, fontSize: '13px' }}>
+            <div style={styles.detailTitle}>Customer Information</div>
+            <div style={styles.detailGrid}>
+              <div style={styles.detailItem}>
+                <div style={styles.detailLabel}>Customer</div>
+                <div style={styles.detailValue}>
+                  {selectedInvoice.customer_name}
+                </div>
+              </div>
+              <div style={styles.detailItem}>
+                <div style={styles.detailLabel}>Email</div>
+                <div style={styles.detailValue}>
+                  {selectedInvoice.customer_email || "-"}
+                </div>
+              </div>
+              <div style={styles.detailItem}>
+                <div style={styles.detailLabel}>Invoice Date</div>
+                <div style={styles.detailValue}>
+                  {formatDate(selectedInvoice.issue_date)}
+                </div>
+              </div>
+              <div style={styles.detailItem}>
+                <div style={styles.detailLabel}>Due Date</div>
+                <div style={styles.detailValue}>
+                  {formatDate(selectedInvoice.due_date)}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={styles.detailSection}>
+            <div style={styles.detailTitle}>Financial Summary</div>
+            <div style={styles.detailGrid}>
+              <div style={styles.detailItem}>
+                <div style={styles.detailLabel}>Subtotal</div>
+                <div style={styles.detailValue}>
+                  {formatCurrency(selectedInvoice.subtotal)}
+                </div>
+              </div>
+              <div style={styles.detailItem}>
+                <div style={styles.detailLabel}>Tax</div>
+                <div style={styles.detailValue}>
+                  {formatCurrency(selectedInvoice.tax_amount)}
+                </div>
+              </div>
+              <div style={styles.detailItem}>
+                <div style={styles.detailLabel}>Shipping</div>
+                <div style={styles.detailValue}>
+                  {formatCurrency(selectedInvoice.shipping)}
+                </div>
+              </div>
+              <div style={styles.detailItem}>
+                <div style={styles.detailLabel}>Total Amount</div>
+                <div
+                  style={{
+                    ...styles.detailValue,
+                    fontWeight: "600",
+                    color: "#166534",
+                  }}
+                >
+                  {formatCurrency(selectedInvoice.total_amount)}
+                </div>
+              </div>
+              <div style={styles.detailItem}>
+                <div style={styles.detailLabel}>Balance Due</div>
+                <div
+                  style={{
+                    ...styles.detailValue,
+                    fontWeight: "600",
+                    color:
+                      selectedInvoice.balance_due > 0 ? "#92400e" : "#166534",
+                  }}
+                >
+                  {formatCurrency(selectedInvoice.balance_due)}
+                </div>
+              </div>
+              <div style={styles.detailItem}>
+                <div style={styles.detailLabel}>Status</div>
+                <div style={styles.detailValue}>
+                  <span
+                    style={getStatusBadgeStyle(
+                      selectedInvoice.payment_status,
+                      "payment"
+                    )}
+                  >
+                    {selectedInvoice.payment_status}
+                    {selectedInvoice.is_overdue ? " (Overdue)" : ""}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={styles.detailSection}>
+            <div style={styles.detailTitle}>
+              Line Items ({selectedInvoice.line_items_count})
+            </div>
+            <table style={{ ...styles.table, fontSize: "13px" }}>
               <thead>
                 <tr>
-                  <th style={styles.th}>Payment Date</th>
-                  <th style={styles.th}>Method</th>
-                  <th style={styles.th}>Reference</th>
+                  <th style={styles.th}>Item</th>
+                  <th style={styles.th}>Description</th>
+                  <th style={styles.th}>Quantity</th>
+                  <th style={styles.th}>Unit Price</th>
                   <th style={styles.th}>Amount</th>
                 </tr>
               </thead>
               <tbody>
-                {selectedInvoice.linked_payments.map((payment) => (
-                  <tr key={payment.id}>
-                    <td style={styles.td}>{formatDate(payment.payment_date)}</td>
-                    <td style={styles.td}>{payment.payment_method || '-'}</td>
-                    <td style={styles.td}>{payment.payment_ref_number || '-'}</td>
-                    <td style={{ ...styles.td, color: '#166534' }}>
-                      {formatCurrency(payment.amount)}
-                    </td>
+                {selectedInvoice.line_items.map((item, index) => (
+                  <tr key={index}>
+                    <td style={styles.td}>{item.item_name || "-"}</td>
+                    <td style={styles.td}>{item.description || "-"}</td>
+                    <td style={styles.td}>{item.quantity}</td>
+                    <td style={styles.td}>{formatCurrency(item.unit_price)}</td>
+                    <td style={styles.td}>{formatCurrency(item.amount)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        )}
+
+          {selectedInvoice.linked_payments &&
+            selectedInvoice.linked_payments.length > 0 && (
+              <div style={styles.detailSection}>
+                <div style={styles.detailTitle}>
+                  Payments ({selectedInvoice.payment_count})
+                </div>
+                <table style={{ ...styles.table, fontSize: "13px" }}>
+                  <thead>
+                    <tr>
+                      <th style={styles.th}>Payment Date</th>
+                      <th style={styles.th}>Method</th>
+                      <th style={styles.th}>Reference</th>
+                      <th style={styles.th}>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedInvoice.linked_payments.map((payment) => (
+                      <tr key={payment.id}>
+                        <td style={styles.td}>
+                          {formatDate(payment.payment_date)}
+                        </td>
+                        <td style={styles.td}>
+                          {payment.payment_method || "-"}
+                        </td>
+                        <td style={styles.td}>
+                          {payment.payment_ref_number || "-"}
+                        </td>
+                        <td style={{ ...styles.td, color: "#166534" }}>
+                          {formatCurrency(payment.amount)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
   const renderDetailModal = () => {
     if (!detailModalOpen || !detailData) return null;
     const isCustomer = activeTab === "customers";
@@ -1992,7 +1982,7 @@ const QuickBooks = () => {
       <div style={styles.detailModal} onClick={() => setDetailModalOpen(false)}>
         <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
           <div style={styles.modalHeader}>
-            <h3 style={{margin: 0, flex: 1, minWidth: 0 }}>
+            <h3 style={{ margin: 0, flex: 1, minWidth: 0 }}>
               {isCustomer ? "Customer" : "Vendor"} Details
             </h3>
             <button
@@ -2241,37 +2231,135 @@ const QuickBooks = () => {
           </div>
           {renderStats()}
           <div style={styles.searchContainer}>
-            <div
-              style={{
-                display: "flex",
-                gap: "12px",
-                alignItems: "center",
-                flexWrap: "wrap",
-              }}
-            >
-              <input
-                type="text"
-                placeholder={`Search ${activeTab.replace("-", " ")}...`}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={styles.searchInput}
-              />
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                style={styles.filterSelect}
+            {activeTab === "purchase-orders" && (
+              <div
+                style={{
+                  display: "flex",
+                  gap: "8px",
+                  backgroundColor: "#e5e7eb",
+                  padding: "4px",
+                  borderRadius: "6px",
+                }}
               >
-                {getFilterOptions().map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+                <button
+                  style={{
+                    padding: "8px 16px",
+                    backgroundColor:
+                      purchaseOrderMode === "vendors"
+                        ? "#2d8a4e"
+                        : "transparent",
+                    color:
+                      purchaseOrderMode === "vendors" ? "white" : "#374151",
+                    border: "none",
+                     whiteSpace: "nowrap",
+                      minWidth: "140px",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                  }}
+                  onClick={() => handlePurchaseOrderModeToggle("vendors")}
+                >
+                  Vendor POs
+                </button>
+                <button
+                  style={{
+                    padding: "8px 16px",
+                    backgroundColor:
+                      purchaseOrderMode === "customers"
+                        ? "#3b82f6"
+                        : "transparent",
+                    color:
+                      purchaseOrderMode === "customers" ? "white" : "#374151",
+                    border: "none",
+                     whiteSpace: "nowrap",
+                      minWidth: "140px",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                  }}
+                  onClick={() => handlePurchaseOrderModeToggle("customers")}
+                >
+                  Customer POs
+                </button>
+              </div>
+            )}
+
+            {activeTab === "bills" && (
+              <div
+                style={{
+                  display: "flex",
+                  gap: "8px",
+                  backgroundColor: "#e5e7eb",
+                  padding: "4px",
+                      minWidth: "140px",
+
+                  borderRadius: "6px",
+                }}
+              >
+                <button
+                  style={{
+                    padding: "8px 16px",
+                    backgroundColor:
+                      billMode === "vendors" ? "#2d8a4e" : "transparent",
+                    color: billMode === "vendors" ? "white" : "#374151",
+                    border: "none",
+                    whiteSpace: "nowrap",
+                      minWidth: "140px",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                  }}
+                  onClick={() => handleBillModeToggle("vendors")}
+                >
+                  Vendor Bills
+                </button>
+                <button
+                  style={{
+                    padding: "8px 16px",
+                    backgroundColor:
+                      billMode === "customers" ? "#3b82f6" : "transparent",
+                    color: billMode === "customers" ? "white" : "#374151",
+                    border: "none",
+                     whiteSpace: "nowrap",
+                      minWidth: "140px",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                  }}
+                  onClick={() => handleBillModeToggle("customers")}
+                >
+                  Customer Bills
+                </button>
+              </div>
+            )}
+            <div style={{ display: "flex", gap: "12px", alignItems: "center", marginLeft: "auto" }}>
+            <input
+              type="text"
+              placeholder={`Search ${activeTab.replace("-", " ")}...`}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={styles.searchInput}
+            />
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              style={styles.filterSelect}
+            >
+              {getFilterOptions().map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+
             <div style={styles.refreshContainer}>
               {activeTab === "inventory" && (
                 <button style={styles.syncBtn} onClick={handleSyncProducts}>
-                  ⇄&nbsp;Sync Products
+                  Sync Products
                 </button>
               )}
               <button
@@ -2281,6 +2369,7 @@ const QuickBooks = () => {
               >
                 ↻ Refresh
               </button>
+            </div>
             </div>
           </div>
           <div
@@ -2292,6 +2381,7 @@ const QuickBooks = () => {
           >
             {renderTable()}
           </div>
+
         </>
       ) : (
         <div style={styles.noData}>
