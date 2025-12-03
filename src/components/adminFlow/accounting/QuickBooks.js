@@ -786,7 +786,6 @@ const QuickBooks = () => {
         setLoading(false);
       } else {
         setLoading(false);
-
         throw new Error(
           response.data.data?.error || "Failed to fetch customer details"
         );
@@ -796,7 +795,6 @@ const QuickBooks = () => {
       Swal.fire("Error", err.message || "Failed to fetch details", "error");
     } finally {
       setLoading(false);
-
       setDetailLoading(false);
     }
   };
@@ -977,6 +975,14 @@ const QuickBooks = () => {
             (item) => item.status?.toLowerCase() === statusFilter
           );
           break;
+        case "accounts":
+          data = data.filter((item) => {
+            if (statusFilter === "all") return true;
+            if (statusFilter === "active") return item.is_active;
+            if (statusFilter === "inactive") return !item.is_active;
+            return true;
+          });
+          break;
         case "inventory":
           if (statusFilter === "low") {
             data = data.filter(
@@ -1022,6 +1028,12 @@ const QuickBooks = () => {
           { value: "all", label: "All Items" },
           { value: "low", label: "Low Stock" },
           { value: "instock", label: "In Stock" },
+        ];
+      case "accounts":
+        return [
+          { value: "all", label: "All Status" },
+          { value: "active", label: "Active" },
+          { value: "inactive", label: "Inactive" },
         ];
       default:
         return [{ value: "all", label: "All" }];
@@ -1245,7 +1257,6 @@ const QuickBooks = () => {
         </div>
       );
     }
-
     const data = getFilteredData();
     // if (data.length === 0) {
     //   return (
@@ -1254,81 +1265,93 @@ const QuickBooks = () => {
     // }
     switch (activeTab) {
       case "invoices":
-  if (data.length === 0) {
-    return <div style={styles.noData}>No invoices found</div>;
-  }
-  return (
-    <table style={styles.table}>
-      <thead>
-        <tr>
-          <th style={styles.th}>Invoice #</th>
-          <th style={styles.th}>Customer</th>
-          <th style={styles.th}>Date</th>
-          <th style={styles.th}>Due Date</th>
-          <th style={styles.th}>Subtotal</th>
-          <th style={styles.th}>Discount</th>
-          <th style={styles.th}>Total Amount</th>
-          <th style={styles.th}>Balance</th>
-          <th style={styles.th}>Status</th>
-          <th style={styles.th}>Billing Address</th> {/* Add back */}
-          <th style={styles.th}>Shipping Address</th> {/* Add back */}
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((inv) => (
-          <tr
-            key={inv.id}
-            style={styles.clickableRow}
-            onClick={() => fetchInvoiceDetails(inv.id)}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#f9fafb")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "")
-            }
-          >
-            <td style={{ ...styles.td, fontWeight: "600", color: "#2d8a4e" }}>
-              {inv.doc_number || inv.id}
-            </td>
-            <td style={styles.td}>{inv.customer_name || "-"}</td>
-            <td style={styles.td}>{formatDate(inv.issue_date)}</td>
-            <td style={styles.td}>{formatDate(inv.due_date)}</td>
-            <td style={{ ...styles.td, fontWeight: "500" }}>
-              {formatCurrency(inv.subtotal)}
-            </td>
-            <td style={{ 
-              ...styles.td, 
-              fontWeight: "500",
-              color: inv.discount > 0 ? "#991b1b" : "#6b7280"
-            }}>
-              {formatCurrency(inv.discount)}
-            </td>
-            <td style={{ 
-              ...styles.td, 
-              fontWeight: "600",
-              color: "#166534"
-            }}>
-              {formatCurrency(inv.total_amount)}
-            </td>
-            <td style={{ ...styles.td, fontWeight: "500" }}>
-              {formatCurrency(inv.balance_due)}
-            </td>
-            <td style={styles.td}>
-              <span style={getStatusBadgeStyle(inv.payment_status, "payment")}>
-                {inv.payment_status || "Unknown"}
-              </span>
-            </td>
-            <td style={styles.td}>
-              {formatAddress(inv.billing_address)}
-            </td>
-            <td style={styles.td}>
-              {formatAddress(inv.shipping_address)}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
+        if (data.length === 0) {
+          return <div style={styles.noData}>No invoices found</div>;
+        }
+        return (
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.th}>Invoice #</th>
+                <th style={styles.th}>Customer</th>
+                <th style={styles.th}>Date</th>
+                <th style={styles.th}>Due Date</th>
+                <th style={styles.th}>Subtotal</th>
+                <th style={styles.th}>Discount</th>
+                <th style={styles.th}>Total Amount</th>
+                <th style={styles.th}>Balance</th>
+                <th style={styles.th}>Status</th>
+                <th style={styles.th}>Billing Address</th> {/* Add back */}
+                <th style={styles.th}>Shipping Address</th> {/* Add back */}
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((inv) => (
+                <tr
+                  key={inv.id}
+                  style={styles.clickableRow}
+                  onClick={() => fetchInvoiceDetails(inv.id)}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#f9fafb")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "")
+                  }
+                >
+                  <td
+                    style={{
+                      ...styles.td,
+                      fontWeight: "600",
+                      color: "#2d8a4e",
+                    }}
+                  >
+                    {inv.doc_number || inv.id}
+                  </td>
+                  <td style={styles.td}>{inv.customer_name || "-"}</td>
+                  <td style={styles.td}>{formatDate(inv.issue_date)}</td>
+                  <td style={styles.td}>{formatDate(inv.due_date)}</td>
+                  <td style={{ ...styles.td, fontWeight: "500" }}>
+                    {formatCurrency(inv.subtotal)}
+                  </td>
+                  <td
+                    style={{
+                      ...styles.td,
+                      fontWeight: "500",
+                      color: inv.discount > 0 ? "#991b1b" : "#6b7280",
+                    }}
+                  >
+                    {formatCurrency(inv.discount)}
+                  </td>
+                  <td
+                    style={{
+                      ...styles.td,
+                      fontWeight: "600",
+                      color: "#166534",
+                    }}
+                  >
+                    {formatCurrency(inv.total_amount)}
+                  </td>
+                  <td style={{ ...styles.td, fontWeight: "500" }}>
+                    {formatCurrency(inv.balance_due)}
+                  </td>
+                  <td style={styles.td}>
+                    <span
+                      style={getStatusBadgeStyle(inv.payment_status, "payment")}
+                    >
+                      {inv.payment_status || "Unknown"}
+                    </span>
+                  </td>
+                  <td style={styles.td}>
+                    {formatAddress(inv.billing_address)}
+                  </td>
+                  <td style={styles.td}>
+                    {formatAddress(inv.shipping_address)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        );
       case "customers":
         if (data.length === 0) {
           return <div style={styles.noData}>No customers found</div>;
@@ -1504,7 +1527,6 @@ const QuickBooks = () => {
                 </button>
               </div>
             </div>
-
             {data.length === 0 ? (
               <div style={styles.noData}>
                 No {purchaseOrderMode === "vendors" ? "vendor" : "customer"}{" "}
@@ -1562,7 +1584,6 @@ const QuickBooks = () => {
             )}
           </>
         );
-
       case "bills":
         return (
           <>
@@ -1806,7 +1827,6 @@ const QuickBooks = () => {
       }
     } catch (error) {
       setLoading(false);
-
       console.error("Error fetching invoice details", error);
       Swal.fire(
         "Error",
@@ -1817,7 +1837,6 @@ const QuickBooks = () => {
   };
   const renderInvoiceModal = () => {
     if (!selectedInvoice || !invoiceModalOpen) return null;
-
     return (
       <div
         style={styles.detailModal}
@@ -1835,7 +1854,6 @@ const QuickBooks = () => {
               ×
             </button>
           </div>
-
           <div style={styles.detailSection}>
             <div style={styles.detailTitle}>Customer Information</div>
             <div style={styles.detailGrid}>
@@ -1865,7 +1883,6 @@ const QuickBooks = () => {
               </div>
             </div>
           </div>
-
           <div style={styles.detailSection}>
             <div style={styles.detailTitle}>Financial Summary</div>
             <div style={styles.detailGrid}>
@@ -1928,7 +1945,6 @@ const QuickBooks = () => {
               </div>
             </div>
           </div>
-
           <div style={styles.detailSection}>
             <div style={styles.detailTitle}>
               Line Items ({selectedInvoice.line_items_count})
@@ -1956,7 +1972,6 @@ const QuickBooks = () => {
               </tbody>
             </table>
           </div>
-
           {selectedInvoice.linked_payments &&
             selectedInvoice.linked_payments.length > 0 && (
               <div style={styles.detailSection}>
@@ -2312,7 +2327,6 @@ const QuickBooks = () => {
                 </button>
               </div>
             )}
-
             {activeTab === "bills" && (
               <div
                 style={{
@@ -2321,7 +2335,6 @@ const QuickBooks = () => {
                   backgroundColor: "#e5e7eb",
                   padding: "4px",
                   minWidth: "140px",
-
                   borderRadius: "6px",
                 }}
               >
@@ -2389,7 +2402,6 @@ const QuickBooks = () => {
                   </option>
                 ))}
               </select>
-
               <div style={styles.refreshContainer}>
                 {activeTab === "inventory" && (
                   <button style={styles.syncBtn} onClick={handleSyncProducts}>
