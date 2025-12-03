@@ -1067,44 +1067,44 @@ const QuickBooks = () => {
     const data = getFilteredData();
     switch (activeTab) {
       case "invoices": {
-        const total = data.reduce(
-          (sum, inv) => sum + (inv.total_amount || 0),
-          0
-        );
-        const balance = data.reduce(
-          (sum, inv) => sum + (inv.balance_due || 0),
-          0
-        );
-        const paidCount = data.filter(
-          (inv) => inv.payment_status === "Paid"
-        ).length;
-        return (
-          <div style={styles.statsContainer}>
-            <div style={styles.statCard}>
-              <div style={styles.statLabel}>Total Invoices</div>
-              <div style={styles.statValue}>{data.length}</div>
-            </div>
-            <div style={styles.statCard}>
-              <div style={styles.statLabel}>Total Amount</div>
-              <div style={{ ...styles.statValue, color: "#166534" }}>
-                {formatCurrency(total)}
-              </div>
-            </div>
-            <div style={styles.statCard}>
-              <div style={styles.statLabel}>Outstanding Balance</div>
-              <div style={{ ...styles.statValue, color: "#92400e" }}>
-                {formatCurrency(balance)}
-              </div>
-            </div>
-            <div style={styles.statCard}>
-              <div style={styles.statLabel}>Paid Invoices</div>
-              <div style={{ ...styles.statValue, color: "#166534" }}>
-                {paidCount}
-              </div>
-            </div>
-          </div>
-        );
-      }
+  const total = data.reduce(
+    (sum, inv) => sum + (inv.total_amount || 0),
+    0
+  );
+  const balance = data.reduce(
+    (sum, inv) => sum + (inv.balance_due || 0),
+    0
+  );
+  const paidCount = data.filter(
+    (inv) => inv.payment_status === "Paid"
+  ).length;
+  return (
+    <div style={styles.statsContainer}>
+      <div style={styles.statCard}>
+        <div style={styles.statLabel}>Total Invoices</div>
+        <div style={styles.statValue}>{data.length}</div>
+      </div>
+      <div style={styles.statCard}>
+        <div style={styles.statLabel}>Total Amount</div>
+        <div style={{ ...styles.statValue, color: "#166534" }}>
+          {formatCurrency(total)}
+        </div>
+      </div>
+      <div style={styles.statCard}>
+        <div style={styles.statLabel}>Outstanding Balance</div>
+        <div style={{ ...styles.statValue, color: "#92400e" }}>
+          {formatCurrency(balance)}
+        </div>
+      </div>
+      <div style={styles.statCard}>
+        <div style={styles.statLabel}>Paid Invoices</div>
+        <div style={{ ...styles.statValue, color: "#166534" }}>
+          {paidCount}
+        </div>
+      </div>
+    </div>
+  );
+}
       case "customers": {
         const totalBalance = data.reduce((sum, c) => sum + (c.balance || 0), 0);
         const activeCount = data.filter((c) => c.is_active).length;
@@ -1254,65 +1254,73 @@ const QuickBooks = () => {
     // }
     switch (activeTab) {
       case "invoices":
-        if (data.length === 0) {
-          return <div style={styles.noData}>No invoices found</div>;
-        }
-        return (
-          <table style={styles.table}>
-            <thead>
-              <tr>
-                <th style={styles.th}>Invoice #</th>
-                <th style={styles.th}>Customer</th>
-                <th style={styles.th}>Date</th>
-                <th style={styles.th}>Due Date</th>
-                <th style={styles.th}>Amount</th>
-                <th style={styles.th}>Balance</th>
-                <th style={styles.th}>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((inv) => (
-                <tr
-                  key={inv.id}
-                  style={styles.clickableRow}
-                  onClick={() => fetchInvoiceDetails(inv.id)}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#f9fafb")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor = "")
-                  }
-                >
-                  <td
-                    style={{
-                      ...styles.td,
-                      fontWeight: "600",
-                      color: "#2d8a4e",
-                    }}
-                  >
-                    {inv.doc_number || inv.id}
-                  </td>
-                  <td style={styles.td}>{inv.customer_name || "-"}</td>
-                  <td style={styles.td}>{formatDate(inv.issue_date)}</td>
-                  <td style={styles.td}>{formatDate(inv.due_date)}</td>
-                  <td style={{ ...styles.td, fontWeight: "500" }}>
-                    {formatCurrency(inv.total_amount)}
-                  </td>
-                  <td style={{ ...styles.td, fontWeight: "500" }}>
-                    {formatCurrency(inv.balance_due)}
-                  </td>
-                  <td style={styles.td}>
-                    <span
-                      style={getStatusBadgeStyle(inv.payment_status, "payment")}
-                    >
-                      {inv.payment_status || "Unknown"}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        );
+  if (data.length === 0) {
+    return <div style={styles.noData}>No invoices found</div>;
+  }
+  return (
+    <table style={styles.table}>
+      <thead>
+        <tr>
+          <th style={styles.th}>Invoice #</th>
+          <th style={styles.th}>Customer</th>
+          <th style={styles.th}>Date</th>
+          <th style={styles.th}>Due Date</th>
+          <th style={styles.th}>Subtotal</th> {/* Add this */}
+          <th style={styles.th}>Discount</th> {/* Add this */}
+          <th style={styles.th}>Total Amount</th> {/* This is after discount total */}
+          <th style={styles.th}>Balance</th>
+          <th style={styles.th}>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((inv) => (
+          <tr
+            key={inv.id}
+            style={styles.clickableRow}
+            onClick={() => fetchInvoiceDetails(inv.id)}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#f9fafb")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "")
+            }
+          >
+            <td style={{ ...styles.td, fontWeight: "600", color: "#2d8a4e" }}>
+              {inv.doc_number || inv.id}
+            </td>
+            <td style={styles.td}>{inv.customer_name || "-"}</td>
+            <td style={styles.td}>{formatDate(inv.issue_date)}</td>
+            <td style={styles.td}>{formatDate(inv.due_date)}</td>
+            <td style={{ ...styles.td, fontWeight: "500" }}>
+              {formatCurrency(inv.subtotal)}
+            </td>
+            <td style={{ 
+              ...styles.td, 
+              fontWeight: "500",
+              color: inv.discount > 0 ? "#991b1b" : "#6b7280"
+            }}>
+              {formatCurrency(inv.discount)}
+            </td>
+            <td style={{ 
+              ...styles.td, 
+              fontWeight: "600",
+              color: "#166534"
+            }}>
+              {formatCurrency(inv.total_amount)}
+            </td>
+            <td style={{ ...styles.td, fontWeight: "500" }}>
+              {formatCurrency(inv.balance_due)}
+            </td>
+            <td style={styles.td}>
+              <span style={getStatusBadgeStyle(inv.payment_status, "payment")}>
+                {inv.payment_status || "Unknown"}
+              </span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
       case "customers":
         if (data.length === 0) {
           return <div style={styles.noData}>No customers found</div>;
@@ -1369,6 +1377,7 @@ const QuickBooks = () => {
           <table style={styles.table}>
             <thead>
               <tr>
+                <th style={styles.th}>Vendor ID</th>
                 <th style={styles.th}>Name</th>
                 <th style={styles.th}>Company</th>
                 <th style={styles.th}>Email</th>
@@ -1390,6 +1399,16 @@ const QuickBooks = () => {
                     (e.currentTarget.style.backgroundColor = "")
                   }
                 >
+                  <td
+                    style={{
+                      ...styles.td,
+                      fontFamily: "monospace",
+                      fontSize: "12px",
+                      color: "#6b7280",
+                    }}
+                  >
+                    {v.id}
+                  </td>
                   <td style={{ ...styles.td, fontWeight: "600" }}>
                     {v.display_name || "-"}
                   </td>
@@ -2251,8 +2270,8 @@ const QuickBooks = () => {
                     color:
                       purchaseOrderMode === "vendors" ? "white" : "#374151",
                     border: "none",
-                     whiteSpace: "nowrap",
-                      minWidth: "140px",
+                    whiteSpace: "nowrap",
+                    minWidth: "140px",
                     borderRadius: "4px",
                     cursor: "pointer",
                     fontSize: "14px",
@@ -2272,8 +2291,8 @@ const QuickBooks = () => {
                     color:
                       purchaseOrderMode === "customers" ? "white" : "#374151",
                     border: "none",
-                     whiteSpace: "nowrap",
-                      minWidth: "140px",
+                    whiteSpace: "nowrap",
+                    minWidth: "140px",
                     borderRadius: "4px",
                     cursor: "pointer",
                     fontSize: "14px",
@@ -2293,7 +2312,7 @@ const QuickBooks = () => {
                   gap: "8px",
                   backgroundColor: "#e5e7eb",
                   padding: "4px",
-                      minWidth: "140px",
+                  minWidth: "140px",
 
                   borderRadius: "6px",
                 }}
@@ -2306,7 +2325,7 @@ const QuickBooks = () => {
                     color: billMode === "vendors" ? "white" : "#374151",
                     border: "none",
                     whiteSpace: "nowrap",
-                      minWidth: "140px",
+                    minWidth: "140px",
                     borderRadius: "4px",
                     cursor: "pointer",
                     fontSize: "14px",
@@ -2323,8 +2342,8 @@ const QuickBooks = () => {
                       billMode === "customers" ? "#3b82f6" : "transparent",
                     color: billMode === "customers" ? "white" : "#374151",
                     border: "none",
-                     whiteSpace: "nowrap",
-                      minWidth: "140px",
+                    whiteSpace: "nowrap",
+                    minWidth: "140px",
                     borderRadius: "4px",
                     cursor: "pointer",
                     fontSize: "14px",
@@ -2336,40 +2355,47 @@ const QuickBooks = () => {
                 </button>
               </div>
             )}
-            <div style={{ display: "flex", gap: "12px", alignItems: "center", marginLeft: "auto" }}>
-            <input
-              type="text"
-              placeholder={`Search ${activeTab.replace("-", " ")}...`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={styles.searchInput}
-            />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              style={styles.filterSelect}
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                alignItems: "center",
+                marginLeft: "auto",
+              }}
             >
-              {getFilterOptions().map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-
-            <div style={styles.refreshContainer}>
-              {activeTab === "inventory" && (
-                <button style={styles.syncBtn} onClick={handleSyncProducts}>
-                  Sync Products
-                </button>
-              )}
-              <button
-                style={styles.refreshBtn}
-                onClick={() => fetchDataForTab(activeTab)}
-                disabled={loading}
+              <input
+                type="text"
+                placeholder={`Search ${activeTab.replace("-", " ")}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={styles.searchInput}
+              />
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                style={styles.filterSelect}
               >
-                ↻ Refresh
-              </button>
-            </div>
+                {getFilterOptions().map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+
+              <div style={styles.refreshContainer}>
+                {activeTab === "inventory" && (
+                  <button style={styles.syncBtn} onClick={handleSyncProducts}>
+                    Sync Products
+                  </button>
+                )}
+                <button
+                  style={styles.refreshBtn}
+                  onClick={() => fetchDataForTab(activeTab)}
+                  disabled={loading}
+                >
+                  ↻ Refresh
+                </button>
+              </div>
             </div>
           </div>
           <div
@@ -2381,7 +2407,6 @@ const QuickBooks = () => {
           >
             {renderTable()}
           </div>
-
         </>
       ) : (
         <div style={styles.noData}>
