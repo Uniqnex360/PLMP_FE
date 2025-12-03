@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Swal from "sweetalert2";
 import axiosInstance from "../../../utils/axiosConfig.js";
-
 const styles = {
   container: {
     backgroundColor: "white",
@@ -10,7 +9,7 @@ const styles = {
     borderRadius: "12px",
     fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
   },
-   checkingStatus: {
+  checkingStatus: {
     backgroundColor: "#fef3c7",
     color: "#92400e",
   },
@@ -93,43 +92,57 @@ const styles = {
   searchContainer: {
     display: "flex",
     gap: "12px",
-    marginBottom: "20px",
+    marginBottom: "16px",
     flexWrap: "wrap",
     alignItems: "center",
+    justifyContent: "space-between",
   },
-  searchInput: {
-    padding: "10px 16px",
-    borderRadius: "8px",
-    border: "1px solid #d1d5db",
-    width: "280px",
-    fontSize: "14px",
-    outline: "none",
+  refreshContainer: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
   },
-  filterSelect: {
-    padding: "10px 32px 10px 12px",
-    borderRadius: "8px",
-    border: "1px solid #d1d5db",
-    fontSize: "14px",
-    cursor: "pointer",
-    appearance: "none",
-    backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-    backgroundPosition: "right 8px center",
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "16px",
-    backgroundColor: "white",
-  },
+searchInput: {
+  padding: "10px 16px",
+  borderRadius: "8px",
+  border: "1px solid #d1d5db",
+  width: "280px",
+  marginTop:'11px',
+  fontSize: "14px",
+  outline: "none",
+  height: "40px", 
+  boxSizing: "border-box", 
+},
+filterSelect: {
+  padding: "10px 32px 10px 12px",
+  borderRadius: "8px",
+  border: "1px solid #d1d5db",
+  fontSize: "14px",
+  cursor: "pointer",
+  appearance: "none",
+  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+  backgroundPosition: "right 8px center",
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "16px",
+  backgroundColor: "white",
+  height: "40px", 
+  boxSizing: "border-box", 
+},
   refreshBtn: {
-    padding: "10px 20px",
+    padding: "10px 12px",
     backgroundColor: "#2d8a4e",
     color: "white",
     border: "none",
     borderRadius: "8px",
     cursor: "pointer",
-    fontSize: "14px",
+    fontSize: "13px",
     fontWeight: "500",
     display: "flex",
     alignItems: "center",
-    gap: "8px",
+    gap: "6px",
+    minWidth: "100px",
+    justifyContent: "center",
+    height: "38px",
   },
   syncBtn: {
     padding: "10px 20px",
@@ -140,6 +153,8 @@ const styles = {
     cursor: "pointer",
     fontSize: "14px",
     fontWeight: "500",
+    height: "38px",
+    boxSizing: "border-box", 
   },
   exportBtn: {
     padding: "10px 20px",
@@ -343,7 +358,6 @@ const styles = {
     color: "#1a1a2e",
   },
 };
-
 const spinnerStyle = document.createElement("style");
 spinnerStyle.textContent = `
   @keyframes spin {
@@ -352,7 +366,6 @@ spinnerStyle.textContent = `
   }
 `;
 document.head.appendChild(spinnerStyle);
-
 const swalButtonStyle = document.createElement("style");
 swalButtonStyle.textContent = `
   .swal2-confirm, .swal2-cancel {
@@ -370,35 +383,31 @@ swalButtonStyle.textContent = `
     word-wrap: normal !important;
     flex: 0 0 auto !important;
   }
-  
   .swal2-confirm {
     background-color: #991b1b !important;
     color: white !important;
   }
-  
   .swal2-cancel {
     background-color: #6b7280 !important;
     color: white !important;
   }
-  
   .swal2-actions {
     gap: 10px !important;
     justify-content: center !important;
   }
 `;
 document.head.appendChild(swalButtonStyle);
-
 const QuickBooks = () => {
   const [isConnected, setIsConnected] = useState(false);
+  const [billMode, setBillMode] = useState("vendors");
+  const [purchaseOrderMode, setPurchaseOrderMode] = useState("vendors");
   const [realmId, setRealmId] = useState(null);
   const [companyInfo, setCompanyInfo] = useState(null);
-
   const [activeTab, setActiveTab] = useState("invoices");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-
   const [invoices, setInvoices] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [vendors, setVendors] = useState([]);
@@ -409,23 +418,19 @@ const QuickBooks = () => {
   const [accounts, setAccounts] = useState([]);
   const [checkingConnection, setCheckingConnection] = useState(true);
   const [connectionError, setConnectionError] = useState(null);
-
   const [invoiceSummary, setInvoiceSummary] = useState({});
   const [inventorySummary, setInventorySummary] = useState({});
   const [accountsSummary, setAccountsSummary] = useState({});
-
   const [selectedItem, setSelectedItem] = useState(null);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [detailData, setDetailData] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
-
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
     }).format(amount || 0);
   };
-
   const formatDate = (dateString) => {
     if (!dateString) return "-";
     try {
@@ -438,7 +443,6 @@ const QuickBooks = () => {
       return dateString;
     }
   };
-
   const formatAddress = (address) => {
     if (!address) return "-";
     const parts = [
@@ -450,13 +454,11 @@ const QuickBooks = () => {
     ].filter(Boolean);
     return parts.join(", ") || "-";
   };
-
   const checkConnectionStatus = useCallback(async () => {
     try {
       const response = await axiosInstance.get(
         `${process.env.REACT_APP_IP}/quickbooks/status/`
       );
-
       if (response.data.estatus && response.data.data.is_connected) {
         const connection = response.data.data.connections[0];
         setIsConnected(true);
@@ -470,24 +472,21 @@ const QuickBooks = () => {
     } catch (err) {
       console.error("Error checking connection status:", err);
       setIsConnected(false);
-      setConnectionError(err.message||"Failed to check connection status")
-       Swal.fire({
-      title: "Connection Error",
-      text: "Unable to check QuickBooks connection status",
-      icon: "error",
-    });
-    }
-    finally{
-      setCheckingConnection(false)
+      setConnectionError(err.message || "Failed to check connection status");
+      Swal.fire({
+        title: "Connection Error",
+        text: "Unable to check QuickBooks connection status",
+        icon: "error",
+      });
+    } finally {
+      setCheckingConnection(false);
     }
   }, []);
-
   const handleConnect = async () => {
     try {
       const response = await axiosInstance.get(
         `${process.env.REACT_APP_IP}/quickbooks/connect/`
       );
-
       if (response.data.estatus && response.data.data.auth_url) {
         window.location.href = response.data.data.auth_url;
       } else {
@@ -506,7 +505,6 @@ const QuickBooks = () => {
       });
     }
   };
-
   const handleDisconnect = async () => {
     const result = await Swal.fire({
       title: "Disconnect QuickBooks?",
@@ -517,27 +515,27 @@ const QuickBooks = () => {
       cancelButtonColor: "#6b7280",
       confirmButtonText: "Yes, disconnect",
       customClass: {
-        confirmButton: 'swal2-confirm-custom',
-        cancelButton: 'swal2-cancel-custom'
+        confirmButton: "swal2-confirm-custom",
+        cancelButton: "swal2-cancel-custom",
       },
-      buttonsStyling: true
-
-      
+      buttonsStyling: true,
     });
-
     if (result.isConfirmed) {
       try {
         const response = await axiosInstance.post(
           `${process.env.REACT_APP_IP}/quickbooks/disconnect/`,
           { realm_id: realmId }
         );
-
         if (response.data.estatus) {
           setIsConnected(false);
           setRealmId(null);
           setCompanyInfo(null);
           clearAllData();
-          Swal.fire("Disconnected", "QuickBooks has been disconnected.", "success");
+          Swal.fire(
+            "Disconnected",
+            "QuickBooks has been disconnected.",
+            "success"
+          );
         }
       } catch (err) {
         console.error("Error disconnecting:", err);
@@ -545,7 +543,6 @@ const QuickBooks = () => {
       }
     }
   };
-
   const clearAllData = () => {
     setInvoices([]);
     setCustomers([]);
@@ -556,23 +553,22 @@ const QuickBooks = () => {
     setInventory([]);
     setAccounts([]);
   };
-
   const fetchInvoices = async () => {
     if (!realmId) return;
     setLoading(true);
     setError(null);
-
     try {
       const response = await axiosInstance.get(
         `${process.env.REACT_APP_IP}/quickbooks/invoices/`,
         { params: { realm_id: realmId } }
       );
-
       if (response.data.estatus && response.data.data.success) {
         setInvoices(response.data.data.invoices || []);
         setInvoiceSummary(response.data.data.summary || {});
       } else {
-        throw new Error(response.data.data?.error || "Failed to fetch invoices");
+        throw new Error(
+          response.data.data?.error || "Failed to fetch invoices"
+        );
       }
     } catch (err) {
       console.error("Error fetching invoices:", err);
@@ -581,22 +577,21 @@ const QuickBooks = () => {
       setLoading(false);
     }
   };
-
   const fetchCustomers = async () => {
     if (!realmId) return;
     setLoading(true);
     setError(null);
-
     try {
       const response = await axiosInstance.get(
         `${process.env.REACT_APP_IP}/quickbooks/customers/`,
         { params: { realm_id: realmId } }
       );
-
       if (response.data.estatus && response.data.data.success) {
         setCustomers(response.data.data.customers || []);
       } else {
-        throw new Error(response.data.data?.error || "Failed to fetch customers");
+        throw new Error(
+          response.data.data?.error || "Failed to fetch customers"
+        );
       }
     } catch (err) {
       console.error("Error fetching customers:", err);
@@ -605,18 +600,15 @@ const QuickBooks = () => {
       setLoading(false);
     }
   };
-
   const fetchVendors = async () => {
     if (!realmId) return;
     setLoading(true);
     setError(null);
-
     try {
       const response = await axiosInstance.get(
         `${process.env.REACT_APP_IP}/quickbooks/vendors/`,
         { params: { realm_id: realmId } }
       );
-
       if (response.data.estatus && response.data.data.success) {
         setVendors(response.data.data.vendors || []);
       } else {
@@ -629,22 +621,29 @@ const QuickBooks = () => {
       setLoading(false);
     }
   };
-
-  const fetchPurchaseOrders = async () => {
+  const fetchPurchaseOrders = async (mode = purchaseOrderMode) => {
     if (!realmId) return;
     setLoading(true);
     setError(null);
-
     try {
+      const params = {
+        realm_id: realmId,
+        mode: mode,
+      };
       const response = await axiosInstance.get(
         `${process.env.REACT_APP_IP}/quickbooks/purchase-orders/`,
-        { params: { realm_id: realmId } }
+        { params }
       );
-
       if (response.data.estatus && response.data.data.success) {
-        setPurchaseOrders(response.data.data.purchase_orders || []);
+        const poData =
+          mode === "customers"
+            ? response.data.data.customer_purchase_orders || []
+            : response.data.data.vendor_purchase_orders || [];
+        setPurchaseOrders(poData);
       } else {
-        throw new Error(response.data.data?.error || "Failed to fetch purchase orders");
+        throw new Error(
+          response.data.data?.error || "Failed to fetch purchase orders"
+        );
       }
     } catch (err) {
       console.error("Error fetching purchase orders:", err);
@@ -653,20 +652,25 @@ const QuickBooks = () => {
       setLoading(false);
     }
   };
-
-  const fetchBills = async () => {
+  const fetchBills = async (mode = billMode) => {
     if (!realmId) return;
     setLoading(true);
     setError(null);
-
     try {
+      const params = {
+        realm_id: realmId,
+        mode: mode,
+      };
       const response = await axiosInstance.get(
         `${process.env.REACT_APP_IP}/quickbooks/bills/`,
-        { params: { realm_id: realmId } }
+        { params }
       );
-
       if (response.data.estatus && response.data.data.success) {
-        setBills(response.data.data.bills || []);
+        const billsData =
+          mode === "customers"
+            ? response.data.data.customer_bills || []
+            : response.data.data.vendor_bills || [];
+        setBills(billsData);
       } else {
         throw new Error(response.data.data?.error || "Failed to fetch bills");
       }
@@ -677,22 +681,21 @@ const QuickBooks = () => {
       setLoading(false);
     }
   };
-
   const fetchPayments = async () => {
     if (!realmId) return;
     setLoading(true);
     setError(null);
-
     try {
       const response = await axiosInstance.get(
         `${process.env.REACT_APP_IP}/quickbooks/payments/`,
         { params: { realm_id: realmId } }
       );
-
       if (response.data.estatus && response.data.data.success) {
         setPayments(response.data.data.payments || []);
       } else {
-        throw new Error(response.data.data?.error || "Failed to fetch payments");
+        throw new Error(
+          response.data.data?.error || "Failed to fetch payments"
+        );
       }
     } catch (err) {
       console.error("Error fetching payments:", err);
@@ -701,23 +704,22 @@ const QuickBooks = () => {
       setLoading(false);
     }
   };
-
   const fetchInventory = async () => {
     if (!realmId) return;
     setLoading(true);
     setError(null);
-
     try {
       const response = await axiosInstance.get(
         `${process.env.REACT_APP_IP}/quickbooks/items/`,
         { params: { realm_id: realmId } }
       );
-
       if (response.data.estatus && response.data.data.success) {
         setInventory(response.data.data.inventory_items || []);
         setInventorySummary(response.data.data.summary || {});
       } else {
-        throw new Error(response.data.data?.error || "Failed to fetch inventory");
+        throw new Error(
+          response.data.data?.error || "Failed to fetch inventory"
+        );
       }
     } catch (err) {
       console.error("Error fetching inventory:", err);
@@ -726,23 +728,22 @@ const QuickBooks = () => {
       setLoading(false);
     }
   };
-
   const fetchAccounts = async () => {
     if (!realmId) return;
     setLoading(true);
     setError(null);
-
     try {
       const response = await axiosInstance.get(
         `${process.env.REACT_APP_IP}/quickbooks/chart-of-accounts/`,
         { params: { realm_id: realmId } }
       );
-
       if (response.data.estatus && response.data.data.success) {
         setAccounts(response.data.data.accounts || []);
         setAccountsSummary(response.data.data.summary || {});
       } else {
-        throw new Error(response.data.data?.error || "Failed to fetch accounts");
+        throw new Error(
+          response.data.data?.error || "Failed to fetch accounts"
+        );
       }
     } catch (err) {
       console.error("Error fetching accounts:", err);
@@ -751,22 +752,21 @@ const QuickBooks = () => {
       setLoading(false);
     }
   };
-
   const fetchCustomerDetails = async (customerId) => {
     if (!realmId || !customerId) return;
     setDetailLoading(true);
-
     try {
       const response = await axiosInstance.get(
         `${process.env.REACT_APP_IP}/quickbooks/customers/details/`,
         { params: { realm_id: realmId, customer_id: customerId } }
       );
-
       if (response.data.estatus && response.data.data.success) {
         setDetailData(response.data.data);
         setDetailModalOpen(true);
       } else {
-        throw new Error(response.data.data?.error || "Failed to fetch customer details");
+        throw new Error(
+          response.data.data?.error || "Failed to fetch customer details"
+        );
       }
     } catch (err) {
       console.error("Error fetching customer details:", err);
@@ -775,22 +775,21 @@ const QuickBooks = () => {
       setDetailLoading(false);
     }
   };
-
   const fetchVendorDetails = async (vendorId) => {
     if (!realmId || !vendorId) return;
     setDetailLoading(true);
-
     try {
       const response = await axiosInstance.get(
         `${process.env.REACT_APP_IP}/quickbooks/vendors/details/`,
         { params: { realm_id: realmId, vendor_id: vendorId } }
       );
-
       if (response.data.estatus && response.data.data.success) {
         setDetailData(response.data.data);
         setDetailModalOpen(true);
       } else {
-        throw new Error(response.data.data?.error || "Failed to fetch vendor details");
+        throw new Error(
+          response.data.data?.error || "Failed to fetch vendor details"
+        );
       }
     } catch (err) {
       console.error("Error fetching vendor details:", err);
@@ -799,10 +798,8 @@ const QuickBooks = () => {
       setDetailLoading(false);
     }
   };
-
   const handleSyncProducts = async () => {
     if (!realmId) return;
-
     const result = await Swal.fire({
       title: "Sync Products to QuickBooks?",
       text: "This will sync all active products from your catalog to QuickBooks.",
@@ -811,7 +808,6 @@ const QuickBooks = () => {
       confirmButtonColor: "#2d8a4e",
       confirmButtonText: "Yes, sync",
     });
-
     if (result.isConfirmed) {
       try {
         Swal.fire({
@@ -820,14 +816,11 @@ const QuickBooks = () => {
           allowOutsideClick: false,
           didOpen: () => Swal.showLoading(),
         });
-
         const response = await axiosInstance.post(
           `${process.env.REACT_APP_IP}/quickbooks/sync-products/`,
           { realm_id: realmId }
         );
-
         Swal.close();
-
         if (response.data.estatus && response.data.data.success) {
           const { synced, failed } = response.data.data;
           Swal.fire({
@@ -836,7 +829,6 @@ const QuickBooks = () => {
                    <p><strong>Failed:</strong> ${failed} products</p>`,
             icon: failed > 0 ? "warning" : "success",
           });
-
           fetchInventory();
         } else {
           throw new Error(response.data.data?.error || "Sync failed");
@@ -847,7 +839,6 @@ const QuickBooks = () => {
       }
     }
   };
-
   const fetchDataForTab = useCallback(
     (tab) => {
       switch (tab) {
@@ -861,10 +852,10 @@ const QuickBooks = () => {
           fetchVendors();
           break;
         case "purchase-orders":
-          fetchPurchaseOrders();
+          fetchPurchaseOrders(purchaseOrderMode);
           break;
         case "bills":
-          fetchBills();
+          fetchBills(billMode);
           break;
         case "payments":
           fetchPayments();
@@ -879,23 +870,19 @@ const QuickBooks = () => {
           break;
       }
     },
-    [realmId]
+    [realmId, billMode, purchaseOrderMode]
   );
-
   useEffect(() => {
     checkConnectionStatus();
   }, [checkConnectionStatus]);
-
   useEffect(() => {
     if (isConnected && realmId) {
       fetchDataForTab(activeTab);
     }
   }, [isConnected, realmId, activeTab, fetchDataForTab]);
-
   const getFilteredData = () => {
     let data = [];
     let searchFields = [];
-
     switch (activeTab) {
       case "invoices":
         data = invoices;
@@ -911,7 +898,10 @@ const QuickBooks = () => {
         break;
       case "purchase-orders":
         data = purchaseOrders;
-        searchFields = ["doc_number", "vendor_name"];
+        searchFields =
+          purchaseOrderMode === "customers"
+            ? ["doc_number", "customer_name"]
+            : ["doc_number", "vendor_name"];
         break;
       case "bills":
         data = bills;
@@ -919,7 +909,10 @@ const QuickBooks = () => {
         break;
       case "payments":
         data = payments;
-        searchFields = ["id", "customer_name"];
+        searchFields =
+          billMode === "customers"
+            ? ["doc_number", "customer_name"]
+            : ["doc_number", "vendor_name"];
         break;
       case "inventory":
         data = inventory;
@@ -932,7 +925,6 @@ const QuickBooks = () => {
       default:
         return [];
     }
-
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       data = data.filter((item) =>
@@ -941,7 +933,6 @@ const QuickBooks = () => {
         )
       );
     }
-
     if (statusFilter !== "all") {
       switch (activeTab) {
         case "invoices":
@@ -976,10 +967,8 @@ const QuickBooks = () => {
           break;
       }
     }
-
     return data;
   };
-
   const getFilterOptions = () => {
     switch (activeTab) {
       case "invoices":
@@ -1013,47 +1002,57 @@ const QuickBooks = () => {
         return [{ value: "all", label: "All" }];
     }
   };
-
- const getStatusBadgeStyle = (status, type) => {
+  const handleBillModeToggle = (mode) => {
+    setBillMode(mode);
+    fetchBills(mode);
+  };
+  const getStatusBadgeStyle = (status, type) => {
     const baseStyle = styles.statusBadge;
-
     if (type === "payment") {
       const statusLower = (status || "").toLowerCase();
       if (statusLower === "paid") return { ...baseStyle, ...styles.paidStatus };
-      if (statusLower === "unpaid") return { ...baseStyle, ...styles.unpaidStatus };
-      if (statusLower === "partial") return { ...baseStyle, ...styles.partialStatus };
+      if (statusLower === "unpaid")
+        return { ...baseStyle, ...styles.unpaidStatus };
+      if (statusLower === "partial")
+        return { ...baseStyle, ...styles.partialStatus };
     }
-
     if (type === "po") {
       const statusLower = (status || "").toLowerCase();
-      if (statusLower === "closed") return { ...baseStyle, ...styles.closedStatus };
+      if (statusLower === "closed")
+        return { ...baseStyle, ...styles.closedStatus };
       if (statusLower === "open") return { ...baseStyle, ...styles.openStatus };
     }
-
     if (type === "active") {
-      const isActive = typeof status === 'boolean' ? status : (status === 'true' || status === true);
+      const isActive =
+        typeof status === "boolean"
+          ? status
+          : status === "true" || status === true;
       return isActive
         ? { ...baseStyle, ...styles.activeStatus }
         : { ...baseStyle, ...styles.inactiveStatus };
     }
-
     if (type === "stock") {
       return status === "low"
         ? { ...baseStyle, ...styles.lowStockStatus }
         : { ...baseStyle, ...styles.inStockStatus };
     }
-
     return baseStyle;
-};
+  };
   const renderStats = () => {
     const data = getFilteredData();
-
     switch (activeTab) {
       case "invoices": {
-        const total = data.reduce((sum, inv) => sum + (inv.total_amount || 0), 0);
-        const balance = data.reduce((sum, inv) => sum + (inv.balance_due || 0), 0);
-        const paidCount = data.filter((inv) => inv.payment_status === "Paid").length;
-
+        const total = data.reduce(
+          (sum, inv) => sum + (inv.total_amount || 0),
+          0
+        );
+        const balance = data.reduce(
+          (sum, inv) => sum + (inv.balance_due || 0),
+          0
+        );
+        const paidCount = data.filter(
+          (inv) => inv.payment_status === "Paid"
+        ).length;
         return (
           <div style={styles.statsContainer}>
             <div style={styles.statCard}>
@@ -1074,16 +1073,16 @@ const QuickBooks = () => {
             </div>
             <div style={styles.statCard}>
               <div style={styles.statLabel}>Paid Invoices</div>
-              <div style={{ ...styles.statValue, color: "#166534" }}>{paidCount}</div>
+              <div style={{ ...styles.statValue, color: "#166534" }}>
+                {paidCount}
+              </div>
             </div>
           </div>
         );
       }
-
       case "customers": {
         const totalBalance = data.reduce((sum, c) => sum + (c.balance || 0), 0);
         const activeCount = data.filter((c) => c.is_active).length;
-
         return (
           <div style={styles.statsContainer}>
             <div style={styles.statCard}>
@@ -1092,7 +1091,9 @@ const QuickBooks = () => {
             </div>
             <div style={styles.statCard}>
               <div style={styles.statLabel}>Active Customers</div>
-              <div style={{ ...styles.statValue, color: "#166534" }}>{activeCount}</div>
+              <div style={{ ...styles.statValue, color: "#166534" }}>
+                {activeCount}
+              </div>
             </div>
             <div style={styles.statCard}>
               <div style={styles.statLabel}>Total Receivable</div>
@@ -1103,11 +1104,9 @@ const QuickBooks = () => {
           </div>
         );
       }
-
       case "vendors": {
         const totalBalance = data.reduce((sum, v) => sum + (v.balance || 0), 0);
         const activeCount = data.filter((v) => v.is_active).length;
-
         return (
           <div style={styles.statsContainer}>
             <div style={styles.statCard}>
@@ -1116,7 +1115,9 @@ const QuickBooks = () => {
             </div>
             <div style={styles.statCard}>
               <div style={styles.statLabel}>Active Vendors</div>
-              <div style={{ ...styles.statValue, color: "#166534" }}>{activeCount}</div>
+              <div style={{ ...styles.statValue, color: "#166534" }}>
+                {activeCount}
+              </div>
             </div>
             <div style={styles.statCard}>
               <div style={styles.statLabel}>Total Payable</div>
@@ -1127,7 +1128,6 @@ const QuickBooks = () => {
           </div>
         );
       }
-
       case "inventory": {
         const lowStock = data.filter(
           (i) => (i.qty_on_hand || 0) <= (i.reorder_point || 0)
@@ -1137,7 +1137,6 @@ const QuickBooks = () => {
           0
         );
         const totalQty = data.reduce((sum, i) => sum + (i.qty_on_hand || 0), 0);
-
         return (
           <div style={styles.statsContainer}>
             <div style={styles.statCard}>
@@ -1150,7 +1149,9 @@ const QuickBooks = () => {
             </div>
             <div style={styles.statCard}>
               <div style={styles.statLabel}>Low Stock Items</div>
-              <div style={{ ...styles.statValue, color: "#991b1b" }}>{lowStock}</div>
+              <div style={{ ...styles.statValue, color: "#991b1b" }}>
+                {lowStock}
+              </div>
             </div>
             <div style={styles.statCard}>
               <div style={styles.statLabel}>Inventory Value</div>
@@ -1161,7 +1162,6 @@ const QuickBooks = () => {
           </div>
         );
       }
-
       case "accounts": {
         return (
           <div style={styles.statsContainer}>
@@ -1190,12 +1190,10 @@ const QuickBooks = () => {
           </div>
         );
       }
-
       default:
         return null;
     }
   };
-
   const renderTable = () => {
     if (loading) {
       return (
@@ -1205,7 +1203,6 @@ const QuickBooks = () => {
         </div>
       );
     }
-
     if (error) {
       return (
         <div style={styles.errorContainer}>
@@ -1219,17 +1216,16 @@ const QuickBooks = () => {
         </div>
       );
     }
-
+    const handlePurchaseOrderModeToggle = (mode) => {
+      setPurchaseOrderMode(mode);
+      fetchPurchaseOrders(mode);
+    };
     const data = getFilteredData();
-
     if (data.length === 0) {
       return (
-        <div style={styles.noData}>
-          No {activeTab.replace("-", " ")} found.
-        </div>
+        <div style={styles.noData}>No {activeTab.replace("-", " ")} found.</div>
       );
     }
-
     switch (activeTab) {
       case "invoices":
         return (
@@ -1248,7 +1244,13 @@ const QuickBooks = () => {
             <tbody>
               {data.map((inv) => (
                 <tr key={inv.id}>
-                  <td style={{ ...styles.td, fontWeight: "600", color: "#2d8a4e" }}>
+                  <td
+                    style={{
+                      ...styles.td,
+                      fontWeight: "600",
+                      color: "#2d8a4e",
+                    }}
+                  >
                     {inv.doc_number || inv.id}
                   </td>
                   <td style={styles.td}>{inv.customer_name || "-"}</td>
@@ -1261,7 +1263,9 @@ const QuickBooks = () => {
                     {formatCurrency(inv.balance_due)}
                   </td>
                   <td style={styles.td}>
-                    <span style={getStatusBadgeStyle(inv.payment_status, "payment")}>
+                    <span
+                      style={getStatusBadgeStyle(inv.payment_status, "payment")}
+                    >
                       {inv.payment_status || "Unknown"}
                     </span>
                   </td>
@@ -1270,7 +1274,6 @@ const QuickBooks = () => {
             </tbody>
           </table>
         );
-
       case "customers":
         return (
           <table style={styles.table}>
@@ -1290,8 +1293,12 @@ const QuickBooks = () => {
                   key={cust.id}
                   style={styles.clickableRow}
                   onClick={() => fetchCustomerDetails(cust.id)}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f9fafb")}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "")}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#f9fafb")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "")
+                  }
                 >
                   <td style={{ ...styles.td, fontWeight: "600" }}>
                     {cust.display_name || "-"}
@@ -1312,7 +1319,6 @@ const QuickBooks = () => {
             </tbody>
           </table>
         );
-
       case "vendors":
         return (
           <table style={styles.table}>
@@ -1332,8 +1338,12 @@ const QuickBooks = () => {
                   key={v.id}
                   style={styles.clickableRow}
                   onClick={() => fetchVendorDetails(v.id)}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f9fafb")}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "")}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#f9fafb")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "")
+                  }
                 >
                   <td style={{ ...styles.td, fontWeight: "600" }}>
                     {v.display_name || "-"}
@@ -1354,83 +1364,227 @@ const QuickBooks = () => {
             </tbody>
           </table>
         );
-
       case "purchase-orders":
         return (
-          <table style={styles.table}>
-            <thead>
-              <tr>
-                <th style={styles.th}>PO #</th>
-                <th style={styles.th}>Vendor</th>
-                <th style={styles.th}>Date</th>
-                <th style={styles.th}>Expected Date</th>
-                <th style={styles.th}>Amount</th>
-                <th style={styles.th}>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((po) => (
-                <tr key={po.id}>
-                  <td style={{ ...styles.td, fontWeight: "600", color: "#2d8a4e" }}>
-                    {po.doc_number || po.id}
-                  </td>
-                  <td style={styles.td}>{po.vendor_name || "-"}</td>
-                  <td style={styles.td}>{formatDate(po.issue_date)}</td>
-                  <td style={styles.td}>{formatDate(po.expected_date)}</td>
-                  <td style={{ ...styles.td, fontWeight: "500" }}>
-                    {formatCurrency(po.total_amount)}
-                  </td>
-                  <td style={styles.td}>
-                    <span style={getStatusBadgeStyle(po.status, "po")}>
-                      {po.status || "Open"}
-                    </span>
-                  </td>
+          <>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginBottom: "20px",
+                backgroundColor: "#f9fafb",
+                padding: "12px",
+                borderRadius: "8px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  gap: "8px",
+                  backgroundColor: "#e5e7eb",
+                  padding: "4px",
+                  borderRadius: "6px",
+                }}
+              >
+                <button
+                  style={{
+                    padding: "8px 16px",
+                    backgroundColor:
+                      purchaseOrderMode === "vendors"
+                        ? "#2d8a4e"
+                        : "transparent",
+                    color:
+                      purchaseOrderMode === "vendors" ? "white" : "#374151",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    transition: "all 0.2s",
+                  }}
+                  onClick={() => handlePurchaseOrderModeToggle("vendors")}
+                >
+                  Vendor POs
+                </button>
+                <button
+                  style={{
+                    padding: "8px 16px",
+                    backgroundColor:
+                      purchaseOrderMode === "customers"
+                        ? "#3b82f6"
+                        : "transparent",
+                    color:
+                      purchaseOrderMode === "customers" ? "white" : "#374151",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    transition: "all 0.2s",
+                  }}
+                  onClick={() => handlePurchaseOrderModeToggle("customers")}
+                >
+                  Customer POs
+                </button>
+              </div>
+            </div>
+            <table style={styles.table}>
+              <thead>
+                <tr>
+                  <th style={styles.th}>PO #</th>
+                  <th style={styles.th}>
+                    {purchaseOrderMode === "vendors" ? "Vendor" : "Customer"}
+                  </th>
+                  <th style={styles.th}>Date</th>
+                  <th style={styles.th}>
+                    {purchaseOrderMode === "vendors"
+                      ? "Expected Date"
+                      : "Delivery Date"}
+                  </th>
+                  <th style={styles.th}>Amount</th>
+                  <th style={styles.th}>Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {data.map((po) => (
+                  <tr key={po.id}>
+                    <td
+                      style={{
+                        ...styles.td,
+                        fontWeight: "600",
+                        color: "#2d8a4e",
+                      }}
+                    >
+                      {po.doc_number || po.id}
+                    </td>
+                    <td style={styles.td}>
+                      {purchaseOrderMode === "vendors"
+                        ? po.vendor_name
+                        : po.customer_name || "-"}
+                    </td>
+                    <td style={styles.td}>{formatDate(po.issue_date)}</td>
+                    <td style={styles.td}>{formatDate(po.expected_date)}</td>
+                    <td style={{ ...styles.td, fontWeight: "500" }}>
+                      {formatCurrency(po.total_amount)}
+                    </td>
+                    <td style={styles.td}>
+                      <span style={getStatusBadgeStyle(po.status, "po")}>
+                        {po.status || "Open"}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
         );
-
       case "bills":
         return (
-          <table style={styles.table}>
-            <thead>
-              <tr>
-                <th style={styles.th}>Bill #</th>
-                <th style={styles.th}>Vendor</th>
-                <th style={styles.th}>Date</th>
-                <th style={styles.th}>Due Date</th>
-                <th style={styles.th}>Amount</th>
-                <th style={styles.th}>Balance</th>
-                <th style={styles.th}>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((bill) => (
-                <tr key={bill.id}>
-                  <td style={{ ...styles.td, fontWeight: "600" }}>
-                    {bill.doc_number || bill.id}
-                  </td>
-                  <td style={styles.td}>{bill.vendor_name || "-"}</td>
-                  <td style={styles.td}>{formatDate(bill.issue_date)}</td>
-                  <td style={styles.td}>{formatDate(bill.due_date)}</td>
-                  <td style={{ ...styles.td, fontWeight: "500" }}>
-                    {formatCurrency(bill.total_amount)}
-                  </td>
-                  <td style={{ ...styles.td, fontWeight: "500" }}>
-                    {formatCurrency(bill.balance_due)}
-                  </td>
-                  <td style={styles.td}>
-                    <span style={getStatusBadgeStyle(bill.payment_status, "payment")}>
-                      {bill.payment_status || "Unknown"}
-                    </span>
-                  </td>
+          <>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginBottom: "20px",
+                backgroundColor: "#f9fafb",
+                padding: "12px",
+                borderRadius: "8px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  gap: "8px",
+                  backgroundColor: "#e5e7eb",
+                  padding: "4px",
+                  borderRadius: "8px",
+                }}
+              >
+                <button
+                  style={{
+                    padding: "8px 16px",
+                    backgroundColor:
+                      billMode === "vendors" ? "#2d8a4e" : "transparent",
+                    color: billMode === "vendors" ? "white" : "#374151",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    transition: "all 0.2s",
+                  }}
+                  onClick={() => handleBillModeToggle("vendors")}
+                >
+                  Vendor Bills
+                </button>
+                <button
+                  style={{
+                    padding: "8px 16px",
+                    backgroundColor:
+                      billMode === "customers" ? "#3b82f6" : "transparent",
+                    color: billMode === "vendors" ? "white" : "#374151",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    transition: "all 0.2s",
+                  }}
+                  onClick={() => handleBillModeToggle("customers")}
+                >
+                  Customer Bills
+                </button>
+              </div>
+            </div>
+            <table style={styles.table}>
+              <thead>
+                <tr>
+                  <th style={styles.th}>Bill #</th>
+                  <th style={styles.th}>
+                    {billMode === "vendors" ? "Vendor" : "Customer"}
+                  </th>
+                  <th style={styles.th}>Date</th>
+                  <th style={styles.th}>Due Date</th>
+                  <th style={styles.th}>Amount</th>
+                  <th style={styles.th}>Balance</th>
+                  <th style={styles.th}>Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {data.map((bill) => (
+                  <tr key={bill.id}>
+                    <td style={{ ...styles.td, fontWeight: "600" }}>
+                      {bill.doc_number || bill.id}
+                    </td>
+                    <td style={styles.td}>
+                      {billMode === "vendors"
+                        ? bill.vendor_name
+                        : bill.customer_name || "-"}
+                    </td>
+                    <td style={styles.td}>{formatDate(bill.issue_date)}</td>
+                    <td style={styles.td}>{formatDate(bill.due_date)}</td>
+                    <td style={{ ...styles.td, fontWeight: "500" }}>
+                      {formatCurrency(bill.total_amount)}
+                    </td>
+                    <td style={{ ...styles.td, fontWeight: "500" }}>
+                      {formatCurrency(bill.balance_due)}
+                    </td>
+                    <td style={styles.td}>
+                      <span
+                        style={getStatusBadgeStyle(
+                          bill.payment_status,
+                          "payment"
+                        )}
+                      >
+                        {bill.payment_status || "Unknown"}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
         );
-
       case "payments":
         return (
           <table style={styles.table}>
@@ -1447,11 +1601,19 @@ const QuickBooks = () => {
             <tbody>
               {data.map((payment) => (
                 <tr key={payment.id}>
-                  <td style={{ ...styles.td, fontWeight: "600" }}>{payment.id}</td>
+                  <td style={{ ...styles.td, fontWeight: "600" }}>
+                    {payment.id}
+                  </td>
                   <td style={styles.td}>{payment.customer_name || "-"}</td>
                   <td style={styles.td}>{formatDate(payment.payment_date)}</td>
                   <td style={styles.td}>{payment.payment_method || "-"}</td>
-                  <td style={{ ...styles.td, fontWeight: "500", color: "#166534" }}>
+                  <td
+                    style={{
+                      ...styles.td,
+                      fontWeight: "500",
+                      color: "#166534",
+                    }}
+                  >
                     {formatCurrency(payment.amount)}
                   </td>
                   <td style={styles.td}>{payment.deposit_account || "-"}</td>
@@ -1460,7 +1622,6 @@ const QuickBooks = () => {
             </tbody>
           </table>
         );
-
       case "inventory":
         return (
           <table style={styles.table}>
@@ -1478,14 +1639,23 @@ const QuickBooks = () => {
             </thead>
             <tbody>
               {data.map((item) => {
-                const isLowStock = (item.qty_on_hand || 0) <= (item.reorder_point || 0);
+                const isLowStock =
+                  (item.qty_on_hand || 0) <= (item.reorder_point || 0);
                 return (
                   <tr
                     key={item.id}
                     style={isLowStock ? { backgroundColor: "#fef2f2" } : {}}
                   >
-                    <td style={{ ...styles.td, fontWeight: "600" }}>{item.name}</td>
-                    <td style={{ ...styles.td, fontFamily: "monospace", color: "#6b7280" }}>
+                    <td style={{ ...styles.td, fontWeight: "600" }}>
+                      {item.name}
+                    </td>
+                    <td
+                      style={{
+                        ...styles.td,
+                        fontFamily: "monospace",
+                        color: "#6b7280",
+                      }}
+                    >
                       {item.sku || "-"}
                     </td>
                     <td style={styles.td}>
@@ -1513,9 +1683,16 @@ const QuickBooks = () => {
                     <td style={{ ...styles.td, fontWeight: "500" }}>
                       {formatCurrency(item.unit_price)}
                     </td>
-                    <td style={styles.td}>{formatCurrency(item.purchase_cost)}</td>
                     <td style={styles.td}>
-                      <span style={getStatusBadgeStyle(isLowStock ? "low" : "instock", "stock")}>
+                      {formatCurrency(item.purchase_cost)}
+                    </td>
+                    <td style={styles.td}>
+                      <span
+                        style={getStatusBadgeStyle(
+                          isLowStock ? "low" : "instock",
+                          "stock"
+                        )}
+                      >
                         {isLowStock ? "Low Stock" : "In Stock"}
                       </span>
                     </td>
@@ -1525,7 +1702,6 @@ const QuickBooks = () => {
             </tbody>
           </table>
         );
-
       case "accounts":
         return (
           <table style={styles.table}>
@@ -1541,14 +1717,18 @@ const QuickBooks = () => {
             <tbody>
               {data.map((account) => (
                 <tr key={account.id}>
-                  <td style={{ ...styles.td, fontWeight: "600" }}>{account.name}</td>
+                  <td style={{ ...styles.td, fontWeight: "600" }}>
+                    {account.name}
+                  </td>
                   <td style={styles.td}>{account.account_type || "-"}</td>
                   <td style={styles.td}>{account.account_subtype || "-"}</td>
                   <td style={{ ...styles.td, fontWeight: "500" }}>
                     {formatCurrency(account.current_balance)}
                   </td>
                   <td style={styles.td}>
-                    <span style={getStatusBadgeStyle(account.is_active, "active")}>
+                    <span
+                      style={getStatusBadgeStyle(account.is_active, "active")}
+                    >
                       {account.is_active ? "Active" : "Inactive"}
                     </span>
                   </td>
@@ -1557,20 +1737,18 @@ const QuickBooks = () => {
             </tbody>
           </table>
         );
-
       default:
         return null;
     }
   };
-
   const renderDetailModal = () => {
     if (!detailModalOpen || !detailData) return null;
-
     const isCustomer = activeTab === "customers";
     const entity = isCustomer ? detailData.customer : detailData.vendor;
     const transactions = isCustomer ? detailData.invoices : detailData.bills;
-    const secondaryData = isCustomer ? detailData.payments : detailData.purchase_orders;
-
+    const secondaryData = isCustomer
+      ? detailData.payments
+      : detailData.purchase_orders;
     return (
       <div style={styles.detailModal} onClick={() => setDetailModalOpen(false)}>
         <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
@@ -1578,21 +1756,27 @@ const QuickBooks = () => {
             <h3 style={{ margin: 0 }}>
               {isCustomer ? "Customer" : "Vendor"} Details
             </h3>
-            <button style={styles.closeBtn} onClick={() => setDetailModalOpen(false)}>
+            <button
+              style={styles.closeBtn}
+              onClick={() => setDetailModalOpen(false)}
+            >
               ×
             </button>
           </div>
-
           <div style={styles.detailSection}>
             <div style={styles.detailTitle}>Basic Information</div>
             <div style={styles.detailGrid}>
               <div style={styles.detailItem}>
                 <div style={styles.detailLabel}>Display Name</div>
-                <div style={styles.detailValue}>{entity?.display_name || "-"}</div>
+                <div style={styles.detailValue}>
+                  {entity?.display_name || "-"}
+                </div>
               </div>
               <div style={styles.detailItem}>
                 <div style={styles.detailLabel}>Company</div>
-                <div style={styles.detailValue}>{entity?.company_name || "-"}</div>
+                <div style={styles.detailValue}>
+                  {entity?.company_name || "-"}
+                </div>
               </div>
               <div style={styles.detailItem}>
                 <div style={styles.detailLabel}>Email</div>
@@ -1604,19 +1788,22 @@ const QuickBooks = () => {
               </div>
               <div style={styles.detailItem}>
                 <div style={styles.detailLabel}>Balance</div>
-                <div style={styles.detailValue}>{formatCurrency(entity?.balance)}</div>
+                <div style={styles.detailValue}>
+                  {formatCurrency(entity?.balance)}
+                </div>
               </div>
               <div style={styles.detailItem}>
                 <div style={styles.detailLabel}>Status</div>
                 <div style={styles.detailValue}>
-                  <span style={getStatusBadgeStyle(entity?.is_active, "active")}>
+                  <span
+                    style={getStatusBadgeStyle(entity?.is_active, "active")}
+                  >
                     {entity?.is_active ? "Active" : "Inactive"}
                   </span>
                 </div>
               </div>
             </div>
           </div>
-
           <div style={styles.detailSection}>
             <div style={styles.detailTitle}>Address</div>
             <div style={styles.detailGrid}>
@@ -1636,7 +1823,6 @@ const QuickBooks = () => {
               )}
             </div>
           </div>
-
           <div style={styles.detailSection}>
             <div style={styles.detailTitle}>
               {isCustomer ? "Invoices" : "Bills"} ({transactions?.length || 0})
@@ -1657,10 +1843,19 @@ const QuickBooks = () => {
                     <tr key={txn.id}>
                       <td style={styles.td}>{txn.doc_number || txn.id}</td>
                       <td style={styles.td}>{formatDate(txn.issue_date)}</td>
-                      <td style={styles.td}>{formatCurrency(txn.total_amount)}</td>
-                      <td style={styles.td}>{formatCurrency(txn.balance_due)}</td>
                       <td style={styles.td}>
-                        <span style={getStatusBadgeStyle(txn.payment_status, "payment")}>
+                        {formatCurrency(txn.total_amount)}
+                      </td>
+                      <td style={styles.td}>
+                        {formatCurrency(txn.balance_due)}
+                      </td>
+                      <td style={styles.td}>
+                        <span
+                          style={getStatusBadgeStyle(
+                            txn.payment_status,
+                            "payment"
+                          )}
+                        >
                           {txn.payment_status}
                         </span>
                       </td>
@@ -1674,10 +1869,10 @@ const QuickBooks = () => {
               </div>
             )}
           </div>
-
           <div style={styles.detailSection}>
             <div style={styles.detailTitle}>
-              {isCustomer ? "Payments" : "Purchase Orders"} ({secondaryData?.length || 0})
+              {isCustomer ? "Payments" : "Purchase Orders"} (
+              {secondaryData?.length || 0})
             </div>
             {secondaryData && secondaryData.length > 0 ? (
               <table style={{ ...styles.table, fontSize: "13px" }}>
@@ -1720,7 +1915,6 @@ const QuickBooks = () => {
       </div>
     );
   };
-
   const tabs = [
     { id: "invoices", label: "Invoices" },
     { id: "customers", label: "Customers" },
@@ -1731,42 +1925,60 @@ const QuickBooks = () => {
     { id: "inventory", label: "Inventory" },
     // { id: "accounts", label: "Chart of Accounts" },
   ];
-
   return (
     <div style={styles.container}>
-    <div style={styles.header}>
-      <h2 style={styles.title}>QuickBooks Integration</h2>
-      
-      {checkingConnection ? (
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <div style={styles.connectionStatus}>
-            <span style={{ width: "8px", height: "8px", backgroundColor: "#f59e0b", borderRadius: "50%" }}></span>
-            Checking connection...
+      <div style={styles.header}>
+        <h2 style={styles.title}>QuickBooks Integration</h2>
+        {checkingConnection ? (
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <div style={styles.connectionStatus}>
+              <span
+                style={{
+                  width: "8px",
+                  height: "8px",
+                  backgroundColor: "#f59e0b",
+                  borderRadius: "50%",
+                }}
+              ></span>
+              Checking connection...
+            </div>
           </div>
-        </div>
-      ) : isConnected ? (
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{ ...styles.connectionStatus, ...styles.connected }}>
-            <span style={{ width: "8px", height: "8px", backgroundColor: "#166534", borderRadius: "50%" }}></span>
-            Connected: {companyInfo?.name || realmId}
+        ) : isConnected ? (
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{ ...styles.connectionStatus, ...styles.connected }}>
+              <span
+                style={{
+                  width: "8px",
+                  height: "8px",
+                  backgroundColor: "#166534",
+                  borderRadius: "50%",
+                }}
+              ></span>
+              Connected: {companyInfo?.name || realmId}
+            </div>
+            <button style={styles.disconnectBtn} onClick={handleDisconnect}>
+              Disconnect
+            </button>
           </div>
-          <button style={styles.disconnectBtn} onClick={handleDisconnect}>
-            Disconnect
-          </button>
-        </div>
-      ) : (
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{ ...styles.connectionStatus, ...styles.disconnected }}>
-            <span style={{ width: "8px", height: "8px", backgroundColor: "#991b1b", borderRadius: "50%" }}></span>
-            Not Connected
+        ) : (
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{ ...styles.connectionStatus, ...styles.disconnected }}>
+              <span
+                style={{
+                  width: "8px",
+                  height: "8px",
+                  backgroundColor: "#991b1b",
+                  borderRadius: "50%",
+                }}
+              ></span>
+              Not Connected
+            </div>
+            <button style={styles.connectBtn} onClick={handleConnect}>
+              Connect to QuickBooks
+            </button>
           </div>
-          <button style={styles.connectBtn} onClick={handleConnect}>
-            Connect to QuickBooks
-          </button>
-        </div>
-      )}
-    </div>
-
+        )}
+      </div>
       {isConnected ? (
         <>
           <div style={styles.tabContainer}>
@@ -1788,42 +2000,50 @@ const QuickBooks = () => {
               </button>
             ))}
           </div>
-
           {renderStats()}
-
           <div style={styles.searchContainer}>
-            <input
-              type="text"
-              placeholder={`Search ${activeTab.replace("-", " ")}...`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={styles.searchInput}
-            />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              style={styles.filterSelect}
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                alignItems: "center",
+                flexWrap: "wrap",
+              }}
             >
-              {getFilterOptions().map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-            <button
-              style={styles.refreshBtn}
-              onClick={() => fetchDataForTab(activeTab)}
-              disabled={loading}
-            >
-              ↻ Refresh
-            </button>
-            {/* {activeTab === "inventory" && (
-              <button style={styles.syncBtn} onClick={handleSyncProducts}>
-                ⇄ Sync Products
+              <input
+                type="text"
+                placeholder={`Search ${activeTab.replace("-", " ")}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={styles.searchInput}
+              />
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                style={styles.filterSelect}
+              >
+                {getFilterOptions().map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div style={styles.refreshContainer}>
+              {activeTab === "inventory" && (
+                <button style={styles.syncBtn} onClick={handleSyncProducts}>
+                  ⇄ Sync Products
+                </button>
+              )}
+              <button
+                style={styles.refreshBtn}
+                onClick={() => fetchDataForTab(activeTab)}
+                disabled={loading}
+              >
+                ↻ Refresh
               </button>
-            )} */}
+            </div>
           </div>
-
           <div
             style={{
               overflowX: "auto",
@@ -1837,7 +2057,9 @@ const QuickBooks = () => {
       ) : (
         <div style={styles.noData}>
           <div style={{ fontSize: "48px", marginBottom: "16px" }}>🔗</div>
-          <div style={{ fontSize: "18px", fontWeight: "500", marginBottom: "8px" }}>
+          <div
+            style={{ fontSize: "18px", fontWeight: "500", marginBottom: "8px" }}
+          >
             Connect to QuickBooks
           </div>
           <div style={{ color: "#9ca3af" }}>
@@ -1845,10 +2067,8 @@ const QuickBooks = () => {
           </div>
         </div>
       )}
-
       {renderDetailModal()}
     </div>
   );
 };
-
 export default QuickBooks;
