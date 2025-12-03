@@ -69,7 +69,7 @@ const styles = {
     marginBottom: "24px",
     borderBottom: "2px solid #e5e7eb",
     paddingBottom: "0",
-    overflowX: "auto",
+    // overflowX: "auto",
   },
   tab: {
     padding: "12px 20px",
