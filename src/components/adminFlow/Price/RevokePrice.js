@@ -143,7 +143,6 @@ const handlePriceChange = async (event) => {
   };
   const [dropdownOpen, setDropdownOpen] = useState(false);
   useEffect(() => {
-    fetchCategories();
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
