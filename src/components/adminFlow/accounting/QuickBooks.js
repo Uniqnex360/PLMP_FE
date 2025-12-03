@@ -353,6 +353,41 @@ spinnerStyle.textContent = `
 `;
 document.head.appendChild(spinnerStyle);
 
+const swalButtonStyle = document.createElement("style");
+swalButtonStyle.textContent = `
+  .swal2-confirm, .swal2-cancel {
+    min-width: 140px !important;
+    padding: 10px 24px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+    border: none !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
+    text-overflow: clip !important;
+    overflow: visible !important;
+    white-space: nowrap !important;
+    word-wrap: normal !important;
+    flex: 0 0 auto !important;
+  }
+  
+  .swal2-confirm {
+    background-color: #991b1b !important;
+    color: white !important;
+  }
+  
+  .swal2-cancel {
+    background-color: #6b7280 !important;
+    color: white !important;
+  }
+  
+  .swal2-actions {
+    gap: 10px !important;
+    justify-content: center !important;
+  }
+`;
+document.head.appendChild(swalButtonStyle);
+
 const QuickBooks = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [realmId, setRealmId] = useState(null);
@@ -481,6 +516,13 @@ const QuickBooks = () => {
       confirmButtonColor: "#991b1b",
       cancelButtonColor: "#6b7280",
       confirmButtonText: "Yes, disconnect",
+      customClass: {
+        confirmButton: 'swal2-confirm-custom',
+        cancelButton: 'swal2-cancel-custom'
+      },
+      buttonsStyling: true
+
+      
     });
 
     if (result.isConfirmed) {
