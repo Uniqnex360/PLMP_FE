@@ -1281,8 +1281,6 @@ const QuickBooks = () => {
                 <th style={styles.th}>Total Amount</th>
                 <th style={styles.th}>Balance</th>
                 <th style={styles.th}>Status</th>
-                <th style={styles.th}>Billing Address</th> {/* Add back */}
-                <th style={styles.th}>Shipping Address</th> {/* Add back */}
               </tr>
             </thead>
             <tbody>
@@ -1340,12 +1338,6 @@ const QuickBooks = () => {
                     >
                       {inv.payment_status || "Unknown"}
                     </span>
-                  </td>
-                  <td style={styles.td}>
-                    {formatAddress(inv.billing_address)}
-                  </td>
-                  <td style={styles.td}>
-                    {formatAddress(inv.shipping_address)}
                   </td>
                 </tr>
               ))}
@@ -1836,182 +1828,207 @@ const QuickBooks = () => {
     }
   };
   const renderInvoiceModal = () => {
-    if (!selectedInvoice || !invoiceModalOpen) return null;
-    return (
-      <div
-        style={styles.detailModal}
-        onClick={() => setInvoiceModalOpen(false)}
-      >
-        <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-          <div style={styles.modalHeader}>
-            <h3 style={{ margin: 0, flex: 1, minWidth: 0 }}>
-              Invoice Details - {selectedInvoice.doc_number}
-            </h3>
-            <button
-              style={styles.closeBtn}
-              onClick={() => setInvoiceModalOpen(false)}
-            >
-              ×
-            </button>
-          </div>
-          <div style={styles.detailSection}>
-            <div style={styles.detailTitle}>Customer Information</div>
-            <div style={styles.detailGrid}>
-              <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Customer</div>
-                <div style={styles.detailValue}>
-                  {selectedInvoice.customer_name}
-                </div>
-              </div>
-              <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Email</div>
-                <div style={styles.detailValue}>
-                  {selectedInvoice.customer_email || "-"}
-                </div>
-              </div>
-              <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Invoice Date</div>
-                <div style={styles.detailValue}>
-                  {formatDate(selectedInvoice.issue_date)}
-                </div>
-              </div>
-              <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Due Date</div>
-                <div style={styles.detailValue}>
-                  {formatDate(selectedInvoice.due_date)}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div style={styles.detailSection}>
-            <div style={styles.detailTitle}>Financial Summary</div>
-            <div style={styles.detailGrid}>
-              <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Subtotal</div>
-                <div style={styles.detailValue}>
-                  {formatCurrency(selectedInvoice.subtotal)}
-                </div>
-              </div>
-              <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Tax</div>
-                <div style={styles.detailValue}>
-                  {formatCurrency(selectedInvoice.tax_amount)}
-                </div>
-              </div>
-              <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Shipping</div>
-                <div style={styles.detailValue}>
-                  {formatCurrency(selectedInvoice.shipping)}
-                </div>
-              </div>
-              <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Total Amount</div>
-                <div
-                  style={{
-                    ...styles.detailValue,
-                    fontWeight: "600",
-                    color: "#166534",
-                  }}
-                >
-                  {formatCurrency(selectedInvoice.total_amount)}
-                </div>
-              </div>
-              <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Balance Due</div>
-                <div
-                  style={{
-                    ...styles.detailValue,
-                    fontWeight: "600",
-                    color:
-                      selectedInvoice.balance_due > 0 ? "#92400e" : "#166534",
-                  }}
-                >
-                  {formatCurrency(selectedInvoice.balance_due)}
-                </div>
-              </div>
-              <div style={styles.detailItem}>
-                <div style={styles.detailLabel}>Status</div>
-                <div style={styles.detailValue}>
-                  <span
-                    style={getStatusBadgeStyle(
-                      selectedInvoice.payment_status,
-                      "payment"
-                    )}
-                  >
-                    {selectedInvoice.payment_status}
-                    {selectedInvoice.is_overdue ? " (Overdue)" : ""}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div style={styles.detailSection}>
-            <div style={styles.detailTitle}>
-              Line Items ({selectedInvoice.line_items_count})
-            </div>
-            <table style={{ ...styles.table, fontSize: "13px" }}>
-              <thead>
-                <tr>
-                  <th style={styles.th}>Item</th>
-                  <th style={styles.th}>Description</th>
-                  <th style={styles.th}>Quantity</th>
-                  <th style={styles.th}>Unit Price</th>
-                  <th style={styles.th}>Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {selectedInvoice.line_items.map((item, index) => (
-                  <tr key={index}>
-                    <td style={styles.td}>{item.item_name || "-"}</td>
-                    <td style={styles.td}>{item.description || "-"}</td>
-                    <td style={styles.td}>{item.quantity}</td>
-                    <td style={styles.td}>{formatCurrency(item.unit_price)}</td>
-                    <td style={styles.td}>{formatCurrency(item.amount)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {selectedInvoice.linked_payments &&
-            selectedInvoice.linked_payments.length > 0 && (
-              <div style={styles.detailSection}>
-                <div style={styles.detailTitle}>
-                  Payments ({selectedInvoice.payment_count})
-                </div>
-                <table style={{ ...styles.table, fontSize: "13px" }}>
-                  <thead>
-                    <tr>
-                      <th style={styles.th}>Payment Date</th>
-                      <th style={styles.th}>Method</th>
-                      <th style={styles.th}>Reference</th>
-                      <th style={styles.th}>Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedInvoice.linked_payments.map((payment) => (
-                      <tr key={payment.id}>
-                        <td style={styles.td}>
-                          {formatDate(payment.payment_date)}
-                        </td>
-                        <td style={styles.td}>
-                          {payment.payment_method || "-"}
-                        </td>
-                        <td style={styles.td}>
-                          {payment.payment_ref_number || "-"}
-                        </td>
-                        <td style={{ ...styles.td, color: "#166534" }}>
-                          {formatCurrency(payment.amount)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+  if (!selectedInvoice || !invoiceModalOpen) return null;
+  
+  return (
+    <div style={styles.detailModal} onClick={() => setInvoiceModalOpen(false)}>
+      <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+        <div style={styles.modalHeader}>
+          <h3 style={{ margin: 0, flex: 1, minWidth: 0 }}>
+            Invoice Details - {selectedInvoice.doc_number}
+          </h3>
+          <button
+            style={styles.closeBtn}
+            onClick={() => setInvoiceModalOpen(false)}
+          >
+            ×
+          </button>
         </div>
+
+        {/* Customer Information Section - KEEP THIS */}
+        <div style={styles.detailSection}>
+          <div style={styles.detailTitle}>Customer Information</div>
+          <div style={styles.detailGrid}>
+            <div style={styles.detailItem}>
+              <div style={styles.detailLabel}>Customer</div>
+              <div style={styles.detailValue}>
+                {selectedInvoice.customer_name}
+              </div>
+            </div>
+            <div style={styles.detailItem}>
+              <div style={styles.detailLabel}>Email</div>
+              <div style={styles.detailValue}>
+                {selectedInvoice.customer_email || "-"}
+              </div>
+            </div>
+            <div style={styles.detailItem}>
+              <div style={styles.detailLabel}>Invoice Date</div>
+              <div style={styles.detailValue}>
+                {formatDate(selectedInvoice.issue_date)}
+              </div>
+            </div>
+            <div style={styles.detailItem}>
+              <div style={styles.detailLabel}>Due Date</div>
+              <div style={styles.detailValue}>
+                {formatDate(selectedInvoice.due_date)}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* NEW: Address Information Section - ADD THIS */}
+        <div style={styles.detailSection}>
+          <div style={styles.detailTitle}>Address Information</div>
+          <div style={styles.detailGrid}>
+            <div style={styles.detailItem}>
+              <div style={styles.detailLabel}>Billing Address</div>
+              <div style={styles.detailValue}>
+                {formatAddress(selectedInvoice.billing_address)}
+              </div>
+            </div>
+            <div style={styles.detailItem}>
+              <div style={styles.detailLabel}>Shipping Address</div>
+              <div style={styles.detailValue}>
+                {formatAddress(selectedInvoice.shipping_address)}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Financial Summary Section - KEEP THIS */}
+        <div style={styles.detailSection}>
+          <div style={styles.detailTitle}>Financial Summary</div>
+          <div style={styles.detailGrid}>
+            <div style={styles.detailItem}>
+              <div style={styles.detailLabel}>Subtotal</div>
+              <div style={styles.detailValue}>
+                {formatCurrency(selectedInvoice.subtotal)}
+              </div>
+            </div>
+            <div style={styles.detailItem}>
+              <div style={styles.detailLabel}>Tax</div>
+              <div style={styles.detailValue}>
+                {formatCurrency(selectedInvoice.tax_amount)}
+              </div>
+            </div>
+            <div style={styles.detailItem}>
+              <div style={styles.detailLabel}>Shipping</div>
+              <div style={styles.detailValue}>
+                {formatCurrency(selectedInvoice.shipping)}
+              </div>
+            </div>
+            <div style={styles.detailItem}>
+              <div style={styles.detailLabel}>Total Amount</div>
+              <div
+                style={{
+                  ...styles.detailValue,
+                  fontWeight: "600",
+                  color: "#166534",
+                }}
+              >
+                {formatCurrency(selectedInvoice.total_amount)}
+              </div>
+            </div>
+            <div style={styles.detailItem}>
+              <div style={styles.detailLabel}>Balance Due</div>
+              <div
+                style={{
+                  ...styles.detailValue,
+                  fontWeight: "600",
+                  color:
+                    selectedInvoice.balance_due > 0 ? "#92400e" : "#166534",
+                }}
+              >
+                {formatCurrency(selectedInvoice.balance_due)}
+              </div>
+            </div>
+            <div style={styles.detailItem}>
+              <div style={styles.detailLabel}>Status</div>
+              <div style={styles.detailValue}>
+                <span
+                  style={getStatusBadgeStyle(
+                    selectedInvoice.payment_status,
+                    "payment"
+                  )}
+                >
+                  {selectedInvoice.payment_status}
+                  {selectedInvoice.is_overdue ? " (Overdue)" : ""}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Line Items Section - KEEP THIS */}
+        <div style={styles.detailSection}>
+          <div style={styles.detailTitle}>
+            Line Items ({selectedInvoice.line_items_count})
+          </div>
+          <table style={{ ...styles.table, fontSize: "13px" }}>
+            <thead>
+              <tr>
+                <th style={styles.th}>Item</th>
+                <th style={styles.th}>Description</th>
+                <th style={styles.th}>Quantity</th>
+                <th style={styles.th}>Unit Price</th>
+                <th style={styles.th}>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {selectedInvoice.line_items.map((item, index) => (
+                <tr key={index}>
+                  <td style={styles.td}>{item.item_name || "-"}</td>
+                  <td style={styles.td}>{item.description || "-"}</td>
+                  <td style={styles.td}>{item.quantity}</td>
+                  <td style={styles.td}>{formatCurrency(item.unit_price)}</td>
+                  <td style={styles.td}>{formatCurrency(item.amount)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Payments Section - KEEP THIS */}
+        {selectedInvoice.linked_payments &&
+          selectedInvoice.linked_payments.length > 0 && (
+            <div style={styles.detailSection}>
+              <div style={styles.detailTitle}>
+                Payments ({selectedInvoice.payment_count})
+              </div>
+              <table style={{ ...styles.table, fontSize: "13px" }}>
+                <thead>
+                  <tr>
+                    <th style={styles.th}>Payment Date</th>
+                    <th style={styles.th}>Method</th>
+                    <th style={styles.th}>Reference</th>
+                    <th style={styles.th}>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedInvoice.linked_payments.map((payment) => (
+                    <tr key={payment.id}>
+                      <td style={styles.td}>
+                        {formatDate(payment.payment_date)}
+                      </td>
+                      <td style={styles.td}>
+                        {payment.payment_method || "-"}
+                      </td>
+                      <td style={styles.td}>
+                        {payment.payment_ref_number || "-"}
+                      </td>
+                      <td style={{ ...styles.td, color: "#166534" }}>
+                        {formatCurrency(payment.amount)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
       </div>
-    );
-  };
+    </div>
+  );
+};
   const renderDetailModal = () => {
     if (!detailModalOpen || !detailData) return null;
     const isCustomer = activeTab === "customers";
