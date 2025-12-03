@@ -206,6 +206,10 @@ setShowclearBtn(true);
 setIsExportAllVisible(false);
 setSelectedCategoryForVariant(id);
 }
+if (!id || id === 'undefined')
+{
+  return
+}
 try {
 const res = await axiosInstance.get(`${process.env.REACT_APP_IP}/obtainVarientForCategory/?id=${id}`);
 // Optionally use res.data
