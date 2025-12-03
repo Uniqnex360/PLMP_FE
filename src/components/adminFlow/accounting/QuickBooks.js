@@ -1067,44 +1067,44 @@ const QuickBooks = () => {
     const data = getFilteredData();
     switch (activeTab) {
       case "invoices": {
-  const total = data.reduce(
-    (sum, inv) => sum + (inv.total_amount || 0),
-    0
-  );
-  const balance = data.reduce(
-    (sum, inv) => sum + (inv.balance_due || 0),
-    0
-  );
-  const paidCount = data.filter(
-    (inv) => inv.payment_status === "Paid"
-  ).length;
-  return (
-    <div style={styles.statsContainer}>
-      <div style={styles.statCard}>
-        <div style={styles.statLabel}>Total Invoices</div>
-        <div style={styles.statValue}>{data.length}</div>
-      </div>
-      <div style={styles.statCard}>
-        <div style={styles.statLabel}>Total Amount</div>
-        <div style={{ ...styles.statValue, color: "#166534" }}>
-          {formatCurrency(total)}
-        </div>
-      </div>
-      <div style={styles.statCard}>
-        <div style={styles.statLabel}>Outstanding Balance</div>
-        <div style={{ ...styles.statValue, color: "#92400e" }}>
-          {formatCurrency(balance)}
-        </div>
-      </div>
-      <div style={styles.statCard}>
-        <div style={styles.statLabel}>Paid Invoices</div>
-        <div style={{ ...styles.statValue, color: "#166534" }}>
-          {paidCount}
-        </div>
-      </div>
-    </div>
-  );
-}
+        const total = data.reduce(
+          (sum, inv) => sum + (inv.total_amount || 0),
+          0
+        );
+        const balance = data.reduce(
+          (sum, inv) => sum + (inv.balance_due || 0),
+          0
+        );
+        const paidCount = data.filter(
+          (inv) => inv.payment_status === "Paid"
+        ).length;
+        return (
+          <div style={styles.statsContainer}>
+            <div style={styles.statCard}>
+              <div style={styles.statLabel}>Total Invoices</div>
+              <div style={styles.statValue}>{data.length}</div>
+            </div>
+            <div style={styles.statCard}>
+              <div style={styles.statLabel}>Total Amount</div>
+              <div style={{ ...styles.statValue, color: "#166534" }}>
+                {formatCurrency(total)}
+              </div>
+            </div>
+            <div style={styles.statCard}>
+              <div style={styles.statLabel}>Outstanding Balance</div>
+              <div style={{ ...styles.statValue, color: "#92400e" }}>
+                {formatCurrency(balance)}
+              </div>
+            </div>
+            <div style={styles.statCard}>
+              <div style={styles.statLabel}>Paid Invoices</div>
+              <div style={{ ...styles.statValue, color: "#166534" }}>
+                {paidCount}
+              </div>
+            </div>
+          </div>
+        );
+      }
       case "customers": {
         const totalBalance = data.reduce((sum, c) => sum + (c.balance || 0), 0);
         const activeCount = data.filter((c) => c.is_active).length;
@@ -1265,11 +1265,13 @@ const QuickBooks = () => {
           <th style={styles.th}>Customer</th>
           <th style={styles.th}>Date</th>
           <th style={styles.th}>Due Date</th>
-          <th style={styles.th}>Subtotal</th> {/* Add this */}
-          <th style={styles.th}>Discount</th> {/* Add this */}
-          <th style={styles.th}>Total Amount</th> {/* This is after discount total */}
+          <th style={styles.th}>Subtotal</th>
+          <th style={styles.th}>Discount</th>
+          <th style={styles.th}>Total Amount</th>
           <th style={styles.th}>Balance</th>
           <th style={styles.th}>Status</th>
+          <th style={styles.th}>Billing Address</th> {/* Add back */}
+          <th style={styles.th}>Shipping Address</th> {/* Add back */}
         </tr>
       </thead>
       <tbody>
@@ -1315,6 +1317,12 @@ const QuickBooks = () => {
               <span style={getStatusBadgeStyle(inv.payment_status, "payment")}>
                 {inv.payment_status || "Unknown"}
               </span>
+            </td>
+            <td style={styles.td}>
+              {formatAddress(inv.billing_address)}
+            </td>
+            <td style={styles.td}>
+              {formatAddress(inv.shipping_address)}
             </td>
           </tr>
         ))}
