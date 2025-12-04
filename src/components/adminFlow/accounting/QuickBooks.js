@@ -1473,7 +1473,7 @@ const QuickBooks = () => {
                   borderRadius: "6px",
                 }}
               >
-                <button
+                {/* <button
                   style={{
                     padding: "8px 16px",
                     backgroundColor:
@@ -1516,7 +1516,7 @@ const QuickBooks = () => {
                   onClick={() => handlePurchaseOrderModeToggle("customers")}
                 >
                   Customer POs
-                </button>
+                </button> */}
               </div>
             </div>
             {data.length === 0 ? (
@@ -2326,7 +2326,7 @@ const QuickBooks = () => {
                     padding: "8px 16px",
                     backgroundColor:
                       purchaseOrderMode === "customers"
-                        ? "#3b82f6"
+                        ? "#2d8a4e"
                         : "transparent",
                     color:
                       purchaseOrderMode === "customers" ? "white" : "#374151",
@@ -2377,7 +2377,7 @@ const QuickBooks = () => {
                   style={{
                     padding: "8px 16px",
                     backgroundColor:
-                      billMode === "customers" ? "#3b82f6" : "transparent",
+                      billMode === "customers" ? "#2d8a4e" : "transparent",
                     color: billMode === "customers" ? "white" : "#374151",
                     border: "none",
                     whiteSpace: "nowrap",
