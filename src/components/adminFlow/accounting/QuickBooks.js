@@ -742,7 +742,7 @@ const QuickBooks = () => {
           itemsToShow = response.data.data.items || [];
         } else if (type === "inventory") {
           itemsToShow = response.data.data.inventory_items || [];
-        } else if (type === "service_items") {
+        } else if (type === "service") {
           itemsToShow = response.data.data.service_items || [];
         } else if (type === "non_inventory") {
           itemsToShow = response.data.data.non_inventory_items || [];
