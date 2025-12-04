@@ -1182,9 +1182,7 @@ const QuickBooks = () => {
         );
       }
       case "inventory": {
-        const lowStock = data.filter(
-          (i) => (i.qty_on_hand || 0) <= (i.reorder_point || 0)
-        ).length;
+        const lowStock = data.filter(i=>i.type==='Inventory' &&  (i.qty_on_hand || 0) <= (i.reorder_point || 0)).length;
         const totalValue = data.reduce(
           (sum, i) => sum + (i.qty_on_hand || 0) * (i.purchase_cost || 0),
           0
