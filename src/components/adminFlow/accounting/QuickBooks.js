@@ -81,7 +81,7 @@ const styles = {
     color: "#6b7280",
     borderBottomWidth: "2px",
     borderBottomStyle: "solid",
-    borderBottomColor: "transparent", 
+    borderBottomColor: "transparent",
     marginBottom: "-2px",
     transition: "all 0.2s ease",
     whiteSpace: "nowrap",
@@ -1060,7 +1060,6 @@ const QuickBooks = () => {
     }
 
     return data;
-    return data;
   };
   const getFilterOptions = () => {
     switch (activeTab) {
@@ -1152,6 +1151,16 @@ const QuickBooks = () => {
         const paidCount = data.filter(
           (inv) => inv.payment_status === "Paid"
         ).length;
+        const unpaidCount = data.filter(
+          (inv) => inv.payment_status === "Unpaid"
+        ).length;
+        const partialPaidCount = data.filter(
+          (inv) => inv.payment_status === "Partial"
+        ).length;
+        const overDue = data.filter(
+          (inv) => inv.payment_status === "OverDue"
+        ).length;
+        const amountReceived = total - balance;
         return (
           <div style={styles.statsContainer}>
             <div style={styles.statCard}>
@@ -1165,6 +1174,12 @@ const QuickBooks = () => {
               </div>
             </div>
             <div style={styles.statCard}>
+              <div style={styles.statLabel}>Amount Received</div>
+              <div style={{ ...styles.statValue, color: "#059669" }}>
+                {formatCurrency(amountReceived)}
+              </div>
+            </div>
+            <div style={styles.statCard}>
               <div style={styles.statLabel}>Outstanding Balance</div>
               <div style={{ ...styles.statValue, color: "#92400e" }}>
                 {formatCurrency(balance)}
@@ -1174,6 +1189,18 @@ const QuickBooks = () => {
               <div style={styles.statLabel}>Paid Invoices</div>
               <div style={{ ...styles.statValue, color: "#166534" }}>
                 {paidCount}
+              </div>
+            </div>
+            <div style={styles.statCard}>
+              <div style={styles.statLabel}>Unpaid Invoices</div>
+              <div style={{ ...styles.statValue, color: "#991b1b" }}>
+                {unpaidCount}
+              </div>
+            </div>
+            <div style={styles.statCard}>
+              <div style={styles.statLabel}>Partially Paid Invoices</div>
+              <div style={{ ...styles.statValue, color: "#166534" }}>
+                {partialPaidCount}
               </div>
             </div>
           </div>
@@ -2687,108 +2714,233 @@ const QuickBooks = () => {
         return (
           <table style={styles.table}>
             <thead>
-  <tr>
-    <th style={styles.th} onClick={() => handleSort('name')}>
-      Item Name
-      <span style={sortField === 'name' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'name' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'name' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'name' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('description')}>
-      Description
-      <span style={sortField === 'description' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'description' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'description' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'description' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('sku')}>
-      SKU
-      <span style={sortField === 'sku' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'sku' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'sku' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'sku' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('type')}>
-      Type
-      <span style={sortField === 'type' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'type' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'type' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'type' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('qty_on_hand')}>
-      Qty On Hand
-      <span style={sortField === 'qty_on_hand' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'qty_on_hand' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'qty_on_hand' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'qty_on_hand' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('reorder_point')}>
-      Reorder Point
-      <span style={sortField === 'reorder_point' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'reorder_point' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'reorder_point' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'reorder_point' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('income_account')}>
-      Income Account
-      <span style={sortField === 'income_account' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'income_account' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'income_account' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'income_account' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('expense_account')}>
-      Expense Account
-      <span style={sortField === 'expense_account' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'expense_account' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'expense_account' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'expense_account' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('asset_account')}>
-      Asset Account
-      <span style={sortField === 'asset_account' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'asset_account' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'asset_account' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'asset_account' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('asset_value')}>
-      Asset Value
-      <span style={sortField === 'asset_value' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'asset_value' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'asset_value' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'asset_value' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('unit_price')}>
-      Unit Price
-      <span style={sortField === 'unit_price' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'unit_price' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'unit_price' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'unit_price' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('purchase_cost')}>
-      Cost
-      <span style={sortField === 'purchase_cost' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'purchase_cost' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'purchase_cost' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'purchase_cost' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th}>
-      Status
-    </th>
-  </tr>
-</thead>
+              <tr>
+                <th style={styles.th} onClick={() => handleSort("name")}>
+                  Item Name
+                  <span
+                    style={
+                      sortField === "name"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "name" && sortDirection === "asc" ? "↑" : ""}
+                    {sortField === "name" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "name" && "↕"}
+                  </span>
+                </th>
+                <th style={styles.th} onClick={() => handleSort("description")}>
+                  Description
+                  <span
+                    style={
+                      sortField === "description"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "description" && sortDirection === "asc"
+                      ? "↑"
+                      : ""}
+                    {sortField === "description" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "description" && "↕"}
+                  </span>
+                </th>
+                <th style={styles.th} onClick={() => handleSort("sku")}>
+                  SKU
+                  <span
+                    style={
+                      sortField === "sku"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "sku" && sortDirection === "asc" ? "↑" : ""}
+                    {sortField === "sku" && sortDirection === "desc" ? "↓" : ""}
+                    {sortField !== "sku" && "↕"}
+                  </span>
+                </th>
+                <th style={styles.th} onClick={() => handleSort("type")}>
+                  Type
+                  <span
+                    style={
+                      sortField === "type"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "type" && sortDirection === "asc" ? "↑" : ""}
+                    {sortField === "type" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "type" && "↕"}
+                  </span>
+                </th>
+                <th style={styles.th} onClick={() => handleSort("qty_on_hand")}>
+                  Qty On Hand
+                  <span
+                    style={
+                      sortField === "qty_on_hand"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "qty_on_hand" && sortDirection === "asc"
+                      ? "↑"
+                      : ""}
+                    {sortField === "qty_on_hand" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "qty_on_hand" && "↕"}
+                  </span>
+                </th>
+                <th
+                  style={styles.th}
+                  onClick={() => handleSort("reorder_point")}
+                >
+                  Reorder Point
+                  <span
+                    style={
+                      sortField === "reorder_point"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "reorder_point" && sortDirection === "asc"
+                      ? "↑"
+                      : ""}
+                    {sortField === "reorder_point" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "reorder_point" && "↕"}
+                  </span>
+                </th>
+                <th
+                  style={styles.th}
+                  onClick={() => handleSort("income_account")}
+                >
+                  Income Account
+                  <span
+                    style={
+                      sortField === "income_account"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "income_account" && sortDirection === "asc"
+                      ? "↑"
+                      : ""}
+                    {sortField === "income_account" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "income_account" && "↕"}
+                  </span>
+                </th>
+                <th
+                  style={styles.th}
+                  onClick={() => handleSort("expense_account")}
+                >
+                  Expense Account
+                  <span
+                    style={
+                      sortField === "expense_account"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "expense_account" && sortDirection === "asc"
+                      ? "↑"
+                      : ""}
+                    {sortField === "expense_account" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "expense_account" && "↕"}
+                  </span>
+                </th>
+                <th
+                  style={styles.th}
+                  onClick={() => handleSort("asset_account")}
+                >
+                  Asset Account
+                  <span
+                    style={
+                      sortField === "asset_account"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "asset_account" && sortDirection === "asc"
+                      ? "↑"
+                      : ""}
+                    {sortField === "asset_account" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "asset_account" && "↕"}
+                  </span>
+                </th>
+                <th style={styles.th} onClick={() => handleSort("asset_value")}>
+                  Asset Value
+                  <span
+                    style={
+                      sortField === "asset_value"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "asset_value" && sortDirection === "asc"
+                      ? "↑"
+                      : ""}
+                    {sortField === "asset_value" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "asset_value" && "↕"}
+                  </span>
+                </th>
+                <th style={styles.th} onClick={() => handleSort("unit_price")}>
+                  Unit Price
+                  <span
+                    style={
+                      sortField === "unit_price"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "unit_price" && sortDirection === "asc"
+                      ? "↑"
+                      : ""}
+                    {sortField === "unit_price" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "unit_price" && "↕"}
+                  </span>
+                </th>
+                <th
+                  style={styles.th}
+                  onClick={() => handleSort("purchase_cost")}
+                >
+                  Cost
+                  <span
+                    style={
+                      sortField === "purchase_cost"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "purchase_cost" && sortDirection === "asc"
+                      ? "↑"
+                      : ""}
+                    {sortField === "purchase_cost" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "purchase_cost" && "↕"}
+                  </span>
+                </th>
+                <th style={styles.th}>Status</th>
+              </tr>
+            </thead>
             <tbody>
               {data.map((item) => {
                 const isLowStock =
@@ -2885,65 +3037,148 @@ const QuickBooks = () => {
         return (
           <table style={styles.table}>
             <thead>
-  <tr>
-    <th style={styles.th} onClick={() => handleSort('name')}>
-      Account Name
-      <span style={sortField === 'name' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'name' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'name' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'name' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('account_type')}>
-      Type
-      <span style={sortField === 'account_type' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'account_type' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'account_type' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'account_type' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('account_subtype')}>
-      Sub Type
-      <span style={sortField === 'account_subtype' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'account_subtype' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'account_subtype' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'account_subtype' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('current_balance')}>
-      Current Balance
-      <span style={sortField === 'current_balance' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'current_balance' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'current_balance' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'current_balance' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('opening_balance')}>
-      Opening Balance
-      <span style={sortField === 'opening_balance' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'opening_balance' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'opening_balance' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'opening_balance' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('parent_account')}>
-      Parent Account
-      <span style={sortField === 'parent_account' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'parent_account' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'parent_account' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'parent_account' && '↕'}
-      </span>
-    </th>
-    <th style={styles.th} onClick={() => handleSort('is_active')}>
-      Status
-      <span style={sortField === 'is_active' ? sortArrowActiveStyle : sortArrowStyle}>
-        {sortField === 'is_active' && sortDirection === 'asc' ? '↑' : ''}
-        {sortField === 'is_active' && sortDirection === 'desc' ? '↓' : ''}
-        {sortField !== 'is_active' && '↕'}
-      </span>
-    </th>
-  </tr>
-</thead>
+              <tr>
+                <th style={styles.th} onClick={() => handleSort("name")}>
+                  Account Name
+                  <span
+                    style={
+                      sortField === "name"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "name" && sortDirection === "asc" ? "↑" : ""}
+                    {sortField === "name" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "name" && "↕"}
+                  </span>
+                </th>
+                <th
+                  style={styles.th}
+                  onClick={() => handleSort("account_type")}
+                >
+                  Type
+                  <span
+                    style={
+                      sortField === "account_type"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "account_type" && sortDirection === "asc"
+                      ? "↑"
+                      : ""}
+                    {sortField === "account_type" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "account_type" && "↕"}
+                  </span>
+                </th>
+                <th
+                  style={styles.th}
+                  onClick={() => handleSort("account_subtype")}
+                >
+                  Sub Type
+                  <span
+                    style={
+                      sortField === "account_subtype"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "account_subtype" && sortDirection === "asc"
+                      ? "↑"
+                      : ""}
+                    {sortField === "account_subtype" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "account_subtype" && "↕"}
+                  </span>
+                </th>
+                <th
+                  style={styles.th}
+                  onClick={() => handleSort("current_balance")}
+                >
+                  Current Balance
+                  <span
+                    style={
+                      sortField === "current_balance"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "current_balance" && sortDirection === "asc"
+                      ? "↑"
+                      : ""}
+                    {sortField === "current_balance" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "current_balance" && "↕"}
+                  </span>
+                </th>
+                <th
+                  style={styles.th}
+                  onClick={() => handleSort("opening_balance")}
+                >
+                  Opening Balance
+                  <span
+                    style={
+                      sortField === "opening_balance"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "opening_balance" && sortDirection === "asc"
+                      ? "↑"
+                      : ""}
+                    {sortField === "opening_balance" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "opening_balance" && "↕"}
+                  </span>
+                </th>
+                <th
+                  style={styles.th}
+                  onClick={() => handleSort("parent_account")}
+                >
+                  Parent Account
+                  <span
+                    style={
+                      sortField === "parent_account"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "parent_account" && sortDirection === "asc"
+                      ? "↑"
+                      : ""}
+                    {sortField === "parent_account" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "parent_account" && "↕"}
+                  </span>
+                </th>
+                <th style={styles.th} onClick={() => handleSort("is_active")}>
+                  Status
+                  <span
+                    style={
+                      sortField === "is_active"
+                        ? sortArrowActiveStyle
+                        : sortArrowStyle
+                    }
+                  >
+                    {sortField === "is_active" && sortDirection === "asc"
+                      ? "↑"
+                      : ""}
+                    {sortField === "is_active" && sortDirection === "desc"
+                      ? "↓"
+                      : ""}
+                    {sortField !== "is_active" && "↕"}
+                  </span>
+                </th>
+              </tr>
+            </thead>
             <tbody>
               {data.map((account) => (
                 <tr key={account.id}>
