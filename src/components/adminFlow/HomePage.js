@@ -317,12 +317,7 @@ function HomePage() {
           />
         </div>
         <div className="right-container">
-          <Routes>
-            <Route path="/" element={
-              showDashboard ? (
-                <Dashboard />
-              ) : null
-            } />
+          <Routes><Route path="/" element={showDashboard ? (<Dashboard />) : null} />
             <Route path="/allproducts" element={<ProductList productTypeId={selectedProductTypeId}/>} />
             <Route path="/history" element={ showHistory ? ( <HistoryPage />):null} />
             <Route path="/categorylist"  element={showCategoriesTable ? (<CategoriesTable categories={categoriesData} refreshCategories={fetchCategories}  />) : null}  />
