@@ -3712,6 +3712,7 @@ const QuickBooks = () => {
       </div>
       {isConnected ? (
         <>
+        
           <div style={styles.tabContainer}>
             {tabs.map((tab) => (
               <button
