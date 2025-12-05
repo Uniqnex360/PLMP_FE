@@ -429,7 +429,6 @@ const QuickBooks = () => {
   const [inventory, setInventory] = useState([]);
   const [accounts, setAccounts] = useState([]);
   const [checkingConnection, setCheckingConnection] = useState(true);
-  const [connectionError, setConnectionError] = useState(null);
   const [invoiceSummary, setInvoiceSummary] = useState({});
   const [inventorySummary, setInventorySummary] = useState({});
   const [accountsSummary, setAccountsSummary] = useState({});
@@ -494,7 +493,6 @@ const QuickBooks = () => {
     } catch (err) {
       console.error("Error checking connection status:", err);
       setIsConnected(false);
-      setConnectionError(err.message || "Failed to check connection status");
       Swal.fire({
         title: "Connection Error",
         text: "Unable to check QuickBooks connection status",
@@ -1347,6 +1345,15 @@ const QuickBooks = () => {
                       }}
                     >
                       {formatCurrency(inv.total_amount)}
+                    </td>
+                     <td
+                      style={{
+                        ...styles.td,
+                        fontWeight: "600",
+                        color: "#166534",
+                      }}
+                    >
+                      {formatCurrency(inv.tax_amount)}
                     </td>
                     <td style={{ ...styles.td, fontWeight: "500" }}>
                       {formatCurrency(inv.balance_due)}
