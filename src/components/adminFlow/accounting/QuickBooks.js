@@ -3710,256 +3710,280 @@ const QuickBooks = () => {
           </div>
         )}
       </div>
-      {isConnected ? (
+            {isConnected ? (
         <>
-        
-          <div style={styles.tabContainer}>
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                style={{
-                  ...styles.tab,
-                  ...(activeTab === tab.id ? styles.activeTab : {}),
-                }}
-                onClick={() => {
-                  setActiveTab(tab.id);
-                  setSearchQuery("");
-                  setStatusFilter("all");
-                  setError(null);
-                }}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-          {renderStats()}
-          <div style={styles.searchContainer}>
-            {activeTab === "purchase-orders" && (
-              <div
-                style={{
-                  display: "flex",
-                  gap: "8px",
-                  backgroundColor: "#e5e7eb",
-                  padding: "4px",
-                  borderRadius: "6px",
-                }}
-              >
-                <button
-                  style={{
-                    padding: "8px 16px",
-                    backgroundColor:
-                      purchaseOrderMode === "vendors"
-                        ? "#2d8a4e"
-                        : "transparent",
-                    color:
-                      purchaseOrderMode === "vendors" ? "white" : "#374151",
-                    border: "none",
-                    whiteSpace: "nowrap",
-                    minWidth: "140px",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    fontWeight: "500",
-                  }}
-                  onClick={() => handlePurchaseOrderModeToggle("vendors")}
-                >
-                  Vendor POs
-                </button>
-                <button
-                  style={{
-                    padding: "8px 16px",
-                    backgroundColor:
-                      purchaseOrderMode === "customers"
-                        ? "#2d8a4e"
-                        : "transparent",
-                    color:
-                      purchaseOrderMode === "customers" ? "white" : "#374151",
-                    border: "none",
-                    whiteSpace: "nowrap",
-                    minWidth: "140px",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    fontWeight: "500",
-                  }}
-                  onClick={() => handlePurchaseOrderModeToggle("customers")}
-                >
-                  Customer POs
-                </button>
-              </div>
-            )}
-            {activeTab === "bills" && (
-              <div
-                style={{
-                  display: "flex",
-                  gap: "8px",
-                  backgroundColor: "#e5e7eb",
-                  padding: "4px",
-                  minWidth: "140px",
-                  borderRadius: "6px",
-                }}
-              >
-                <button
-                  style={{
-                    padding: "8px 16px",
-                    backgroundColor:
-                      billMode === "vendors" ? "#2d8a4e" : "transparent",
-                    color: billMode === "vendors" ? "white" : "#374151",
-                    border: "none",
-                    whiteSpace: "nowrap",
-                    minWidth: "140px",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    fontWeight: "500",
-                  }}
-                  onClick={() => handleBillModeToggle("vendors")}
-                >
-                  Vendor Bills
-                </button>
-                <button
-                  style={{
-                    padding: "8px 16px",
-                    backgroundColor:
-                      billMode === "customers" ? "#2d8a4e" : "transparent",
-                    color: billMode === "customers" ? "white" : "#374151",
-                    border: "none",
-                    whiteSpace: "nowrap",
-                    minWidth: "140px",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    fontWeight: "500",
-                  }}
-                  onClick={() => handleBillModeToggle("customers")}
-                >
-                  Customer Bills
-                </button>
-              </div>
-            )}
-            {activeTab === "inventory" && (
-              <div
-                style={{
-                  display: "flex",
-                  gap: "8px",
-                  backgroundColor: "#e5e7eb",
-                  padding: "4px",
-                  borderRadius: "6px",
-                  marginRight: "12px",
-                }}
-              >
-                <button
-                  style={{
-                    padding: "8px 16px",
-                    backgroundColor:
-                      itemTypeFilter === "all" ? "#2d8a4e" : "transparent",
-                    color: itemTypeFilter === "all" ? "white" : "#374151",
-                    border: "none",
-                    whiteSpace: "nowrap",
-                    minWidth: "100px",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    fontWeight: "500",
-                  }}
-                  onClick={() => {
-                    setItemTypeFilter("all");
-                    fetchInventory("all");
-                  }}
-                >
-                  All Items
-                </button>
-                <button
-                  style={{
-                    padding: "8px 16px",
-                    backgroundColor:
-                      itemTypeFilter === "inventory"
-                        ? "#2d8a4e"
-                        : "transparent",
-                    color: itemTypeFilter === "inventory" ? "white" : "#374151",
-                    border: "none",
-                    whiteSpace: "nowrap",
-                    minWidth: "100px",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    fontWeight: "500",
-                  }}
-                  onClick={() => {
-                    setItemTypeFilter("inventory");
-                    fetchInventory("inventory");
-                  }}
-                >
-                  Inventory
-                </button>
-                <button
-                  style={{
-                    padding: "8px 16px",
-                    backgroundColor:
-                      itemTypeFilter === "service" ? "#2d8a4e" : "transparent",
-                    color: itemTypeFilter === "service" ? "white" : "#374151",
-                    border: "none",
-                    whiteSpace: "nowrap",
-                    minWidth: "100px",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    fontWeight: "500",
-                  }}
-                  onClick={() => {
-                    setItemTypeFilter("service");
-                    fetchInventory("service");
-                  }}
-                >
-                  Services
-                </button>
-              </div>
-            )}
-            <div
-              style={{
-                display: "flex",
-                gap: "12px",
-                alignItems: "center",
-                marginLeft: "auto",
-              }}
-            >
-              <input
-                type="text"
-                placeholder={`Search ${activeTab.replace("-", " ")}...`}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={styles.searchInput}
-              />
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                style={styles.filterSelect}
-              >
-                {getFilterOptions().map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              <div style={styles.refreshContainer}>
-                <button
-                  style={styles.refreshBtn}
-                  onClick={() => fetchDataForTab(activeTab)}
-                  disabled={loading}
-                >
-                  ↻ Refresh
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
+          {/* Sticky Tabs Wrapper */}
+          <div style={{
+      position: "sticky",
+      top: "0",
+      backgroundColor: "white",
+      zIndex: 100,
+      paddingBottom: "8px",
+      borderBottom: "2px solid #e5e7eb",
+      marginBottom: "24px"
+    }}>
+      <div style={styles.tabContainer}>
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
             style={{
-              overflowX: "auto",
-              border: "1px solid #e5e7eb",
-              borderRadius: "10px",
+              ...styles.tab,
+              ...(activeTab === tab.id ? styles.activeTab : {}),
+            }}
+            onClick={() => {
+              setActiveTab(tab.id);
+              setSearchQuery("");
+              setStatusFilter("all");
+              setError(null);
             }}
           >
-            {renderTable()}
+            {tab.label}
+          </button>
+        ))}
+      </div>
+      
+      {/* Stats section - also sticky */}
+      {renderStats()}
+      
+      {/* Search and filter section - also sticky */}
+      <div style={styles.searchContainer}>
+        {activeTab === "purchase-orders" && (
+          <div
+            style={{
+              display: "flex",
+              gap: "8px",
+              backgroundColor: "#e5e7eb",
+              padding: "4px",
+              borderRadius: "6px",
+            }}
+          >
+            <button
+              style={{
+                padding: "8px 16px",
+                backgroundColor:
+                  purchaseOrderMode === "vendors"
+                    ? "#2d8a4e"
+                    : "transparent",
+                color:
+                  purchaseOrderMode === "vendors" ? "white" : "#374151",
+                border: "none",
+                whiteSpace: "nowrap",
+                minWidth: "140px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "500",
+              }}
+              onClick={() => handlePurchaseOrderModeToggle("vendors")}
+            >
+              Vendor POs
+            </button>
+            <button
+              style={{
+                padding: "8px 16px",
+                backgroundColor:
+                  purchaseOrderMode === "customers"
+                    ? "#2d8a4e"
+                    : "transparent",
+                color:
+                  purchaseOrderMode === "customers" ? "white" : "#374151",
+                border: "none",
+                whiteSpace: "nowrap",
+                minWidth: "140px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "500",
+              }}
+              onClick={() => handlePurchaseOrderModeToggle("customers")}
+            >
+              Customer POs
+            </button>
+          </div>
+        )}
+        {activeTab === "bills" && (
+          <div
+            style={{
+              display: "flex",
+              gap: "8px",
+              backgroundColor: "#e5e7eb",
+              padding: "4px",
+              minWidth: "140px",
+              borderRadius: "6px",
+            }}
+          >
+            <button
+              style={{
+                padding: "8px 16px",
+                backgroundColor:
+                  billMode === "vendors" ? "#2d8a4e" : "transparent",
+                color: billMode === "vendors" ? "white" : "#374151",
+                border: "none",
+                whiteSpace: "nowrap",
+                minWidth: "140px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "500",
+              }}
+              onClick={() => handleBillModeToggle("vendors")}
+            >
+              Vendor Bills
+            </button>
+            <button
+              style={{
+                padding: "8px 16px",
+                backgroundColor:
+                  billMode === "customers" ? "#2d8a4e" : "transparent",
+                color: billMode === "customers" ? "white" : "#374151",
+                border: "none",
+                whiteSpace: "nowrap",
+                minWidth: "140px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "500",
+              }}
+              onClick={() => handleBillModeToggle("customers")}
+            >
+              Customer Bills
+            </button>
+          </div>
+        )}
+        {activeTab === "inventory" && (
+          <div
+            style={{
+              display: "flex",
+              gap: "8px",
+              backgroundColor: "#e5e7eb",
+              padding: "4px",
+              borderRadius: "6px",
+              marginRight: "12px",
+            }}
+          >
+            <button
+              style={{
+                padding: "8px 16px",
+                backgroundColor:
+                  itemTypeFilter === "all" ? "#2d8a4e" : "transparent",
+                color: itemTypeFilter === "all" ? "white" : "#374151",
+                border: "none",
+                whiteSpace: "nowrap",
+                minWidth: "100px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "500",
+              }}
+              onClick={() => {
+                setItemTypeFilter("all");
+                fetchInventory("all");
+              }}
+            >
+              All Items
+            </button>
+            <button
+              style={{
+                padding: "8px 16px",
+                backgroundColor:
+                  itemTypeFilter === "inventory"
+                    ? "#2d8a4e"
+                    : "transparent",
+                color: itemTypeFilter === "inventory" ? "white" : "#374151",
+                border: "none",
+                whiteSpace: "nowrap",
+                minWidth: "100px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "500",
+              }}
+              onClick={() => {
+                setItemTypeFilter("inventory");
+                fetchInventory("inventory");
+              }}
+            >
+              Inventory
+            </button>
+            <button
+              style={{
+                padding: "8px 16px",
+                backgroundColor:
+                  itemTypeFilter === "service" ? "#2d8a4e" : "transparent",
+                color: itemTypeFilter === "service" ? "white" : "#374151",
+                border: "none",
+                whiteSpace: "nowrap",
+                minWidth: "100px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: "500",
+              }}
+              onClick={() => {
+                setItemTypeFilter("service");
+                fetchInventory("service");
+              }}
+            >
+              Services
+            </button>
+          </div>
+        )}
+        <div
+          style={{
+            display: "flex",
+            gap: "12px",
+            alignItems: "center",
+            marginLeft: "auto",
+          }}
+        >
+          <input
+            type="text"
+            placeholder={`Search ${activeTab.replace("-", " ")}...`}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={styles.searchInput}
+          />
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            style={styles.filterSelect}
+          >
+            {getFilterOptions().map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+          <div style={styles.refreshContainer}>
+            <button
+              style={styles.refreshBtn}
+              onClick={() => fetchDataForTab(activeTab)}
+              disabled={loading}
+            >
+              ↻ Refresh
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+          <div style={{
+            maxHeight: "calc(100vh - 420px)",
+            overflowY: "auto",
+            paddingRight: "8px"
+          }}>
+            
+            
+            <div
+              style={{
+                overflowX: "auto",
+                border: "1px solid #e5e7eb",
+                borderRadius: "10px",
+              }}
+            >
+              {renderTable()}
+            </div>
           </div>
         </>
       ) : (
